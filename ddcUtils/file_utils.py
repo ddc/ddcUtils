@@ -27,7 +27,7 @@ class FileUtils:
         return parser
 
     @staticmethod
-    def _get_parser_value(parser, section: str, config_name: str) -> str | int | None:
+    def _get_parser_value(parser: configparser.ConfigParser, section: str, config_name: str) -> str | int | None:
         try:
             value = parser.get(section, config_name).replace("\"", "")
             lst_value = list(value.split(","))
@@ -49,6 +49,19 @@ class FileUtils:
             sys.stderr.write(get_exception(e))
             value = None
         return value
+
+    def _get_section_data(self, parser: configparser.ConfigParser, section: str, final_data: dict, mixed_values: bool = False):
+        for name in parser.options(section):
+            config_name = name.lower().replace(" ", "_")
+            section_name = section.lower().replace(" ", "_")
+            value = self._get_parser_value(parser, section, config_name)
+            if not mixed_values:
+                final_data[section_name][config_name] = value
+            else:
+                if config_name in final_data:
+                    config_name = f"{section_name}_{config_name}"
+                final_data[config_name] = value
+        return final_data
 
     @staticmethod
     def open_file(file_path: str) -> int:
@@ -150,18 +163,10 @@ class FileUtils:
         try:
             parser.read(file_path)
             for section in parser.sections():
-                section_name = section.lower().replace(" ", "_")
                 if not mixed_values:
+                    section_name = section.lower().replace(" ", "_")
                     final_data[section_name] = {}
-                for name in parser.options(section):
-                    config_name = name.lower().replace(" ", "_")
-                    value = self._get_parser_value(parser, section, config_name)
-                    if not mixed_values:
-                        final_data[section_name][config_name] = value
-                    else:
-                        if config_name in final_data:
-                            config_name = f"{section_name}_{config_name}"
-                        final_data[config_name] = value
+                final_data = self._get_section_data(parser, section, final_data, mixed_values)
             return final_data if len(final_data) > 0 else None
         except Exception as e:
             sys.stderr.write(get_exception(e))
@@ -173,10 +178,7 @@ class FileUtils:
         parser = self._get_default_parser()
         try:
             parser.read(file_path)
-            for name in parser.options(section):
-                config_name = name.lower().replace(" ", "_")
-                value = self._get_parser_value(parser, section, config_name)
-                final_data[config_name] = value
+            final_data = self._get_section_data(parser, section, final_data, True)
             return final_data if len(final_data) > 0 else None
         except Exception as e:
             sys.stderr.write(get_exception(e))
