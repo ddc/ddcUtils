@@ -191,15 +191,14 @@ class FileUtils:
         value = self._get_parser_value(parser, section, config_name)
         return value
 
-    def set_file_value(self, file_path: str, section: str, config_name: str, value) -> bool:
+    def set_file_value(self, file_path: str, section_name: str, config_name: str, new_value) -> bool:
         if not os.path.isfile(file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         parser = self._get_default_parser()
         parser.read(file_path)
-        new_value = value
-        if isinstance(value, str):
-            new_value = f'"{value}"'
-        parser.set(section, config_name, new_value)
+        if isinstance(new_value, str):
+            new_value = f'"{new_value}"'
+        parser.set(section_name, config_name, new_value)
         try:
             with open(file_path, "w") as configfile:
                 parser.write(configfile, space_around_delimiters=False)

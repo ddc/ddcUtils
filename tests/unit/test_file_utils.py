@@ -20,34 +20,34 @@ class TestFileUtils:
     def test_open_file(self):
         # nonexistent file
         with pytest.raises(FileNotFoundError) as exc_info:
-            FileUtils().open_file(self.unknown_file)
+            FileUtils.open_file(self.unknown_file)
         assert exc_info.value.args[0] == 2
         assert exc_info.value.args[1] == "No such file or directory"
         assert exc_info.typename == "FileNotFoundError"
 
     def test_list_files(self):
         # list all files
-        result = FileUtils().list_files(self.test_files_dir)
+        result = FileUtils.list_files(self.test_files_dir)
         assert Path(self.test_file) in result
 
         # list all files by exntension
-        result = FileUtils().list_files(self.test_files_dir, ".zip")
+        result = FileUtils.list_files(self.test_files_dir, ".zip")
         assert Path(self.test_zip_file) in result
 
     def test_gzip_file(self):
         # test gzip file and delete afterwards
         file_name = os.path.basename(self.test_file)
         result_file_path = os.path.join(self.test_files_dir, f"{file_name}.gz")
-        result = FileUtils().gzip_file(self.test_file)
+        result = FileUtils.gzip_file(self.test_file)
         assert result == Path(result_file_path)
         os.remove(result_file_path)
 
     def test_unzip_file(self):
         # test unzip file and delete afterwards
-        result = FileUtils().unzip_file(self.test_zip_file)
+        result = FileUtils.unzip_file(self.test_zip_file)
         assert result is not None
         test_file = os.path.join(self.test_files_dir, result.filelist[0].filename)
-        files_list = FileUtils().list_files(self.test_files_dir)
+        files_list = FileUtils.list_files(self.test_files_dir)
         assert Path(test_file) in files_list
         os.remove(test_file)
 
@@ -110,5 +110,5 @@ class TestFileUtils:
         assert result == new_value
 
     def test_get_binary_type(self):
-        result = FileUtils().get_exe_binary_type(self.test_file)
+        result = FileUtils.get_exe_binary_type(self.test_file)
         assert result == "Not an EXE file"
