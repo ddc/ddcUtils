@@ -3,7 +3,6 @@ import gzip
 import logging.handlers
 import os
 import sys
-from .constants import DAYS_TO_KEEP_LOGS
 
 
 class Log:
@@ -11,7 +10,7 @@ class Log:
         self,
         app_name: str = "app",
         dir_logs: str = "logs",
-        days_to_keep: int = DAYS_TO_KEEP_LOGS,
+        days_to_keep: int = 7,
         level: str = "info"
     ):
         self.app_name = app_name
