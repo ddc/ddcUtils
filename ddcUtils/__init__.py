@@ -7,7 +7,7 @@ from .os_utils import OsUtils
 from .exceptions import get_exception
 
 
-__version_info__ = ("1", "0", "4")
+__version_info__ = ("1", "0", "5")
 __version__ = ".".join(__version_info__)
 __author__ = "Daniel Costa"
 __email__ = "danieldcsta@gmail.com>"

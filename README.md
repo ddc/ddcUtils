@@ -1,9 +1,12 @@
 # Few Utility Functions
 
 [<img src="https://img.shields.io/github/license/ddc/ddcUtils.svg?style=plastic">](https://github.com/ddc/ddcUtils/blob/master/LICENSE)
-[<img src="https://img.shields.io/badge/Python-3.11+-blue.svg?style=plastic">](https://www.python.org/)
-[<img src="https://img.shields.io/github/release/ddc/ddcUtils.svg?style=plastic">](https://github.com/ddc/ddcUtils/releases/latest)
+[<img src="https://img.shields.io/badge/Python-3.11+-blue.svg?style=plastic">](https://www.python.org)
+[<img src="https://img.shields.io/pypi/v/ddcUtils.svg?style=plastic">](https://pypi.python.org/pypi/ddcUtils)
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fddc%2FddcUtils%2Fbadge%3Fref%3Dmain&style=plastic&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
+
+
+
 
 
 # Install
