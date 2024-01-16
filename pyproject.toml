@@ -8,10 +8,9 @@ version = "1.0.0"
 description = "Few Utilities"
 readme = "README.md"
 license = "MIT"
-authors = ["ddc <ddc@users.noreply.github.com>"]
+authors = ["Daniel Costa <danieldcsta@gmail.com>"]
 homepage = "https://github.com/ddc/ddcUtils"
 packages = [{include = "ddcUtils"}]
-
 
 [tool.poetry.dependencies]
 python = "^3.11"
