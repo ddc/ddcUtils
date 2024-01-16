@@ -2,7 +2,7 @@
 
 [<img src="https://img.shields.io/github/license/ddc/ddcUtils.svg?style=plastic">](https://github.com/ddc/ddcUtils/blob/master/LICENSE)
 [<img src="https://img.shields.io/badge/Python-3.11+-blue.svg?style=plastic">](https://www.python.org/)
-[<img src="https://img.shields.io/github/release/ddc/ddc.svg?style=plastic">](https://github.com/ddc/ddcUtils/releases/latest)
+[<img src="https://img.shields.io/github/release/ddc/ddcUtils.svg?style=plastic">](https://github.com/ddc/ddcUtils/releases/latest)
 
 
 ## Install
