@@ -14,7 +14,7 @@ from ddcUtils import constants
 from ddcUtils.exceptions import get_exception
 
 
-def open_file(file_path) -> int:
+def open_file(file_path: str) -> int:
     if not os.path.isfile(file_path):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
     try:
@@ -178,7 +178,7 @@ def get_all_file_section_values(file_path: str, section: str) -> dict:
         sys.stderr.write(get_exception(e))
 
 
-def get_file_section_value(file_path: str, section: str, config_name: str) -> str | int | None:
+def get_file_value(file_path: str, section: str, config_name: str) -> str | int | None:
     if not os.path.isfile(file_path):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
     parser = _get_default_parser()
