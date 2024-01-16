@@ -5,9 +5,9 @@ import sys
 def get_exception(e) -> str:
     module = e.__class__.__module__
     if module is None or module == str.__class__.__module__:
-        module_and_exception = f"{e.__class__.__name__}:{e}"
+        module_and_exception = f"[{e.__class__.__name__}]:[{e}]"
     else:
-        module_and_exception = f"{module}.{e.__class__.__name__}:{e}"
+        module_and_exception = f"[{module}.{e.__class__.__name__}]:[{e}]"
     return module_and_exception.replace("\r\n", " ").replace("\n", " ")
 
 
