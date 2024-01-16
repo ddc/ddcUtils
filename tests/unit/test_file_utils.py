@@ -90,13 +90,13 @@ class TestFileUtils:
         # existing config_name
         section_name = "Database Credentials"
         config_name = "port"
-        result = file_utils.get_file_section_value(self.test_file, section_name, config_name)
+        result = file_utils.get_file_value(self.test_file, section_name, config_name)
         assert result == 5432
 
         # nonexistent config_name
         section_name = "main"
         config_name = "filess"
-        result = file_utils.get_file_section_value(self.test_file, section_name, config_name)
+        result = file_utils.get_file_value(self.test_file, section_name, config_name)
         assert result is None
 
     def test_set_file_value(self):
@@ -106,7 +106,7 @@ class TestFileUtils:
         new_value = "/tmp/test_dir"
         result = file_utils.set_file_value(self.test_file, section_name, config_name, new_value)
         assert result is True
-        result = file_utils.get_file_section_value(self.test_file, section_name, config_name)
+        result = file_utils.get_file_value(self.test_file, section_name, config_name)
         assert result == new_value
 
     def test_get_binary_type(self):

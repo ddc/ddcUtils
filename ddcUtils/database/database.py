@@ -4,7 +4,7 @@ import sqlalchemy as sa
 from sqlalchemy.engine import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import Session
-from .exceptions import get_exception
+from ..exceptions import get_exception
 
 
 class DBSqlite:
