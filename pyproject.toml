@@ -5,17 +5,13 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "ddcUtils"
 version = "1.0.0"
-description = "ddcUtils"
+description = "Few Utilities"
 readme = "README.md"
-license = "LICENSE"
+license = "MIT"
 authors = ["ddc <ddc@users.noreply.github.com>"]
-keywords = ["utils", "utilities"]
+homepage = "https://github.com/ddc/ddcUtils"
 packages = [{include = "ddcUtils"}]
-classifiers = [
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-]
+
 
 [tool.poetry.dependencies]
 python = "^3.11"
