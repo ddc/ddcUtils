@@ -5,6 +5,7 @@ from .misc_utils import Object, MiscUtils
 from .file_utils import FileUtils
 from .os_utils import OsUtils
 from .exceptions import get_exception
+from .log import Log
 
 
 __version_info__ = ("1", "0", "5")

@@ -6,16 +6,13 @@
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fddc%2FddcUtils%2Fbadge%3Fref%3Dmain&style=plastic&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
 
 
-
-
-
 # Install
     pip install ddcUtils
     pip install -U git+https://github.com/ddc/ddcUtils
 
 
 # File Utils
-    from ddcUtils import file_utils
+    from ddcUtils import FileUtils
 + open_file
 + list_files
 + gzip_file
@@ -30,7 +27,7 @@
 
 
 # Misc Utils
-    from ddcUtils import misc_utils
+    from ddcUtils import MiscUtils
 + Object()
 + clear_screen
 + user_choice
@@ -43,7 +40,7 @@
 
 
 # OS Utils
-    from ddcUtils import os_utils
+    from ddcUtils import OsUtils
 + get_current_path
 + get_pictures_path
 + get_downloads_path
@@ -62,7 +59,7 @@
 
 
 # Logs
-    from ddcUtils.log import Log
+    from ddcUtils import Log
 + setup_logging
 
 
