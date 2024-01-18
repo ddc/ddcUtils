@@ -20,16 +20,16 @@ jobs:
         run: |  
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install poetry
-          poetry update
+          python -m poetry update
 
       - name: Install poetry dependencies
         run: |  
-          poetry update
+          python -m poetry update
 
       - name: Test with pytest
         run: |  
-          poetry run coverage run -m pytest -v
+          python -m poetry run coverage run -m pytest -v
 
       - name: Generate Coverage Report
         run: |  
-          poetry run coverage report
+          python -m poetry run coverage report

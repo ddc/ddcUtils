@@ -21,6 +21,11 @@ class FileUtils:
 
     @staticmethod
     def _get_default_parser() -> configparser.ConfigParser:
+        """
+        Returns the parser
+        :return configparser.ConfigParser:
+        """
+
         parser = configparser.ConfigParser(delimiters="=", allow_no_value=True)
         parser.optionxform = str  # this will not change all values to lowercase
         parser._interpolation = configparser.ExtendedInterpolation()
@@ -28,6 +33,14 @@ class FileUtils:
 
     @staticmethod
     def _get_parser_value(parser: configparser.ConfigParser, section: str, config_name: str) -> str | int | None:
+        """
+        Returns the value of the specified section in the given parser
+        :param parser:
+        :param section:
+        :param config_name:
+        :return: str | int | None
+        """
+
         try:
             value = parser.get(section, config_name).replace("\"", "")
             lst_value = list(value.split(","))
@@ -51,6 +64,15 @@ class FileUtils:
         return value
 
     def _get_section_data(self, parser: configparser.ConfigParser, section: str, final_data: dict, mixed_values: bool = False):
+        """
+        Returns the section data from the given parser
+        :param parser:
+        :param section:
+        :param final_data:
+        :param mixed_values:
+        :return: dict
+        """
+
         for name in parser.options(section):
             config_name = name.lower().replace(" ", "_")
             section_name = section.lower().replace(" ", "_")
@@ -65,6 +87,12 @@ class FileUtils:
 
     @staticmethod
     def open_file(file_path: str) -> int:
+        """
+        Opens the given file and returns 0 for success and 1 for failed access to the file
+        :param file_path:
+        :return: 0 | 1
+        """
+
         if not os.path.isfile(file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         try:
@@ -83,6 +111,13 @@ class FileUtils:
 
     @staticmethod
     def list_files(directory: str, file_extension: str = None) -> list:
+        """
+        Lists all files in the given directory and returns them in a list
+        :param directory:
+        :param file_extension:
+        :return: list
+        """
+
         files_list = None
         if os.path.isdir(directory):
             if not file_extension:
@@ -95,6 +130,12 @@ class FileUtils:
 
     @staticmethod
     def gzip_file(file_path: str) -> Path | None:
+        """
+        Opens the given file and returns the path for success and None if failed
+        :param file_path:
+        :return: Path | None
+        """
+
         file_name = os.path.basename(file_path)
         gz_out_file_path = os.path.join(os.path.dirname(file_path), f"{file_name}.gz")
 
@@ -111,6 +152,13 @@ class FileUtils:
 
     @staticmethod
     def unzip_file(file_path: str, out_path: str = None) -> zipfile.ZipFile | None:
+        """
+        Opens the given file and returns the zipfile for success and None for failed
+        :param file_path:
+        :param out_path:
+        :return: ZipFile | None
+        """
+
         try:
             out_path = out_path or os.path.dirname(file_path)
             zipfile_path = file_path
@@ -124,6 +172,12 @@ class FileUtils:
 
     @staticmethod
     def get_exe_binary_type(file_path: str) -> str | None:
+        """
+        Returns the binary type of the given EXE file
+        :param file_path:
+        :return: str | None
+        """
+
         with open(file_path, "rb") as f:
             s = f.read(2)
             if s != b"MZ":
@@ -156,6 +210,12 @@ class FileUtils:
         return binary_type
 
     def get_all_file_values(self, file_path: str, mixed_values: bool = False) -> dict:
+        """
+        Get all values from an .ini config file structure and returns them as a dictionary
+        :param file_path:
+        :param mixed_values:
+        :return: dict
+        """
         if not os.path.isfile(file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         final_data = {}
@@ -172,6 +232,13 @@ class FileUtils:
             sys.stderr.write(get_exception(e))
 
     def get_all_file_section_values(self, file_path: str, section: str) -> dict:
+        """
+        Get all section values from an .ini config file structure and returns them as a dictionary
+        :param file_path:
+        :param section:
+        :return: dict
+        """
+
         if not os.path.isfile(file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         final_data = {}
@@ -184,6 +251,14 @@ class FileUtils:
             sys.stderr.write(get_exception(e))
 
     def get_file_value(self, file_path: str, section: str, config_name: str) -> str | int | None:
+        """
+        Get value from an .ini config file structure and returns it
+        :param file_path:
+        :param section:
+        :param config_name:
+        :return: str | int | None
+        """
+
         if not os.path.isfile(file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         parser = self._get_default_parser()
@@ -192,6 +267,15 @@ class FileUtils:
         return value
 
     def set_file_value(self, file_path: str, section_name: str, config_name: str, new_value) -> bool:
+        """
+        Set value from an .ini config file structure and returns True or False
+        :param file_path:
+        :param section_name:
+        :param config_name:
+        :param new_value:
+        :return: True or False
+        """
+
         if not os.path.isfile(file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         parser = self._get_default_parser()
@@ -208,6 +292,14 @@ class FileUtils:
 
     @staticmethod
     def copydir(src, dst, symlinks=False, ignore=None) -> bool:
+        """
+        Copy files from src to dst and returns True or False
+        :param src:
+        :param dst:
+        :param symlinks:
+        :param ignore:
+        :return: True or False
+        """
         try:
             for item in os.listdir(src):
                 s = os.path.join(src, item)
@@ -223,6 +315,13 @@ class FileUtils:
 
     @staticmethod
     def download_file(remote_file_url, local_file_path) -> bool:
+        """
+        Download file from remote url to local and returns True or False
+        :param remote_file_url:
+        :param local_file_path:
+        :return: True or False
+        """
+
         try:
             req = requests.get(remote_file_url)
             if req.status_code == 200:
