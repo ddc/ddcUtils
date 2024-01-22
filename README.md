@@ -137,24 +137,28 @@ mu = MiscUtils()
 
 + CONVERT_DATETIME_TO_STR_LONG
     + Converts a datetime object to a long string
+    + returns: "Mon Jan 01 2024 21:43:04"
         ```python
         convert_datetime_to_str_long(date: datetime) -> str
         ```
 
 + CONVERT_DATETIME_TO_STR_SHORT
     + Converts a datetime object to a short string
+    + returns: "2024-01-01 00:00:00.000000"
         ```python
         convert_datetime_to_str_short(date: datetime) -> str
         ```
 
 + CONVERT_STR_TO_DATETIME_SHORT
-    + Converts a datetime str to a datetime
+    + Converts a str to a datetime
+    + input: "2024-01-01 00:00:00.000000"
         ```python
         convert_str_to_datetime_short(datetime_str: str) -> datetime
         ```
 
 + GET_CURRENT_DATE_TIME_STR_LONG
     + Returns the current date and time as string
+    + returns: "Mon Jan 01 2024 21:47:00"
         ```python
         get_current_date_time_str_long() -> str
         ```
@@ -229,18 +233,17 @@ db = kwargs["database"]
 ```
 
 + DBUTILS
+  + Uses SQLAlchemy statements
 ```python
 from ddcUtils import DBUtils
 db_utils = DBUtils(session)
+db_utils.add(stmt)
+db_utils.execute(stmt)
+db_utils.fetchall(stmt)
+db_utils.fetchone(stmt)
+db_utils.fetch_value(stmt)
 ```
 
-+ DBUTILS
-  + Uses SQLAlchemy statements
-      + add(stmt)
-      + execute(stmt)
-      + fetchall(stmt)
-      + fetchone(stmt)
-      + fetch_value(stmt)
 
 
 # Source Code

@@ -99,7 +99,7 @@ class MiscUtils:
     @staticmethod
     def convert_str_to_datetime_short(datetime_str: str) -> datetime:
         """
-        Converts a datetime str to a datetime
+        Converts a str to a datetime
         :param datetime_str:
         :return: datetime
         """

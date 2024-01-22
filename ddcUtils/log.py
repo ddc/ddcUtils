@@ -127,6 +127,7 @@ class RemoveOldLogs:
 
 def _get_level(level: str):
     if not isinstance(level, str):
+        sys.stdout.write("[ERROR]:[Unable to get log level, 'info' level will be used]\n]")
         return logging.INFO
     match level.lower():
         case "debug":
