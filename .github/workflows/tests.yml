@@ -1,6 +1,13 @@
 name: Build and Run Unit Tests
 
-on: [push]
+on:
+  pull_request:
+    types: [opened, reopened]
+  push:
+    branches:
+      - '**' # matches every branch
+      - '!master'
+      - '!main'
 
 jobs:
   build:
