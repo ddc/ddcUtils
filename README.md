@@ -62,7 +62,7 @@ fu = FileUtils()
         ```
 
 ### Functions for .ini/.conf config file structure
-Example of file:
+Example of file.ini:
 
     [main]
     files=5
@@ -187,14 +187,23 @@ ou = OsUtils()
 
 # Logs
 + SETUP_LOGGING
-    + Logs will rotate everyday at midnight to a `.tar.gz` file
-    + Logs will be deleted based on the `days_to_keep` variable
+    + Logs will rotate based on `when` variable to a `.tar.gz` file, defaults to `midnight`
+    + Logs will be deleted based on the `days_to_keep` variable, defaults to 7
+    + Current 'when' events supported:
+        + S - Seconds
+        + M - Minutes
+        + H - Hours
+        + D - Days
+        + midnight - roll over at midnight
+        + W{0-6} - roll over on a certain day; 0 - Monday
 ```python
 from ddcUtils import Log
 log = Log(
     dir_logs: str = "logs",
     filename: str = "app",
     days_to_keep: int = 7,
+    when: str = "midnight",
+    utc: bool = True,
     level: str = "info"
 )
 log.setup_logging()
@@ -202,10 +211,16 @@ log.setup_logging()
 
 
 # Databases
++ DBSQLITE
 ```python
-from ddcUtils.databases import DBSqlite, DBPostgres
-dbs = DBSqlite(db_file_path: str, batch_size=100, echo=False)
-dbp = DBPostgres(**kwargs)
+from ddcUtils.databases import DBSqlite
+dbsqlite = DBSqlite(db_file_path: str, batch_size=100, echo=False)
+```
+
++ DBPOSTGRES
+```python
+from ddcUtils.databases import DBPostgres
+dbpostgres = DBPostgres(**kwargs)
 username = kwargs["username"]
 password = kwargs["password"]
 host = kwargs["host"]
@@ -213,19 +228,19 @@ port = kwargs["port"]
 db = kwargs["database"]
 ```
 
++ DBUTILS
 ```python
 from ddcUtils import DBUtils
 db_utils = DBUtils(session)
 ```
 
-+ DBSQLITE
-+ DBPOSTGRES
 + DBUTILS
-    + add
-    + execute
-    + fetchall
-    + fetchone
-    + fetch_value
+  + Uses SQLAlchemy statements
+      + add(stmt)
+      + execute(stmt)
+      + fetchall(stmt)
+      + fetchone(stmt)
+      + fetch_value(stmt)
 
 
 # Source Code

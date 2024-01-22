@@ -8,17 +8,29 @@ import sys
 class Log:
     """
     Logging class
+
+    Current 'when' events supported:
+    S - Seconds
+    M - Minutes
+    H - Hours
+    D - Days
+    midnight - roll over at midnight
+    W{0-6} - roll over on a certain day; 0 - Monday
     """
     def __init__(
         self,
         dir_logs: str = "logs",
         filename: str = "app",
         days_to_keep: int = 7,
+        when: str = "midnight",
+        utc: bool = True,
         level: str = "info"
     ):
-        self.filename = filename
         self.dir = dir_logs
+        self.filename = filename
         self.days_to_keep = days_to_keep
+        self.when = when
+        self.utc = utc
         self.level = _get_level(level)
 
     def setup_logging(self):
@@ -49,6 +61,7 @@ class Log:
         file_hdlr = logging.handlers.TimedRotatingFileHandler(filename=log_file_path,
                                                               encoding="UTF-8",
                                                               when="midnight",
+                                                              utc=self.utc,
                                                               backupCount=self.days_to_keep)
 
         file_hdlr.setFormatter(formatter)
