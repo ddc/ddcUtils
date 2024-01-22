@@ -88,7 +88,7 @@ class FileUtils:
     @staticmethod
     def open_file(file_path: str) -> int:
         """
-        Opens the given file and returns 0 for success and 1 for failed access to the file
+        Opens the given file and returns 0 for success or 1 for failed access to the file
         :param file_path:
         :return: 0 | 1
         """
@@ -131,7 +131,7 @@ class FileUtils:
     @staticmethod
     def gzip_file(file_path: str) -> Path | None:
         """
-        Opens the given file and returns the path for success and None if failed
+        Opens the given file and returns the path for success or None if failed
         :param file_path:
         :return: Path | None
         """
@@ -153,7 +153,7 @@ class FileUtils:
     @staticmethod
     def unzip_file(file_path: str, out_path: str = None) -> zipfile.ZipFile | None:
         """
-        Opens the given file and returns the zipfile for success and None for failed
+        Opens the given file and returns the zipfile for success or None for failed
         :param file_path:
         :param out_path:
         :return: ZipFile | None
@@ -169,6 +169,48 @@ class FileUtils:
         except Exception as e:
             sys.stderr.write(get_exception(e))
             return None
+
+    @staticmethod
+    def copydir(src, dst, symlinks=False, ignore=None) -> bool:
+        """
+        Copy files from src to dst and returns True or False
+        :param src:
+        :param dst:
+        :param symlinks:
+        :param ignore:
+        :return: True or False
+        """
+        try:
+            for item in os.listdir(src):
+                s = os.path.join(src, item)
+                d = os.path.join(dst, item)
+                if os.path.isdir(s):
+                    shutil.copytree(s, d, symlinks, ignore)
+                else:
+                    shutil.copy2(s, d)
+            return True
+        except IOError as e:
+            sys.stderr.write(get_exception(e))
+        return False
+
+    @staticmethod
+    def download_file(remote_file_url, local_file_path) -> bool:
+        """
+        Download file from remote url to local and returns True or False
+        :param remote_file_url:
+        :param local_file_path:
+        :return: True or False
+        """
+
+        try:
+            req = requests.get(remote_file_url)
+            if req.status_code == 200:
+                with open(local_file_path, "wb") as outfile:
+                    outfile.write(req.content)
+                return True
+        except requests.HTTPError as e:
+            sys.stderr.write(get_exception(e))
+        return False
 
     @staticmethod
     def get_exe_binary_type(file_path: str) -> str | None:
@@ -289,45 +331,3 @@ class FileUtils:
             return True
         except configparser.DuplicateOptionError:
             return False
-
-    @staticmethod
-    def copydir(src, dst, symlinks=False, ignore=None) -> bool:
-        """
-        Copy files from src to dst and returns True or False
-        :param src:
-        :param dst:
-        :param symlinks:
-        :param ignore:
-        :return: True or False
-        """
-        try:
-            for item in os.listdir(src):
-                s = os.path.join(src, item)
-                d = os.path.join(dst, item)
-                if os.path.isdir(s):
-                    shutil.copytree(s, d, symlinks, ignore)
-                else:
-                    shutil.copy2(s, d)
-            return True
-        except IOError as e:
-            sys.stderr.write(get_exception(e))
-        return False
-
-    @staticmethod
-    def download_file(remote_file_url, local_file_path) -> bool:
-        """
-        Download file from remote url to local and returns True or False
-        :param remote_file_url:
-        :param local_file_path:
-        :return: True or False
-        """
-
-        try:
-            req = requests.get(remote_file_url)
-            if req.status_code == 200:
-                with open(local_file_path, "wb") as outfile:
-                    outfile.write(req.content)
-                return True
-        except requests.HTTPError as e:
-            sys.stderr.write(get_exception(e))
-        return False

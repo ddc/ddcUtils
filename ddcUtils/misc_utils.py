@@ -7,6 +7,9 @@ from ddcUtils import constants
 
 
 class Object:
+    """
+    This class is used for creating a simple class object
+    """
     def __init__(self):
         self._created = datetime.now().isoformat()
 
@@ -25,7 +28,7 @@ class MiscUtils:
     @staticmethod
     def clear_screen() -> None:
         """
-        Clears the screen
+        Clears the terminal screen
         :return:
         """
 

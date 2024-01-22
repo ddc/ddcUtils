@@ -6,14 +6,17 @@ import sys
 
 
 class Log:
+    """
+    Logging class
+    """
     def __init__(
         self,
-        app_name: str = "app",
         dir_logs: str = "logs",
+        filename: str = "app",
         days_to_keep: int = 7,
         level: str = "info"
     ):
-        self.app_name = app_name
+        self.filename = filename
         self.dir = dir_logs
         self.days_to_keep = days_to_keep
         self.level = _get_level(level)
@@ -25,7 +28,7 @@ class Log:
             sys.stderr.write(f"[ERROR]:[Unable to create logs dir]:{str(e)}: {self.dir}\n")
             sys.exit(1)
 
-        log_file_path = os.path.join(self.dir, f"{self.app_name}.log")
+        log_file_path = os.path.join(self.dir, f"{self.filename}.log")
 
         try:
             open(log_file_path, "a+").close()

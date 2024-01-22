@@ -7,50 +7,220 @@
 
 
 # Install
-    pip install ddcUtils
-    pip install -U git+https://github.com/ddc/ddcUtils
+```shell
+pip install ddcUtils
+pip install git+https://github.com/ddc/ddcUtils
+```
 
 
 # File Utils
-    from ddcUtils import FileUtils
-+ open_file
-+ list_files
-+ gzip_file
-+ unzip_file
-+ copydir
-+ download_file
-+ get_exe_binary_type
-+ get_all_file_values
-+ get_all_file_section_values
-+ get_file_value
-+ set_file_value
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+```
+
++ OPEN_FILE
+    + Opens the given file and returns 0 for success and 1 for failed access to the file
+        ```python
+        open_file(file_path: str) -> int
+        ```
+
++ LIST_FILES
+    + Lists all files in the given directory and returns them in a list
+        ```python
+        list_files(directory: str, file_extension: str = None) -> list
+        ```
+
++ GZIP_FILE
+    + Opens the given file and returns the path for success or None if failed
+        ```python
+        gzip_file(file_path: str) -> Path | None
+        ```
+
++ UNZIP_FILE
+    + Opens the given file and returns the zipfile for success or None for failed
+        ```python
+        unzip_file(file_path: str, out_path: str = None) -> zipfile.ZipFile | None
+        ```
+
++ COPYDIR
+    + Copy files from src to dst and returns True or False
+        ```python
+        copydir(src, dst, symlinks=False, ignore=None) -> bool
+        ```
+
++ DOWNLOAD_FILE
+    + Download file from remote url to local and returns True or False
+        ```python
+        download_file(remote_file_url, local_file_path) -> bool
+        ```
+
++ GET_EXE_BINARY_TYPE
+    + Returns the binary type of the given windows EXE file
+        ```python
+        get_exe_binary_type(file_path: str) -> str | None
+        ```
+
+### Functions for .ini/.conf config file structure
+Example of file:
+
+    [main]
+    files=5
+    path="/tmp/test_dir"
+    port=5432
+    list=1,2,3,4,5,6
+
+
++ GET_ALL_FILE_VALUES
+    + Get all values from an .ini config file structure and returns them as a dictionary
+        ```python
+        get_all_file_values(file_path: str, mixed_values: bool = False) -> dict
+        ```
+
++ GET_ALL_FILE_SECTION_VALUES
+    + Get all section values from an .ini config file structure and returns them as a dictionary
+        ```python
+        get_all_file_section_values(file_path: str, section: str) -> dict
+        ```
+
++ GET_FILE_VALUE
+    + Get value from an .ini config file structure and returns it
+        ```python
+        get_file_value(file_path: str, section: str, config_name: str) -> str | int | None:
+        ```
+
++ SET_FILE_VALUE
+    + Set value from an .ini config file structure and returns True or False
+        ```python
+        set_file_value(file_path: str, section_name: str, config_name: str, new_value) -> bool:
+        ```
+
+
+# Object
++ This class is used for creating a simple class object
+ ```python
+from ddcUtils import Object
+obj = Object()
+obj.test = "test"
+```   
 
 
 # Misc Utils
-    from ddcUtils import MiscUtils
-+ Object()
-+ clear_screen
-+ user_choice
-+ get_active_branch_name
-+ get_current_date_time
-+ get_current_date_time_str_long
-+ convert_datetime_to_str_long
-+ convert_datetime_to_str_short
-+ convert_str_to_datetime_short
+```python
+from ddcUtils import MiscUtils
+mu = MiscUtils()
+```
+
++ CLEAR_SCREEN
+    + Clears the terminal screen
+        ```python
+        clear_screen() -> None
+        ```
+
++ USER_CHOICE
+    + This function will ask the user to select an option
+        ```python
+        user_choice() -> input
+        ```
+
++ GET_ACTIVE_BRANCH_NAME
+    + This function will return the name of the active branch
+        ```python
+        get_active_branch_name(default_master_branch_name: str = "master") -> str
+        ```
+
++ GET_CURRENT_DATE_TIME
+    + Returns the current date and time on UTC timezone
+        ```python
+        get_current_date_time() -> datetime
+        ```
+
++ CONVERT_DATETIME_TO_STR_LONG
+    + Converts a datetime object to a long string
+        ```python
+        convert_datetime_to_str_long(date: datetime) -> str
+        ```
+
++ CONVERT_DATETIME_TO_STR_SHORT
+    + Converts a datetime object to a short string
+        ```python
+        convert_datetime_to_str_short(date: datetime) -> str
+        ```
+
++ CONVERT_STR_TO_DATETIME_SHORT
+    + Converts a datetime str to a datetime
+        ```python
+        convert_str_to_datetime_short(datetime_str: str) -> datetime
+        ```
+
++ GET_CURRENT_DATE_TIME_STR_LONG
+    + Returns the current date and time as string
+        ```python
+        get_current_date_time_str_long() -> str
+        ```
 
 
 # OS Utils
-    from ddcUtils import OsUtils
-+ get_current_path
-+ get_pictures_path
-+ get_downloads_path
+```python
+from ddcUtils import OsUtils
+ou = OsUtils()
+```
+
++ GET_CURRENT_PATH
+    + Returns the current working directory
+        ```python
+        get_current_path() -> Path
+        ```
+
++ GET_PICTURES_PATH
+    + Returns the pictures directory inside the user's home directory
+        ```python
+        get_pictures_path() -> Path
+        ```
+
++ GET_DOWNLOADS_PATH
+    + Returns the download directory inside the user's home directory
+        ```python
+        get_downloads_path() -> Path
+        ```
+
+
+# Logs
++ SETUP_LOGGING
+    + Logs will rotate everyday at midnight to a `.tar.gz` file
+    + Logs will be deleted based on the `days_to_keep` variable
+```python
+from ddcUtils import Log
+log = Log(
+    dir_logs: str = "logs",
+    filename: str = "app",
+    days_to_keep: int = 7,
+    level: str = "info"
+)
+log.setup_logging()
+```
 
 
 # Databases
-      from ddcUtils.database import DBPostgres, DBSqlite, DBUtils
-+ DBSqlite
-+ DBPostgres
-+ DBUtils
+```python
+from ddcUtils.databases import DBSqlite, DBPostgres
+dbs = DBSqlite(db_file_path: str, batch_size=100, echo=False)
+dbp = DBPostgres(**kwargs)
+username = kwargs["username"]
+password = kwargs["password"]
+host = kwargs["host"]
+port = kwargs["port"]
+db = kwargs["database"]
+```
+
+```python
+from ddcUtils import DBUtils
+db_utils = DBUtils(session)
+```
+
++ DBSQLITE
++ DBPOSTGRES
++ DBUTILS
     + add
     + execute
     + fetchall
@@ -58,22 +228,22 @@
     + fetch_value
 
 
-# Logs
-    from ddcUtils import Log
-+ setup_logging
-
-
 # Source Code
-#### Build
-+ poetry build
+### Build
+```shell
+poetry build
+```
+
+### Run Tests
+```shell
+poe test
+```
 
 
-#### Run Tests
-+ poe test
-
-
-#### Get Coverage Report
-+ poe coverage
+### Get Coverage Report
+```shell
+poe coverage
+```
 
 
 # License

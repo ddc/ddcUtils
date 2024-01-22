@@ -4,6 +4,7 @@ from logging import NullHandler
 from .misc_utils import Object, MiscUtils
 from .file_utils import FileUtils
 from .os_utils import OsUtils
+from .databases.db_utils import DBUtils
 from .exceptions import get_exception
 from .log import Log
 
