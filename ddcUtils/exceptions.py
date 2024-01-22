@@ -3,6 +3,12 @@ import sys
 
 
 def get_exception(e) -> str:
+    """
+    Get exception
+    :param e: exception string
+    :return: str
+    """
+
     module = e.__class__.__module__
     if module is None or module == str.__class__.__module__:
         module_and_exception = f"[{e.__class__.__name__}]:[{e}]"

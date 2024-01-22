@@ -6,16 +6,31 @@ import sys
 
 
 class Log:
+    """
+    Logging class
+
+    Current 'when' events supported:
+    S - Seconds
+    M - Minutes
+    H - Hours
+    D - Days
+    midnight - roll over at midnight
+    W{0-6} - roll over on a certain day; 0 - Monday
+    """
     def __init__(
         self,
-        app_name: str = "app",
         dir_logs: str = "logs",
+        filename: str = "app",
         days_to_keep: int = 7,
+        when: str = "midnight",
+        utc: bool = True,
         level: str = "info"
     ):
-        self.app_name = app_name
         self.dir = dir_logs
+        self.filename = filename
         self.days_to_keep = days_to_keep
+        self.when = when
+        self.utc = utc
         self.level = _get_level(level)
 
     def setup_logging(self):
@@ -25,7 +40,7 @@ class Log:
             sys.stderr.write(f"[ERROR]:[Unable to create logs dir]:{str(e)}: {self.dir}\n")
             sys.exit(1)
 
-        log_file_path = os.path.join(self.dir, f"{self.app_name}.log")
+        log_file_path = os.path.join(self.dir, f"{self.filename}.log")
 
         try:
             open(log_file_path, "a+").close()
@@ -46,6 +61,7 @@ class Log:
         file_hdlr = logging.handlers.TimedRotatingFileHandler(filename=log_file_path,
                                                               encoding="UTF-8",
                                                               when="midnight",
+                                                              utc=self.utc,
                                                               backupCount=self.days_to_keep)
 
         file_hdlr.setFormatter(formatter)
@@ -111,6 +127,7 @@ class RemoveOldLogs:
 
 def _get_level(level: str):
     if not isinstance(level, str):
+        sys.stdout.write("[ERROR]:[Unable to get log level, 'info' level will be used]\n]")
         return logging.INFO
     match level.lower():
         case "debug":

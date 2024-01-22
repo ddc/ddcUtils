@@ -8,7 +8,7 @@ from ..exceptions import get_exception
 
 
 class DBSqlite:
-    def __init__(self, db_file_path, batch_size=100, echo=False):
+    def __init__(self, db_file_path: str, batch_size=100, echo=False):
         self.file = db_file_path
         self.batch_size = batch_size
         self.echo = echo

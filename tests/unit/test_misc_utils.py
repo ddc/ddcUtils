@@ -19,6 +19,11 @@ class TestMiscUtils:
         result = MiscUtils.get_active_branch_name(default_branch_name)
         assert result == default_branch_name
 
+    def test_convert_datetime_to_str_long(self):
+        now_utc = datetime.now(timezone.utc)
+        result = MiscUtils.convert_datetime_to_str_long(now_utc)
+        assert result == now_utc.strftime(f"{constants.DATE_TIME_FORMATTER_STR}")
+
     def test_convert_datetime_to_str_short(self):
         now_utc = datetime.now(timezone.utc)
         result = MiscUtils.convert_datetime_to_str_short(now_utc)

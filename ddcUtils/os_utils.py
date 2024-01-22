@@ -11,11 +11,21 @@ class OsUtils:
 
     @staticmethod
     def get_current_path() -> Path:
+        """
+        Returns the current working directory
+        :return: Path
+        """
+
         path = os.path.abspath(os.getcwd())
         return Path(os.path.normpath(path)) if path else None
 
     @staticmethod
     def get_pictures_path() -> Path:
+        """
+        Returns the pictures directory inside the user's home directory
+        :return: Path
+        """
+
         if constants.OS_NAME == "Windows":
             import winreg
             sub_key = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
@@ -29,6 +39,11 @@ class OsUtils:
 
     @staticmethod
     def get_downloads_path() -> Path:
+        """
+        Returns the download directory inside the user's home directory
+        :return: Path
+        """
+
         if constants.OS_NAME == "Windows":
             import winreg
             sub_key = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
