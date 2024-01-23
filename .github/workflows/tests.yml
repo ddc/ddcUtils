@@ -1,4 +1,4 @@
-name: Build and Run Unit Tests
+name: Run Unit Tests
 
 on:
   push:
@@ -8,7 +8,8 @@ on:
       - '!main'
 
 jobs:
-  build:
+  run-tests:
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
