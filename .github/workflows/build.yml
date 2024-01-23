@@ -1,4 +1,4 @@
-name: Build and Run Unit Tests
+name: Build distribution
 
 on:
   push:
@@ -8,12 +8,10 @@ on:
 
 jobs:
   build:
-    name: Build distribution
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.x"]
-
     steps:
     - uses: actions/checkout@v4
 
