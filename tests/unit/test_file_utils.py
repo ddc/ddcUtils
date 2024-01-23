@@ -86,7 +86,7 @@ class TestFileUtils:
         assert "files" in result
         assert "path_logs" in result
 
-    def test_get_file_section_value(self):
+    def test_get_file_value(self):
         # existing config_name
         section_name = "Database Credentials"
         config_name = "port"

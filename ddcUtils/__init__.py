@@ -1,5 +1,6 @@
+from importlib.metadata import version
 import logging
-import sys
+from typing import NamedTuple, Literal
 from logging import NullHandler
 from .misc_utils import Object, MiscUtils
 from .file_utils import FileUtils
@@ -9,17 +10,37 @@ from .exceptions import get_exception
 from .log import Log
 
 
-__version_info__ = ("1", "0", "6")
-__version__ = ".".join(__version_info__)
+class VersionInfo(NamedTuple):
+    major: int
+    minor: int
+    micro: int
+    releaselevel: Literal["alpha", "beta", "candidate", "final"]
+    serial: int
+
+
+__title__ = "ddcUtils"
 __author__ = "Daniel Costa"
 __email__ = "danieldcsta@gmail.com>"
+__license__ = "MIT"
+__copyright__ = "Copyright 2023-present ddc"
 __req_python_version__ = (3, 11, 0)
-VERSION = __version__
-REQ_PYTHON_VERSION = sys.version_info >= __req_python_version__
 
-_formatt = "[%(asctime)s.%(msecs)03d]:[%(levelname)s]:%(message)s"
-formatter = logging.Formatter(_formatt, datefmt="%Y-%m-%dT%H:%M:%S")
-stream_hdlr = logging.StreamHandler()
-stream_hdlr.setFormatter(formatter)
-stream_hdlr.setLevel("INFO")
-logging.getLogger(__name__).addHandler(stream_hdlr)
+
+try:
+    __version__ = tuple(int(x) for x in version(__title__).split("."))
+    _release_level = "final"
+except ModuleNotFoundError:
+    __version__ = (0, 0, 0)
+    _release_level = "test"
+
+__version_info__: VersionInfo = VersionInfo(
+    major=__version__[0],
+    minor=__version__[1],
+    micro=__version__[2],
+    releaselevel=_release_level,
+    serial=0
+)
+
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+
+del logging, NamedTuple, Literal, VersionInfo, version
