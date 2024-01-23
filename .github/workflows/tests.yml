@@ -3,12 +3,12 @@ name: Run Unit Tests
 on:
   push:
     branches:
-      - '**' # matches every branch
-      - '!master'
-      - '!main'
+      - "**" # including all branches before excluding master
+      - "!master"
+      - "!main"
 
 jobs:
-  tests:
+  test-all:
     runs-on: ubuntu-latest
     strategy:
       matrix:
