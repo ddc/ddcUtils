@@ -40,7 +40,7 @@ jobs:
             path: dist/
 
 
-  publish:
+  publish-to-testpypi:
     runs-on: ubuntu-latest
     environment: release
     needs:
@@ -59,5 +59,14 @@ jobs:
       with:
         repository-url: https://test.pypi.org/legacy/
 
+
+  publish-to-pypi:
+    runs-on: ubuntu-latest
+    environment: release
+    needs:
+      - publish-to-test-pypi
+    permissions:
+      id-token: write
+    steps:
     - name: Publish distribution to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
