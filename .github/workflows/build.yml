@@ -3,8 +3,8 @@ name: Build distribution
 on:
   push:
     branches:
-      - "master"
-      - "main"
+      - master
+      - main
 
 jobs:
   build:
@@ -33,3 +33,24 @@ jobs:
       - name: Build package
         run: |  
           python -m poetry build
+
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    env:
+      GITHUB_TOKEN: ${{ secrets.GIT_HUB_ACTIONS_RELEASE_TOKEN }}
+    steps:
+      - id: release
+        uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: patch # major | minor | patch
+          tag_prefix: v
+          release_name: "Version <RELEASE_VERSION>"
+          release_body: ${{ steps.release.outputs.tag_name }}
+
+      - name: Check Output Parameters
+        run: |
+          echo "Got tag name ${{ steps.release.outputs.tag_name }}"
+          echo "Got release version ${{ steps.release.outputs.version }}"
+          echo "Upload release artifacts to ${{ steps.release.outputs.upload_url }}"
