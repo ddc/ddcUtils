@@ -12,6 +12,31 @@ pip install ddcUtils
 pip install git+https://github.com/ddc/ddcUtils
 ```
 
+# Cryptography
+```python
+from ddcUtils import Cryptography
+cp = Cryptography()
+```
+
++ GENERATE_PRIVATE_KEY
+    + Generates a private key to be used instead of default one
+    + But keep in mind that this private key will be needed to decode further strings
+        ```python
+        generate_private_key() -> str
+        ```
+      
++ ENCODE
+    + Encodes a given string
+        ```python
+        encode(str_to_encode: str) -> str
+         ```     
+
++ DECODE
+    + Decodes a given string
+        ```python
+        decode(str_to_decode: str) -> str
+        ```
+
 
 # File Utils
 ```python
