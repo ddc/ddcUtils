@@ -6,10 +6,16 @@ from ddcUtils import constants, MiscUtils, Object
 class TestMiscUtils:
     @classmethod
     def setup_class(cls):
+        """
+        Leaving empty for further use
+        """
         pass
 
     @classmethod
     def teardown_class(cls):
+        """
+        Leaving empty for further use
+        """
         pass
 
     def test_get_active_branch_name(self):
