@@ -11,6 +11,9 @@ class TestCryptography:
 
     @classmethod
     def teardown_class(cls):
+        """
+        Leaving empty for further use
+        """
         pass
 
     def test_generate_private_key(self):
