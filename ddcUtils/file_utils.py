@@ -125,10 +125,10 @@ class FileUtils:
                 result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
                                f.lower().startswith(starts_with.lower()) and
                                f.lower().endswith(ends_with.lower())]
-            elif starts_with and not ends_with:
+            elif starts_with:
                 result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
                                f.lower().startswith(starts_with.lower())]
-            elif not starts_with and ends_with:
+            elif ends_with:
                 result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
                                f.lower().endswith(ends_with.lower())]
             else:
