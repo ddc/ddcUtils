@@ -37,7 +37,7 @@ class Log:
         try:
             os.makedirs(self.dir, exist_ok=True) if not os.path.isdir(self.dir) else None
         except Exception as e:
-            sys.stderr.write(f"[ERROR]:[Unable to create logs dir]:{str(e)}: {self.dir}\n")
+            sys.stderr.write(f"[ERROR]:[Unable to create logs directory]:{str(e)}: {self.dir}\n")
             sys.exit(1)
 
         log_file_path = os.path.join(self.dir, f"{self.filename}.log")
@@ -48,11 +48,11 @@ class Log:
             sys.stderr.write(f"[ERROR]:[Unable to open log file for writing]:{str(e)}: {log_file_path}\n")
             sys.exit(1)
 
+        _debug_formatt = ""
         if self.level == logging.DEBUG:
-            formatt = "[%(asctime)s.%(msecs)03d]:[%(levelname)s]:[%(filename)s:%(funcName)s:%(lineno)d]:%(message)s"
-        else:
-            formatt = "[%(asctime)s.%(msecs)03d]:[%(levelname)s]:%(message)s"
+            _debug_formatt = "[%(filename)s:%(funcName)s:%(lineno)d]:"
 
+        formatt = f"[%(asctime)s.%(msecs)03d]:[%(levelname)s]:{_debug_formatt}%(message)s"
         formatter = logging.Formatter(formatt, datefmt="%Y-%m-%dT%H:%M:%S")
 
         logger = logging.getLogger()
@@ -60,7 +60,7 @@ class Log:
 
         file_hdlr = logging.handlers.TimedRotatingFileHandler(filename=log_file_path,
                                                               encoding="UTF-8",
-                                                              when="midnight",
+                                                              when=self.when,
                                                               utc=self.utc,
                                                               backupCount=self.days_to_keep)
 
@@ -127,7 +127,7 @@ class RemoveOldLogs:
 
 def _get_level(level: str):
     if not isinstance(level, str):
-        sys.stdout.write("[ERROR]:[Unable to get log level, 'info' level will be used]\n]")
+        sys.stdout.write("[ERROR]:[Unable to get log level]. Default level to: 'info'\n")
         return logging.INFO
     match level.lower():
         case "debug":
