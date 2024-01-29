@@ -33,8 +33,12 @@ class TestFileUtils:
         result = FileUtils.list_files(self.test_files_dir)
         assert Path(self.test_file) in result
 
+        # list all files with "test"
+        result = FileUtils.list_files(directory=self.test_files_dir, starts_with="test")
+        assert Path(self.test_zip_file) in result
+
         # list all files by exntension
-        result = FileUtils.list_files(self.test_files_dir, ".zip")
+        result = FileUtils.list_files(directory=self.test_files_dir, ends_with=".zip")
         assert Path(self.test_zip_file) in result
 
     def test_gzip_file(self):

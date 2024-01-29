@@ -53,7 +53,7 @@ fu = FileUtils()
 + LIST_FILES
     + Lists all files in the given directory and returns them in a list
         ```python
-        list_files(directory: str, file_extension: str = None) -> list
+        list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list
         ```
 
 + GZIP_FILE
