@@ -22,6 +22,7 @@ cp = Cryptography()
     + Generates a private key to be used instead of default one
     + But keep in mind that this private key will be needed to decode further strings
         ```
+        @staticmethod
         generate_private_key() -> str
         ```
       
