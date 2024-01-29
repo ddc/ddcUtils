@@ -119,7 +119,7 @@ class FileUtils:
         :return: list
         """
 
-        result_list = None
+        result_list = []
         if os.path.isdir(directory):
             if starts_with and ends_with:
                 result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
