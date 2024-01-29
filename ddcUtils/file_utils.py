@@ -110,23 +110,31 @@ class FileUtils:
             return 1
 
     @staticmethod
-    def list_files(directory: str, file_extension: str = None) -> list:
+    def list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list:
         """
         Lists all files in the given directory and returns them in a list
         :param directory:
-        :param file_extension:
+        :param starts_with:
+        :param ends_with:
         :return: list
         """
 
-        files_list = None
+        result_list = []
         if os.path.isdir(directory):
-            if not file_extension:
-                files_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
+            if starts_with and ends_with:
+                result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                               f.lower().startswith(starts_with.lower()) and
+                               f.lower().endswith(ends_with.lower())]
+            elif starts_with:
+                result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                               f.lower().startswith(starts_with.lower())]
+            elif ends_with:
+                result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                               f.lower().endswith(ends_with.lower())]
             else:
-                files_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                              f.lower().endswith(file_extension.lower())]
-            files_list.sort(key=os.path.getctime)
-        return files_list
+                result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
+            result_list.sort(key=os.path.getctime)
+        return result_list
 
     @staticmethod
     def gzip_file(file_path: str) -> Path | None:
