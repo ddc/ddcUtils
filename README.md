@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/github/license/ddc/ddcUtils.svg?style=plastic)](https://github.com/ddc/ddcUtils/blob/master/LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg?style=plastic)](https://www.python.org)
-[![pypi](https://img.shields.io/pypi/v/ddcUtils.svg?style=plastic)](https://pypi.python.org/pypi/ddcUtils)
+[![PyPi](https://img.shields.io/pypi/v/ddcUtils.svg?style=plastic)](https://pypi.python.org/pypi/ddcUtils)
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fddc%2FddcUtils%2Fbadge%3Fref%3Dmain&style=plastic&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
 
 
@@ -21,19 +21,19 @@ cp = Cryptography()
 + GENERATE_PRIVATE_KEY
     + Generates a private key to be used instead of default one
     + But keep in mind that this private key will be needed to decode further strings
-        ```python
+        ```
         generate_private_key() -> str
         ```
       
 + ENCODE
     + Encodes a given string
-        ```python
+        ```
         encode(str_to_encode: str) -> str
          ```     
 
 + DECODE
     + Decodes a given string
-        ```python
+        ```
         decode(str_to_decode: str) -> str
         ```
 
@@ -46,43 +46,50 @@ fu = FileUtils()
 
 + OPEN_FILE
     + Opens the given file and returns 0 for success and 1 for failed access to the file
-        ```python
+        ```
+        @staticmethod
         open_file(file_path: str) -> int
         ```
 
 + LIST_FILES
     + Lists all files in the given directory and returns them in a list
-        ```python
+        ```
+        @staticmethod
         list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list
         ```
 
 + GZIP_FILE
     + Opens the given file and returns the path for success or None if failed
-        ```python
+        ```
+        @staticmethod
         gzip_file(file_path: str) -> Path | None
         ```
 
 + UNZIP_FILE
     + Opens the given file and returns the zipfile for success or None for failed
-        ```python
+        ```
+        @staticmethod
         unzip_file(file_path: str, out_path: str = None) -> zipfile.ZipFile | None
         ```
 
 + COPYDIR
     + Copy files from src to dst and returns True or False
-        ```python
+        ```
+        @staticmethod
         copydir(src, dst, symlinks=False, ignore=None) -> bool
         ```
 
 + DOWNLOAD_FILE
     + Download file from remote url to local and returns True or False
-        ```python
+        ```
+        @staticmethod
         download_file(remote_file_url, local_file_path) -> bool
         ```
 
 + GET_EXE_BINARY_TYPE
     + Returns the binary type of the given windows EXE file
-        ```python
+        ```
+        @staticmethod
         get_exe_binary_type(file_path: str) -> str | None
         ```
 
@@ -98,25 +105,25 @@ Example of file.ini:
 
 + GET_ALL_FILE_VALUES
     + Get all values from an .ini config file structure and returns them as a dictionary
-        ```python
+        ```
         get_all_file_values(file_path: str, mixed_values: bool = False) -> dict
         ```
 
 + GET_ALL_FILE_SECTION_VALUES
     + Get all section values from an .ini config file structure and returns them as a dictionary
-        ```python
+        ```
         get_all_file_section_values(file_path: str, section: str) -> dict
         ```
 
 + GET_FILE_VALUE
     + Get value from an .ini config file structure and returns it
-        ```python
+        ```
         get_file_value(file_path: str, section: str, config_name: str) -> str | int | None:
         ```
 
 + SET_FILE_VALUE
     + Set value from an .ini config file structure and returns True or False
-        ```python
+        ```
         set_file_value(file_path: str, section_name: str, config_name: str, new_value) -> bool:
         ```
 
@@ -138,53 +145,60 @@ mu = MiscUtils()
 
 + CLEAR_SCREEN
     + Clears the terminal screen
-        ```python
+        ```
+        @staticmethod
         clear_screen() -> None
         ```
 
 + USER_CHOICE
     + This function will ask the user to select an option
-        ```python
+        ```
+        @staticmethod
         user_choice() -> input
         ```
 
 + GET_ACTIVE_BRANCH_NAME
     + This function will return the name of the active branch
-        ```python
+        ```
+        @staticmethod
         get_active_branch_name(default_master_branch_name: str = "master") -> str
         ```
 
 + GET_CURRENT_DATE_TIME
     + Returns the current date and time on UTC timezone
-        ```python
+        ```
+        @staticmethod
         get_current_date_time() -> datetime
         ```
 
 + CONVERT_DATETIME_TO_STR_LONG
     + Converts a datetime object to a long string
     + returns: "Mon Jan 01 2024 21:43:04"
-        ```python
+        ```
+        @staticmethod
         convert_datetime_to_str_long(date: datetime) -> str
         ```
 
 + CONVERT_DATETIME_TO_STR_SHORT
     + Converts a datetime object to a short string
     + returns: "2024-01-01 00:00:00.000000"
-        ```python
+        ```
+        @staticmethod
         convert_datetime_to_str_short(date: datetime) -> str
         ```
 
 + CONVERT_STR_TO_DATETIME_SHORT
     + Converts a str to a datetime
     + input: "2024-01-01 00:00:00.000000"
-        ```python
+        ```
+        @staticmethod
         convert_str_to_datetime_short(datetime_str: str) -> datetime
         ```
 
 + GET_CURRENT_DATE_TIME_STR_LONG
     + Returns the current date and time as string
     + returns: "Mon Jan 01 2024 21:47:00"
-        ```python
+        ```
         get_current_date_time_str_long() -> str
         ```
 
@@ -197,19 +211,22 @@ ou = OsUtils()
 
 + GET_CURRENT_PATH
     + Returns the current working directory
-        ```python
+        ```
+        @staticmethod
         get_current_path() -> Path
         ```
 
 + GET_PICTURES_PATH
     + Returns the pictures directory inside the user's home directory
-        ```python
+        ```
+        @staticmethod
         get_pictures_path() -> Path
         ```
 
 + GET_DOWNLOADS_PATH
     + Returns the download directory inside the user's home directory
-        ```python
+        ```
+        @staticmethod
         get_downloads_path() -> Path
         ```
 
