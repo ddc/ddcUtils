@@ -284,7 +284,7 @@ db = kwargs["database"]
 + DBUTILS
   + Uses SQLAlchemy statements
 ```python
-from ddcUtils import DBUtils
+from ddcUtils.databases import DBUtils
 db_utils = DBUtils(session)
 db_utils.add(stmt)
 db_utils.execute(stmt)
