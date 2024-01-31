@@ -1,1 +1,2 @@
-from .database import DBSqlite, DBPostgres
+from .sqlite import DBSqlite
+from .postgres import DBPostgres

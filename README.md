@@ -259,9 +259,15 @@ log.setup_logging()
 
 # Databases
 + DBSQLITE
+```
+class DBSqlite(db_file_path: str, batch_size=100, echo=False)
+```
+  
 ```python
 from ddcUtils.databases import DBSqlite
-dbsqlite = DBSqlite(db_file_path: str, batch_size=100, echo=False)
+dbsqlite = DBSqlite(db_file_path)
+with dbsqlite.session() as db_session:
+    do your stuff here
 ```
 
 + DBPOSTGRES
