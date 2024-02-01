@@ -259,26 +259,60 @@ log.setup_logging()
 
 # Databases
 + DBSQLITE
+```
+class DBSqlite(db_file_path: str, batch_size=100, echo=False)
+```
+
 ```python
-from ddcUtils.databases import DBSqlite
-dbsqlite = DBSqlite(db_file_path: str, batch_size=100, echo=False)
+import sqlalchemy as sa
+from ddcUtils.databases import DBSqlite, DBUtils
+dbsqlite = DBSqlite(database_file_path)
+with dbsqlite.session() as session:
+    stmt = sa.select(Table).where(Table.id == 1)
+    db_utils = DBUtils(session)
+    results = db_utils.fetchall(stmt)
 ```
 
 + DBPOSTGRES
 ```python
-from ddcUtils.databases import DBPostgres
-dbpostgres = DBPostgres(**kwargs)
-username = kwargs["username"]
-password = kwargs["password"]
-host = kwargs["host"]
-port = kwargs["port"]
-db = kwargs["database"]
+import sqlalchemy as sa
+from ddcUtils.databases import DBPostgres, DBUtils
+db_configs = {
+    "username": username,
+    "password": password,
+    "host": host,
+    "port": port,
+    "database": database
+}
+dbpostgres = DBPostgres(**db_configs)
+with dbpostgres.session() as session:
+    stmt = sa.select(Table).where(Table.id == 1)
+    db_utils = DBUtils(session)
+    results = db_utils.fetchall(stmt)
+```
+
++ DBPOSTGRES ASYNC
+```python
+import sqlalchemy as sa
+from ddcUtils.databases import DBPostgresAsync, DBUtilsAsync
+db_configs = {
+    "username": username,
+    "password": password,
+    "host": host,
+    "port": port,
+    "database": database
+}
+dbpostgres = DBPostgresAsync(**db_configs)
+async with dbpostgres.session() as session:
+    stmt = sa.select(Table).where(Table.id == 1)
+    db_utils = DBUtilsAsync(session)
+    results = await db_utils.fetchall(stmt)
 ```
 
 + DBUTILS
   + Uses SQLAlchemy statements
 ```python
-from ddcUtils import DBUtils
+from ddcUtils.databases import DBUtils
 db_utils = DBUtils(session)
 db_utils.add(stmt)
 db_utils.execute(stmt)
@@ -287,6 +321,17 @@ db_utils.fetchone(stmt)
 db_utils.fetch_value(stmt)
 ```
 
++ DBUTILS ASYNC
+  + Uses SQLAlchemy statements
+```python
+from ddcUtils.databases import DBUtilsAsync
+db_utils = DBUtilsAsync(session)
+await db_utils.add(stmt)
+await db_utils.execute(stmt)
+await db_utils.fetchall(stmt)
+await db_utils.fetchone(stmt)
+await db_utils.fetch_value(stmt)
+```
 
 
 # Source Code
