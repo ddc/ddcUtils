@@ -58,40 +58,40 @@ class TestFileUtils:
         assert Path(test_file) in files_list
         os.remove(test_file)
 
-    def test_get_all_file_values(self):
+    def test_get_file_values(self):
         # wrong file path
         with pytest.raises(FileNotFoundError) as exc_info:
-            FileUtils().get_all_file_values(self.unknown_file)
+            FileUtils().get_file_values(self.unknown_file)
         assert exc_info.value.args[0] == 2
         assert exc_info.value.args[1] == "No such file or directory"
         assert exc_info.typename == "FileNotFoundError"
 
         # returnign one single dict - mixed values
         mixed_values = True
-        result = FileUtils().get_all_file_values(self.test_file, mixed_values)
-        assert "files" in result
-        assert "database" in result
+        result = FileUtils().get_file_values(self.test_file, mixed_values)
+        assert "main.files" in result.keys()
+        assert "Database_Credentials.database" in result.keys()
 
         # return organized dict values
         mixed_values = False
-        result = FileUtils().get_all_file_values(self.test_file, mixed_values)
-        assert "main" in result
-        assert "database_credentials" in result
+        result = FileUtils().get_file_values(self.test_file, mixed_values)
+        assert "main" in result.keys()
+        assert "Database_Credentials" in result.keys()
 
-    def test_get_all_file_section_values(self):
+    def test_get_file_section_values(self):
         # wrong file
         section_name = "main"
         with pytest.raises(FileNotFoundError) as exc_info:
-            FileUtils().get_all_file_section_values(self.unknown_file, section_name)
+            FileUtils().get_file_section_values(self.unknown_file, section_name)
         assert exc_info.value.args[0] == 2
         assert exc_info.value.args[1] == "No such file or directory"
         assert exc_info.typename == "FileNotFoundError"
 
         # get all section values
         section_name = "main"
-        result = FileUtils().get_all_file_section_values(self.test_file, section_name)
-        assert "files" in result
-        assert "path_logs" in result
+        result = FileUtils().get_file_section_values(self.test_file, section_name)
+        assert "files" in result.keys()
+        assert "path_logs" in result.keys()
 
     def test_get_file_value(self):
         # existing config_name
