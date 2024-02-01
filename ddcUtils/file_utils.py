@@ -63,26 +63,27 @@ class FileUtils:
             value = None
         return value
 
-    def _get_section_data(self, parser: configparser.ConfigParser, section: str, final_data: dict, mixed_values: bool = False):
+    def _get_section_data(self, parser: configparser.ConfigParser, section: str, final_data: dict, mixed_values: bool = True, include_section_name: bool = False):
         """
         Returns the section data from the given parser
         :param parser:
         :param section:
         :param final_data:
         :param mixed_values:
+        :param include_section_name:
         :return: dict
         """
 
         for name in parser.options(section):
-            config_name = name.lower().replace(" ", "_")
-            section_name = section.lower().replace(" ", "_")
-            value = self._get_parser_value(parser, section, config_name)
-            if not mixed_values:
-                final_data[section_name][config_name] = value
-            else:
-                if config_name in final_data:
-                    config_name = f"{section_name}_{config_name}"
+            section_name = section.replace(" ", "_")
+            config_name = name.replace(" ", "_")
+            value = self._get_parser_value(parser, section, name)
+            if mixed_values and include_section_name:
+                final_data[f"{section_name}.{config_name}"] = value
+            elif mixed_values and not include_section_name:
                 final_data[config_name] = value
+            else:
+                final_data[section_name][config_name] = value
         return final_data
 
     @staticmethod
@@ -188,6 +189,7 @@ class FileUtils:
         :param ignore:
         :return: True or False
         """
+
         try:
             for item in os.listdir(src):
                 s = os.path.join(src, item)
@@ -259,13 +261,14 @@ class FileUtils:
                     binary_type = None
         return binary_type
 
-    def get_all_file_values(self, file_path: str, mixed_values: bool = False) -> dict:
+    def get_file_values(self, file_path: str, mixed_values: bool = False) -> dict:
         """
         Get all values from an .ini config file structure and returns them as a dictionary
         :param file_path:
         :param mixed_values:
         :return: dict
         """
+
         if not os.path.isfile(file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         final_data = {}
@@ -274,14 +277,14 @@ class FileUtils:
             parser.read(file_path)
             for section in parser.sections():
                 if not mixed_values:
-                    section_name = section.lower().replace(" ", "_")
+                    section_name = section.replace(" ", "_")
                     final_data[section_name] = {}
-                final_data = self._get_section_data(parser, section, final_data, mixed_values)
+                final_data = self._get_section_data(parser, section, final_data, mixed_values, True)
             return final_data if len(final_data) > 0 else None
         except Exception as e:
             sys.stderr.write(get_exception(e))
 
-    def get_all_file_section_values(self, file_path: str, section: str) -> dict:
+    def get_file_section_values(self, file_path: str, section: str) -> dict:
         """
         Get all section values from an .ini config file structure and returns them as a dictionary
         :param file_path:
@@ -295,7 +298,7 @@ class FileUtils:
         parser = self._get_default_parser()
         try:
             parser.read(file_path)
-            final_data = self._get_section_data(parser, section, final_data, True)
+            final_data = self._get_section_data(parser, section, final_data)
             return final_data if len(final_data) > 0 else None
         except Exception as e:
             sys.stderr.write(get_exception(e))

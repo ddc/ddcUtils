@@ -10,6 +10,7 @@ class Object:
     """
     This class is used for creating a simple class object
     """
+
     def __init__(self):
         self._created = datetime.now().isoformat()
 

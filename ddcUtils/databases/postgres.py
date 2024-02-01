@@ -10,11 +10,12 @@ class DBPostgres:
     """
     Class to handle postgres database connection
 
-        database = DBPostgres(**db_configs)
-        with database.session() as session:
-            do your stuff here
+    database = DBPostgres(**db_configs)
+    with database.session() as session:
+        do your stuff here
 
     """
+
     def __init__(self, future=True, echo=False, **kwargs):
         self.echo = echo
         self.future = future
@@ -75,13 +76,13 @@ class DBPostgresAsync(DBPostgres):
     def __init__(self, future=True, echo=False, **kwargs):
         super().__init__(future, echo, **kwargs)
 
-    def uri(self, drivername="asyncpg") -> sa.engine.URL:
+    def url(self, drivername="asyncpg") -> sa.engine.URL:
         return super().uri(drivername)
 
     def engine(self) -> AsyncEngine | None:
         try:
             engine = create_async_engine(
-                self.uri(),
+                self.url(),
                 echo=self.echo,
                 future=self.future
             )

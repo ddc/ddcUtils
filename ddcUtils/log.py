@@ -17,6 +17,7 @@ class Log:
     midnight - roll over at midnight
     W{0-6} - roll over on a certain day; 0 - Monday
     """
+
     def __init__(
         self,
         dir_logs: str = "logs",

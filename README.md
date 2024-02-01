@@ -104,16 +104,16 @@ Example of file.ini:
     list=1,2,3,4,5,6
 
 
-+ GET_ALL_FILE_VALUES
++ GET_FILE_VALUES
     + Get all values from an .ini config file structure and returns them as a dictionary
         ```
-        get_all_file_values(file_path: str, mixed_values: bool = False) -> dict
+        get_file_values(file_path: str, mixed_values: bool = False) -> dict
         ```
 
-+ GET_ALL_FILE_SECTION_VALUES
++ GET_FILE_SECTION_VALUES
     + Get all section values from an .ini config file structure and returns them as a dictionary
         ```
-        get_all_file_section_values(file_path: str, section: str) -> dict
+        get_file_section_values(file_path: str, section: str) -> dict
         ```
 
 + GET_FILE_VALUE
