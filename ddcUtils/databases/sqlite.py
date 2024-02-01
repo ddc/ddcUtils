@@ -15,18 +15,19 @@ class DBSqlite:
             do your stuff here
 
     """
+
     def __init__(self, db_file_path: str, batch_size=100, echo=False, future=True):
         self.file = db_file_path
         self.batch_size = batch_size
         self.echo = echo
         self.future = future
 
-    def uri(self) -> str:
+    def url(self) -> str:
         return f"sqlite:///{self.file}"
 
     def engine(self) -> Engine | None:
         try:
-            engine = create_engine(self.uri(), future=self.future, echo=self.echo).\
+            engine = create_engine(self.url(), future=self.future, echo=self.echo).\
                 execution_options(stream_results=self.echo, isolation_level="AUTOCOMMIT")
 
             @sa.event.listens_for(engine, "before_cursor_execute")
@@ -48,4 +49,5 @@ class DBSqlite:
             sys.stderr.write("Unable to Create Database Session: Empty Engine")
             return None
         session_maker = sessionmaker(bind=_engine)
+        _engine.dispose()
         return session_maker()
