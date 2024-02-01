@@ -262,16 +262,20 @@ log.setup_logging()
 ```
 class DBSqlite(db_file_path: str, batch_size=100, echo=False)
 ```
-  
+
 ```python
-from ddcUtils.databases import DBSqlite
-dbsqlite = DBSqlite(db_file_path)
+import sqlalchemy as sa
+from ddcUtils.databases import DBSqlite, DBUtils
+dbsqlite = DBSqlite(database_file_path)
 with dbsqlite.session() as session:
-    do your stuff here
+    stmt = sa.select(Table).where(Table.id == 1)
+    db_utils = DBUtils(session)
+    results = db_utils.fetchall(stmt)
 ```
 
 + DBPOSTGRES
 ```python
+import sqlalchemy as sa
 from ddcUtils.databases import DBPostgres, DBUtils
 db_configs = {
     "username": username,
@@ -282,12 +286,14 @@ db_configs = {
 }
 dbpostgres = DBPostgres(**db_configs)
 with dbpostgres.session() as session:
+    stmt = sa.select(Table).where(Table.id == 1)
     db_utils = DBUtils(session)
-    db_utils.execute(stmt)
+    results = db_utils.fetchall(stmt)
 ```
 
 + DBPOSTGRES ASYNC
 ```python
+import sqlalchemy as sa
 from ddcUtils.databases import DBPostgresAsync, DBUtilsAsync
 db_configs = {
     "username": username,
@@ -298,8 +304,9 @@ db_configs = {
 }
 dbpostgres = DBPostgresAsync(**db_configs)
 async with dbpostgres.session() as session:
+    stmt = sa.select(Table).where(Table.id == 1)
     db_utils = DBUtilsAsync(session)
-    db_utils.execute(stmt)
+    results = await db_utils.fetchall(stmt)
 ```
 
 + DBUTILS
