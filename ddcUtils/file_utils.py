@@ -188,6 +188,7 @@ class FileUtils:
         :param ignore:
         :return: True or False
         """
+
         try:
             for item in os.listdir(src):
                 s = os.path.join(src, item)
@@ -266,6 +267,7 @@ class FileUtils:
         :param mixed_values:
         :return: dict
         """
+
         if not os.path.isfile(file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         final_data = {}

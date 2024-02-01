@@ -10,9 +10,9 @@ class DBPostgres:
     """
     Class to handle postgres database connection
 
-        database = DBPostgres(**db_configs)
-        with database.session() as session:
-            do your stuff here
+    database = DBPostgres(**db_configs)
+    with database.session() as session:
+        do your stuff here
 
     """
 

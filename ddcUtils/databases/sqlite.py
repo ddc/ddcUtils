@@ -10,9 +10,9 @@ class DBSqlite:
     """
     Class to handle sqlite databases
 
-        database = DBSqlite(DATABASE_FILE_PATH)
-        with database.session() as session:
-            do your stuff here
+    database = DBSqlite(DATABASE_FILE_PATH)
+    with database.session() as session:
+        do your stuff here
 
     """
 

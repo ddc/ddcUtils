@@ -19,6 +19,7 @@ class Cryptography:
         But keep in mind that this private key will be needed to decode further strings
         :return: str
         """
+
         private_key = base64.urlsafe_b64encode(os.urandom(32))
         return private_key.decode("UTF-8")
 
@@ -28,6 +29,7 @@ class Cryptography:
         :param str_to_encode:
         :return: str
         """
+
         str_bytes = bytes(str_to_encode, "UTF-8")
         encoded_text = self.cipher_suite.encrypt(str_bytes)
         return encoded_text.decode("UTF-8")
@@ -38,6 +40,7 @@ class Cryptography:
         :param str_to_decode:
         :return:
         """
+
         if str_to_decode is not None and len(str_to_decode) > 0:
             try:
                 bet = bytes(str_to_decode, "UTF-8")
