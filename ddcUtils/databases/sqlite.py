@@ -2,7 +2,7 @@
 import sys
 import sqlalchemy as sa
 from sqlalchemy.engine import create_engine, Engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 from ..exceptions import get_exception
 
 
@@ -21,9 +21,8 @@ class DBSqlite:
         self.echo = echo
         self.future = future
 
-    def uri(self) -> sa.engine.URL:
-        uri = f"sqlite:///{self.file}"
-        return sa.engine.URL.create(uri)
+    def uri(self) -> str:
+        return f"sqlite:///{self.file}"
 
     def engine(self) -> Engine | None:
         try:
@@ -48,5 +47,5 @@ class DBSqlite:
         if _engine is None:
             sys.stderr.write("Unable to Create Database Session: Empty Engine")
             return None
-        session_maker = sa.sessionmaker(bind=_engine)
+        session_maker = sessionmaker(bind=_engine)
         return session_maker()
