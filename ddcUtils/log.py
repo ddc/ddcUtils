@@ -20,11 +20,11 @@ class Log:
     def __init__(
         self,
         dir_logs: str = "logs",
+        level: str = "info",
         filename: str = "app",
         days_to_keep: int = 7,
         when: str = "midnight",
         utc: bool = True,
-        level: str = "info"
     ):
         self.dir = dir_logs
         self.filename = filename

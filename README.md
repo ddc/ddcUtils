@@ -266,19 +266,40 @@ class DBSqlite(db_file_path: str, batch_size=100, echo=False)
 ```python
 from ddcUtils.databases import DBSqlite
 dbsqlite = DBSqlite(db_file_path)
-with dbsqlite.session() as db_session:
+with dbsqlite.session() as session:
     do your stuff here
 ```
 
 + DBPOSTGRES
 ```python
-from ddcUtils.databases import DBPostgres
-dbpostgres = DBPostgres(**kwargs)
-username = kwargs["username"]
-password = kwargs["password"]
-host = kwargs["host"]
-port = kwargs["port"]
-db = kwargs["database"]
+from ddcUtils.databases import DBPostgres, DBUtils
+db_configs = {
+    "username": username,
+    "password": password,
+    "host": host,
+    "port": port,
+    "database": database
+}
+dbpostgres = DBPostgres(**db_configs)
+with dbpostgres.session() as session:
+    db_utils = DBUtils(session)
+    db_utils.execute(stmt)
+```
+
++ DBPOSTGRES ASYNC
+```python
+from ddcUtils.databases import DBPostgresAsync, DBUtilsAsync
+db_configs = {
+    "username": username,
+    "password": password,
+    "host": host,
+    "port": port,
+    "database": database
+}
+dbpostgres = DBPostgresAsync(**db_configs)
+async with dbpostgres.session() as session:
+    db_utils = DBUtilsAsync(session)
+    db_utils.execute(stmt)
 ```
 
 + DBUTILS
@@ -293,6 +314,17 @@ db_utils.fetchone(stmt)
 db_utils.fetch_value(stmt)
 ```
 
++ DBUTILS ASYNC
+  + Uses SQLAlchemy statements
+```python
+from ddcUtils.databases import DBUtilsAsync
+db_utils = DBUtilsAsync(session)
+await db_utils.add(stmt)
+await db_utils.execute(stmt)
+await db_utils.fetchall(stmt)
+await db_utils.fetchone(stmt)
+await db_utils.fetch_value(stmt)
+```
 
 
 # Source Code
