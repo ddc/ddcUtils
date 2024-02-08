@@ -1,13 +1,33 @@
 # -*- encoding: utf-8 -*-
 import os
+import platform
 from pathlib import Path
-from ddcUtils import constants
 
 
 class OsUtils:
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
+
+    @staticmethod
+    def get_os_name() -> str:
+        """
+        Get OS name
+        :return:
+        """
+
+        return platform.system()
+
+    @staticmethod
+    def is_windows() -> bool:
+        """
+        Check if OS is Windows
+        :return:
+        """
+
+        if platform.system() == "Windows":
+            return True
+        return False
 
     @staticmethod
     def get_current_path() -> Path:
@@ -19,14 +39,13 @@ class OsUtils:
         path = os.path.abspath(os.getcwd())
         return Path(os.path.normpath(path)) if path else None
 
-    @staticmethod
-    def get_pictures_path() -> Path:
+    def get_pictures_path(self) -> Path:
         """
         Returns the pictures directory inside the user's home directory
         :return: Path
         """
 
-        if constants.OS_NAME == "Windows":
+        if self.is_windows():
             import winreg
             sub_key = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
             pictures_guid = "My Pictures"
@@ -37,14 +56,13 @@ class OsUtils:
             pictures_path = os.path.join(os.getenv("HOME"), "Pictures")
             return Path(pictures_path)
 
-    @staticmethod
-    def get_downloads_path() -> Path:
+    def get_downloads_path(self) -> Path:
         """
         Returns the download directory inside the user's home directory
         :return: Path
         """
 
-        if constants.OS_NAME == "Windows":
+        if self.is_windows():
             import winreg
             sub_key = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
             downloads_guid = "{374DE290-123F-4565-9164-39C4925E467B}"

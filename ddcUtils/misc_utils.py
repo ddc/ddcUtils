@@ -3,7 +3,8 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
-from ddcUtils import constants
+from .os_utils import OsUtils
+from . import constants
 
 
 class Object:
@@ -33,10 +34,8 @@ class MiscUtils:
         :return:
         """
 
-        if constants.OS_NAME == "Windows":
-            os.system("cls")
-        else:
-            os.system("clear")
+        cmd = "cls" if OsUtils.is_windows() else "clear"
+        os.system(cmd)
 
     @staticmethod
     def user_choice() -> input:
