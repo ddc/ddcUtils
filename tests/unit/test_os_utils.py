@@ -22,9 +22,9 @@ class TestOsUtils:
         assert result.parts[-1] == "ddcUtils"
 
     def test_get_pictures_path(self):
-        result = OsUtils.get_pictures_path()
+        result = OsUtils().get_pictures_path()
         assert "Pictures" in result.parts[-1]
 
     def test_get_downloads_path(self):
-        result = OsUtils.get_downloads_path()
+        result = OsUtils().get_downloads_path()
         assert "Downloads" in result.parts[-1]

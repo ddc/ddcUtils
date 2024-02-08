@@ -3,15 +3,15 @@ import configparser
 import errno
 import gzip
 import os
-from pathlib import Path
 import shutil
 import struct
 import subprocess
 import sys
 import zipfile
+from pathlib import Path
 import requests
-from ddcUtils import constants
-from ddcUtils.exceptions import get_exception
+from .exceptions import get_exception
+from .os_utils import OsUtils
 
 
 class FileUtils:
@@ -97,7 +97,7 @@ class FileUtils:
         if not os.path.isfile(file_path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         try:
-            match constants.OS_NAME:
+            match OsUtils.get_os_name():
                 case "Windows":
                     os.startfile(file_path)
                     return_code = 0

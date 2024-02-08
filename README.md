@@ -210,6 +210,20 @@ from ddcUtils import OsUtils
 ou = OsUtils()
 ```
 
++ GET_OS_NAME
+    + Get OS name
+        ```
+        @staticmethod
+        get_os_name() -> str
+        ```
+      
++ IS_WINDOWS
+    + Check if OS is Windows
+        ```
+        @staticmethod
+        is_windows() -> bool
+        ```
+
 + GET_CURRENT_PATH
     + Returns the current working directory
         ```
@@ -220,14 +234,12 @@ ou = OsUtils()
 + GET_PICTURES_PATH
     + Returns the pictures directory inside the user's home directory
         ```
-        @staticmethod
         get_pictures_path() -> Path
         ```
 
 + GET_DOWNLOADS_PATH
     + Returns the download directory inside the user's home directory
         ```
-        @staticmethod
         get_downloads_path() -> Path
         ```
 
