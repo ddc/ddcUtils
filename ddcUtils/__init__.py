@@ -1,15 +1,15 @@
 import logging
-import os
+from importlib.metadata import version
+from typing import Literal, NamedTuple
 from .crypto import Cryptography
 from .exceptions import get_exception
 from .file_utils import FileUtils
 from .log import Log
-from .misc_utils import Object, MiscUtils
+from .misc_utils import MiscUtils, Object
 from .os_utils import OsUtils
-from importlib.metadata import version
-from pathlib import Path
-from typing import Literal, NamedTuple
 
+
+__all__ = ("Cryptography", "get_exception", "FileUtils", "Log", "Object", "MiscUtils", "OsUtils")
 
 __title__ = "ddcUtils"
 __author__ = "Daniel Costa"
@@ -22,11 +22,7 @@ _req_python_version = (3, 11, 0)
 try:
     _version = tuple(int(x) for x in version(__title__).split("."))
 except ModuleNotFoundError:
-    # this will be called on local tests, since theres no package installed
-    import toml
-    pyproject = toml.load(os.path.join(Path(__file__).parent.parent, "pyproject.toml"))
-    _version = pyproject["tool"]["poetry"]["version"]
-    del pyproject
+    _version = (0, 0, 0)
 
 
 class VersionInfo(NamedTuple):
