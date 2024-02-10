@@ -46,47 +46,47 @@ fu = FileUtils()
 ```
 
 + OPEN_FILE
-    + Opens the given file and returns 0 for success and 1 for failed access to the file
+    + Open the given file and returns 0 for success and 1 for failed access to the file
         ```
         @staticmethod
         open_file(file_path: str) -> int
         ```
 
 + LIST_FILES
-    + Lists all files in the given directory and returns them in a list
+    + List all files in the given directory and returns them in a list
         ```
         @staticmethod
         list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list
         ```
 
-+ GZIP_FILE
-    + Opens the given file and returns the path for success or None if failed
++ GZIP
+    + Compress the given file and returns the Path for success or None if failed
         ```
         @staticmethod
-        gzip_file(file_path: str) -> Path | None
+        gzip(file_path: str) -> Path | None:
         ```
 
-+ UNZIP_FILE
-    + Opens the given file and returns the zipfile for success or None for failed
++ UNZIP
+    + Unzips the given file and returns ZipFile for success or None if failed
         ```
         @staticmethod
-        unzip_file(file_path: str, out_path: str = None) -> zipfile.ZipFile | None
+        unzip(file_path: str, out_path: str = None) -> ZipFile | None
         ```
 
-+ REMOVE_FILE
-    + Removes the given file and returns True if the file was successfully removed
++ REMOVE
+    + Remove the given file or dir and returns True if it was successfully removed
         ```
         @staticmethod
-        remove_file(file_path: str) -> bool
+        remove(path: str) -> bool
         ```
 
-+ REMOVE_DIR
-    + Removes the given directory and returns True if the directory was successfully removed
++ RENAME
+    + Rename the given file and returns True if the file was successfully
         ```
         @staticmethod
-        remove_dir(dir_path: str) -> bool
+        rename(from_name: str, to_name: str) -> bool
         ```
-      
+
 + COPY_DIR
     + Copy files from src to dst and returns True or False
         ```
@@ -155,14 +155,14 @@ Example of file.ini:
                                           filesystem: str = "github",
                                           exist_ok: bool = True,
                                           parents: bool = True,
-                                          recursive: bool = False) -> requests.HTTPError | None
+                                          recursive: bool = False) -> bool
         ```
   + Github example:
     ```python
     from ddcUtils import FileUtils
     fu = FileUtils()
     res = fu.download_filesystem_directory(org="ddc", repo="ddcutils", branch="main", remote_dir="tests", local_dir="tests")
-    if res:
+    if not res:
         print("error")
     ```
 

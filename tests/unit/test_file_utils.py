@@ -45,18 +45,18 @@ class TestFileUtils:
         # test gzip file and delete afterwards
         file_name = os.path.basename(self.test_file)
         result_file_path = os.path.join(self.test_files_dir, f"{file_name}.gz")
-        result = FileUtils.gzip_file(self.test_file)
+        result = FileUtils.gzip(self.test_file)
         assert result == Path(result_file_path)
-        os.remove(result_file_path)
+        FileUtils.remove(str(result_file_path))
 
     def test_unzip_file(self):
         # test unzip file and delete afterwards
-        result = FileUtils.unzip_file(self.test_zip_file)
+        result = FileUtils.unzip(self.test_zip_file)
         assert result is not None
         test_file = os.path.join(self.test_files_dir, result.filelist[0].filename)
         files_list = FileUtils.list_files(self.test_files_dir)
         assert Path(test_file) in files_list
-        os.remove(test_file)
+        FileUtils.remove(test_file)
 
     def test_get_file_values(self):
         # wrong file path
