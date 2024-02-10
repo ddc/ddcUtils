@@ -200,7 +200,7 @@ mu = MiscUtils()
     + This function will return the name of the active branch
         ```
         @staticmethod
-        get_active_branch_name(default_master_branch_name: str = "master") -> str
+        get_active_branch_name() -> str | None
         ```
 
 + GET_CURRENT_DATE_TIME
