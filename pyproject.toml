@@ -28,8 +28,8 @@ poethepoet = "^0.24.4"
 [tool.poe.tasks]
 test = "poetry run coverage run -m pytest -v"
 coverage = "poetry run coverage report"
+testPublish = "poetry publish -r test-pypi"
 _build = "poetry build"
 build  = ["test", "_build"]
-testPublish = "poetry publish -r test-pypi"
 _publish = "poetry publish"
 publish = ["testPublish", "_publish"]
