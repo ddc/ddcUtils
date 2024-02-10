@@ -7,8 +7,9 @@ import shutil
 import struct
 import subprocess
 import sys
-import zipfile
 from pathlib import Path
+from zipfile import ZipFile
+import fsspec
 import requests
 from .exceptions import get_exception
 from .os_utils import OsUtils
@@ -89,7 +90,7 @@ class FileUtils:
     @staticmethod
     def open_file(file_path: str) -> int:
         """
-        Opens the given file and returns 0 for success or 1 for failed access to the file
+        Open the given file and returns 0 for success or 1 for failed access to the file
         :param file_path:
         :return: 0 | 1
         """
@@ -113,7 +114,7 @@ class FileUtils:
     @staticmethod
     def list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list:
         """
-        Lists all files in the given directory and returns them in a list
+        List all files in the given directory and returns them in a list
         :param directory:
         :param starts_with:
         :param ends_with:
@@ -138,11 +139,11 @@ class FileUtils:
         return result_list
 
     @staticmethod
-    def gzip_file(file_path: str) -> Path | None:
+    def gzip(file_path: str) -> Path | None:
         """
-        Opens the given file and returns the path for success or None if failed
+        Compress the given file and returns the Path for success or None if failed
         :param file_path:
-        :return: Path | None
+        :return: Path | None:
         """
 
         file_name = os.path.basename(file_path)
@@ -157,12 +158,12 @@ class FileUtils:
             sys.stderr.write(get_exception(e))
             if os.path.isfile(gz_out_file_path):
                 os.remove(gz_out_file_path)
-            return None
+        return None
 
     @staticmethod
-    def unzip_file(file_path: str, out_path: str = None) -> zipfile.ZipFile | None:
+    def unzip(file_path: str, out_path: str = None) -> ZipFile | None:
         """
-        Opens the given file and returns the zipfile for success or None for failed
+        Unzips the given file and returns ZipFile for success or None if failed
         :param file_path:
         :param out_path:
         :return: ZipFile | None
@@ -170,17 +171,49 @@ class FileUtils:
 
         try:
             out_path = out_path or os.path.dirname(file_path)
-            zipfile_path = file_path
-            zipf = zipfile.ZipFile(zipfile_path)
-            zipf.extractall(out_path)
-            zipf.close()
+            with ZipFile(file_path) as zipf:
+                zipf.extractall(out_path)
             return zipf
         except Exception as e:
             sys.stderr.write(get_exception(e))
             return None
 
     @staticmethod
-    def copydir(src, dst, symlinks=False, ignore=None) -> bool:
+    def remove(path: str) -> bool:
+        """
+        Remove the given file and returns True if the file was successfully removed
+        :param path:
+        :return:
+        """
+        try:
+            if os.path.isfile(path):
+                os.remove(path)
+            elif os.path.exists(path):
+                shutil.rmtree(path)
+        except OSError as e:
+            sys.stderr.write(get_exception(e))
+            return False
+        return True
+
+    @staticmethod
+    def rename(from_name: str, to_name: str) -> bool:
+        """
+        Rename the given file and returns True if the file was successfully
+        :param from_name:
+        :param to_name:
+        :return: bool
+        """
+
+        try:
+            if os.path.exists(from_name):
+                os.rename(from_name, to_name)
+        except OSError as e:
+            sys.stderr.write(get_exception(e))
+            return False
+        return True
+
+    @staticmethod
+    def copy_dir(src, dst, symlinks=False, ignore=None) -> bool:
         """
         Copy files from src to dst and returns True or False
         :param src:
@@ -198,10 +231,10 @@ class FileUtils:
                     shutil.copytree(s, d, symlinks, ignore)
                 else:
                     shutil.copy2(s, d)
-            return True
         except IOError as e:
             sys.stderr.write(get_exception(e))
-        return False
+            return False
+        return True
 
     @staticmethod
     def download_file(remote_file_url, local_file_path) -> bool:
@@ -217,10 +250,10 @@ class FileUtils:
             if req.status_code == 200:
                 with open(local_file_path, "wb") as outfile:
                     outfile.write(req.content)
-                return True
         except requests.HTTPError as e:
             sys.stderr.write(get_exception(e))
-        return False
+            return False
+        return True
 
     @staticmethod
     def get_exe_binary_type(file_path: str) -> str | None:
@@ -280,9 +313,9 @@ class FileUtils:
                     section_name = section.replace(" ", "_")
                     final_data[section_name] = {}
                 final_data = self._get_section_data(parser, section, final_data, mixed_values, True)
-            return final_data if len(final_data) > 0 else None
         except Exception as e:
             sys.stderr.write(get_exception(e))
+        return final_data
 
     def get_file_section_values(self, file_path: str, section: str) -> dict:
         """
@@ -299,9 +332,9 @@ class FileUtils:
         try:
             parser.read(file_path)
             final_data = self._get_section_data(parser, section, final_data)
-            return final_data if len(final_data) > 0 else None
         except Exception as e:
             sys.stderr.write(get_exception(e))
+        return final_data
 
     def get_file_value(self, file_path: str, section: str, config_name: str) -> str | int | None:
         """
@@ -339,6 +372,42 @@ class FileUtils:
         try:
             with open(file_path, "w") as configfile:
                 parser.write(configfile, space_around_delimiters=False)
-            return True
-        except configparser.DuplicateOptionError:
+        except configparser.DuplicateOptionError as e:
+            sys.stderr.write(get_exception(e))
             return False
+        return True
+
+    @staticmethod
+    def download_filesystem_directory(org: str,
+                                      repo: str,
+                                      branch: str,
+                                      remote_dir: str,
+                                      local_dir: str,
+                                      filesystem: str = "github",
+                                      exist_ok: bool = True,
+                                      parents: bool = True,
+                                      recursive: bool = False) -> bool:
+        """
+        Downloads a GitHub directory and save it to a local directory
+        :param org:
+        :param repo:
+        :param branch:
+        :param remote_dir:
+        :param local_dir:
+        :param filesystem:
+        :param exist_ok:
+        :param parents:
+        :param recursive:
+        :return:
+        """
+
+        try:
+            destination = Path(local_dir)
+            destination.mkdir(exist_ok=exist_ok, parents=parents)
+            fs = fsspec.filesystem(filesystem, org=org, repo=repo, sha=branch)
+            remote_files = fs.ls(remote_dir)
+            fs.get(remote_files, destination.as_posix(), recursive=recursive)
+        except requests.HTTPError as e:
+            sys.stderr.write(get_exception(e))
+            return False
+        return True

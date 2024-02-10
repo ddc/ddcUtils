@@ -46,38 +46,52 @@ fu = FileUtils()
 ```
 
 + OPEN_FILE
-    + Opens the given file and returns 0 for success and 1 for failed access to the file
+    + Open the given file and returns 0 for success and 1 for failed access to the file
         ```
         @staticmethod
         open_file(file_path: str) -> int
         ```
 
 + LIST_FILES
-    + Lists all files in the given directory and returns them in a list
+    + List all files in the given directory and returns them in a list
         ```
         @staticmethod
         list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list
         ```
 
-+ GZIP_FILE
-    + Opens the given file and returns the path for success or None if failed
++ GZIP
+    + Compress the given file and returns the Path for success or None if failed
         ```
         @staticmethod
-        gzip_file(file_path: str) -> Path | None
+        gzip(file_path: str) -> Path | None:
         ```
 
-+ UNZIP_FILE
-    + Opens the given file and returns the zipfile for success or None for failed
++ UNZIP
+    + Unzips the given file and returns ZipFile for success or None if failed
         ```
         @staticmethod
-        unzip_file(file_path: str, out_path: str = None) -> zipfile.ZipFile | None
+        unzip(file_path: str, out_path: str = None) -> ZipFile | None
         ```
 
-+ COPYDIR
++ REMOVE
+    + Remove the given file or dir and returns True if it was successfully removed
+        ```
+        @staticmethod
+        remove(path: str) -> bool
+        ```
+
++ RENAME
+    + Rename the given file and returns True if the file was successfully
+        ```
+        @staticmethod
+        rename(from_name: str, to_name: str) -> bool
+        ```
+
++ COPY_DIR
     + Copy files from src to dst and returns True or False
         ```
         @staticmethod
-        copydir(src, dst, symlinks=False, ignore=None) -> bool
+        copy_dir(src, dst, symlinks=False, ignore=None) -> bool
         ```
 
 + DOWNLOAD_FILE
@@ -127,6 +141,30 @@ Example of file.ini:
         ```
         set_file_value(file_path: str, section_name: str, config_name: str, new_value) -> bool:
         ```
+
++ DOWNLOAD_FILESYSTEM_DIRECTORY
+    + Uses fsspec 
+    + Downloads a filesystem directory and save it to a local directory
+        ```
+        @staticmethod
+        def download_filesystem_directory(org: str,
+                                          repo: str,
+                                          branch: str,
+                                          remote_dir: str,
+                                          local_dir: str,
+                                          filesystem: str = "github",
+                                          exist_ok: bool = True,
+                                          parents: bool = True,
+                                          recursive: bool = False) -> bool
+        ```
+  + Github example:
+    ```python
+    from ddcUtils import FileUtils
+    fu = FileUtils()
+    res = fu.download_filesystem_directory(org="ddc", repo="ddcutils", branch="main", remote_dir="tests", local_dir="tests")
+    if not res:
+        print("error")
+    ```
 
 
 # Object
