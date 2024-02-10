@@ -73,11 +73,25 @@ fu = FileUtils()
         unzip_file(file_path: str, out_path: str = None) -> zipfile.ZipFile | None
         ```
 
-+ COPYDIR
++ REMOVE_FILE
+    + Removes the given file and returns True if the file was successfully removed
+        ```
+        @staticmethod
+        remove_file(file_path: str) -> bool
+        ```
+
++ REMOVE_DIR
+    + Removes the given directory and returns True if the directory was successfully removed
+        ```
+        @staticmethod
+        remove_dir(dir_path: str) -> bool
+        ```
+      
++ COPY_DIR
     + Copy files from src to dst and returns True or False
         ```
         @staticmethod
-        copydir(src, dst, symlinks=False, ignore=None) -> bool
+        copy_dir(src, dst, symlinks=False, ignore=None) -> bool
         ```
 
 + DOWNLOAD_FILE
@@ -127,6 +141,30 @@ Example of file.ini:
         ```
         set_file_value(file_path: str, section_name: str, config_name: str, new_value) -> bool:
         ```
+
++ DOWNLOAD_FILESYSTEM_DIRECTORY
+    + Uses fsspec 
+    + Downloads a filesystem directory and save it to a local directory
+        ```
+        @staticmethod
+        def download_filesystem_directory(org: str,
+                                          repo: str,
+                                          branch: str,
+                                          remote_dir: str,
+                                          local_dir: str,
+                                          filesystem: str = "github",
+                                          exist_ok: bool = True,
+                                          parents: bool = True,
+                                          recursive: bool = False) -> requests.HTTPError | None
+        ```
+  + Github example:
+    ```python
+    from ddcUtils import FileUtils
+    fu = FileUtils()
+    res = fu.download_filesystem_directory(org="ddc", repo="ddcutils", branch="main", remote_dir="tests", local_dir="tests")
+    if res:
+        print("error")
+    ```
 
 
 # Object

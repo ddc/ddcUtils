@@ -7,8 +7,9 @@ import shutil
 import struct
 import subprocess
 import sys
-import zipfile
 from pathlib import Path
+from zipfile import ZipFile
+import fsspec
 import requests
 from .exceptions import get_exception
 from .os_utils import OsUtils
@@ -160,7 +161,7 @@ class FileUtils:
             return None
 
     @staticmethod
-    def unzip_file(file_path: str, out_path: str = None) -> zipfile.ZipFile | None:
+    def unzip_file(file_path: str, out_path: str = None) -> ZipFile | None:
         """
         Opens the given file and returns the zipfile for success or None for failed
         :param file_path:
@@ -170,17 +171,46 @@ class FileUtils:
 
         try:
             out_path = out_path or os.path.dirname(file_path)
-            zipfile_path = file_path
-            zipf = zipfile.ZipFile(zipfile_path)
-            zipf.extractall(out_path)
-            zipf.close()
-            return zipf
+            with ZipFile(file_path) as zipf:
+                zipf.extractall(out_path)
+                return zipf
         except Exception as e:
             sys.stderr.write(get_exception(e))
             return None
 
     @staticmethod
-    def copydir(src, dst, symlinks=False, ignore=None) -> bool:
+    def remove_file(file_path: str) -> bool:
+        """
+        Removes the given file and returns True if the file was successfully removed
+        :param file_path:
+        :return:
+        """
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+            return True
+        except OSError as e:
+            sys.stderr.write(get_exception(e))
+            return False
+
+    @staticmethod
+    def remove_dir(dir_path: str) -> bool:
+        """
+        Removes the given directory and returns True if the directory was successfully removed
+        :param dir_path:
+        :return:
+        """
+
+        try:
+            if os.path.isdir(dir_path):
+                shutil.rmtree(dir_path)
+            return True
+        except OSError as e:
+            sys.stderr.write(get_exception(e))
+            return False
+
+    @staticmethod
+    def copy_dir(src, dst, symlinks=False, ignore=None) -> bool:
         """
         Copy files from src to dst and returns True or False
         :param src:
@@ -342,3 +372,38 @@ class FileUtils:
             return True
         except configparser.DuplicateOptionError:
             return False
+
+    @staticmethod
+    def download_filesystem_directory(org: str,
+                                      repo: str,
+                                      branch: str,
+                                      remote_dir: str,
+                                      local_dir: str,
+                                      filesystem: str = "github",
+                                      exist_ok: bool = True,
+                                      parents: bool = True,
+                                      recursive: bool = False) -> requests.HTTPError | None:
+        """
+        Downloads a GitHub directory and save it to a local directory
+        :param org:
+        :param repo:
+        :param branch:
+        :param remote_dir:
+        :param local_dir:
+        :param filesystem:
+        :param exist_ok:
+        :param parents:
+        :param recursive:
+        :return:
+        """
+
+        try:
+            destination = Path(local_dir)
+            destination.mkdir(exist_ok=exist_ok, parents=parents)
+            fs = fsspec.filesystem(filesystem, org=org, repo=repo, sha=branch)
+            remote_files = fs.ls(remote_dir)
+            fs.get(remote_files, destination.as_posix(), recursive=recursive)
+        except requests.HTTPError as e:
+            sys.stderr.write(get_exception(e))
+            return e
+        return None
