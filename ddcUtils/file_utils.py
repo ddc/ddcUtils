@@ -324,22 +324,21 @@ class FileUtils:
             machine = struct.unpack("<H", s)[0]
             match machine:
                 case 332:
-                    sys.stdout.write("IA32 (32-bit x86)")
+                    # IA32 (32-bit x86)
                     binary_type = "IA32"
                 case 512:
-                    sys.stdout.write("IA64 (Itanium)")
+                    # IA64 (Itanium)
                     binary_type = "IA64"
                 case 34404:
-                    sys.stdout.write("AMD64 (64-bit x86)")
+                    # IAMD64 (64-bit x86)
                     binary_type = "AMD64"
                 case 452:
-                    sys.stdout.write("ARM eabi (32-bit)")
+                    # IARM eabi (32-bit)
                     binary_type = "ARM-32bits"
                 case 43620:
-                    sys.stdout.write("AArch64 (ARM-64, 64-bit)")
+                    # IAArch64 (ARM-64, 64-bit)
                     binary_type = "ARM-64bits"
                 case _:
-                    sys.stdout.write(f"Unknown architecture {machine}")
                     binary_type = None
         return binary_type
 
