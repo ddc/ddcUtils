@@ -45,11 +45,11 @@ from ddcUtils import FileUtils
 fu = FileUtils()
 ```
 
-+ OPEN_FILE
-    + Open the given file and returns 0 for success and 1 for failed access to the file
++ SHOW
+    + Open the given file or directory in explorer or notepad and returns True for success or False for failed access
         ```
         @staticmethod
-        open_file(file_path: str) -> int
+        show(path: str) -> bool
         ```
 
 + LIST_FILES
@@ -101,6 +101,14 @@ fu = FileUtils()
         download_file(remote_file_url, local_file_path) -> bool
         ```
 
++ DOWNLOAD_GITHUB_DIR
+    + Download directory from remote url to local and returns True or False
+        Need to specify the branch on remote url
+            example: https://github.com/ddc/ddcutils/blob/master/ddcutils/databases
+        ```
+        download_github_dir(self, remote_dir_url: str, local_dir_path: str) -> bool
+        ```
++ 
 + GET_EXE_BINARY_TYPE
     + Returns the binary type of the given windows EXE file
         ```
@@ -200,7 +208,7 @@ mu = MiscUtils()
     + This function will return the name of the active branch
         ```
         @staticmethod
-        get_active_branch_name(default_master_branch_name: str = "master") -> str
+        get_active_branch_name() -> str | None
         ```
 
 + GET_CURRENT_DATE_TIME

@@ -2,6 +2,7 @@
 import configparser
 import errno
 import gzip
+import json
 import os
 import shutil
 import struct
@@ -88,28 +89,28 @@ class FileUtils:
         return final_data
 
     @staticmethod
-    def open_file(file_path: str) -> int:
+    def show(path: str) -> bool:
         """
-        Open the given file and returns 0 for success or 1 for failed access to the file
-        :param file_path:
-        :return: 0 | 1
+        Open the given file or directory in explorer or notepad and returns True for success or False for failed access
+        :param path:
+        :return: bool
         """
 
-        if not os.path.isfile(file_path):
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
+        if not os.path.exists(path):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
         try:
             match OsUtils.get_os_name():
                 case "Windows":
-                    os.startfile(file_path)
+                    os.startfile(path)
                     return_code = 0
                 case "Darwin":
-                    return_code = subprocess.call(("open", file_path))
+                    return_code = subprocess.call(("open", path))
                 case _:
-                    return_code = subprocess.call(("xdg-open", file_path))
-            return return_code
+                    return_code = subprocess.call(("xdg-open", path))
+            return not bool(return_code)
         except Exception as e:
             sys.stderr.write(get_exception(e))
-            return 1
+            return False
 
     @staticmethod
     def list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list:
@@ -250,7 +251,55 @@ class FileUtils:
             if req.status_code == 200:
                 with open(local_file_path, "wb") as outfile:
                     outfile.write(req.content)
+                return True
         except requests.HTTPError as e:
+            sys.stderr.write(get_exception(e))
+        return False
+
+    def download_github_dir(self, remote_dir_url: str, local_dir_path: str) -> bool:
+        """
+        Download directory from remote url to local and returns True or False
+        Need to specify the branch on remote url
+            example: https://github.com/ddc/ddcutils/blob/master/ddcutils/databases
+
+        :param remote_dir_url:
+        :param local_dir_path:
+        :return:
+        """
+
+        try:
+            if not os.path.exists(local_dir_path):
+                os.makedirs(local_dir_path, exist_ok=True)
+
+            req_dir = requests.get(remote_dir_url)
+            if req_dir.status_code == 200:
+                data_dict = json.loads(req_dir.content)
+                files_list = data_dict["payload"]["tree"]["items"]
+                for file in files_list:
+                    remote_file_url = f"{remote_dir_url}/{file['name']}"
+                    local_file_path = f"{local_dir_path}/{file['name']}"
+                    if file["contentType"] == "directory":
+                        self.download_github_dir(remote_file_url, local_file_path)
+                    else:
+                        req_file = requests.get(remote_file_url)
+                        if req_file.status_code == 200:
+                            data_dict = json.loads(req_file.content)
+                            content = data_dict["payload"]["blob"]["rawLines"]
+                            if not content:
+                                payload = data_dict['payload']
+                                url = (f"https://raw.githubusercontent.com/"
+                                       f"{payload['repo']['ownerLogin']}/"
+                                       f"{payload['repo']['name']}/"
+                                       "master/"
+                                       f"{payload['path']}")
+                                req_file = requests.get(url)
+                                with open(local_file_path, "wb") as outfile:
+                                    outfile.write(req_file.content)
+                            else:
+                                with open(local_file_path, "w") as outfile:
+                                    outfile.writelines([f"{line}\n" for line in content])
+
+        except Exception as e:
             sys.stderr.write(get_exception(e))
             return False
         return True
@@ -275,22 +324,21 @@ class FileUtils:
             machine = struct.unpack("<H", s)[0]
             match machine:
                 case 332:
-                    sys.stdout.write("IA32 (32-bit x86)")
+                    # IA32 (32-bit x86)
                     binary_type = "IA32"
                 case 512:
-                    sys.stdout.write("IA64 (Itanium)")
+                    # IA64 (Itanium)
                     binary_type = "IA64"
                 case 34404:
-                    sys.stdout.write("AMD64 (64-bit x86)")
+                    # IAMD64 (64-bit x86)
                     binary_type = "AMD64"
                 case 452:
-                    sys.stdout.write("ARM eabi (32-bit)")
+                    # IARM eabi (32-bit)
                     binary_type = "ARM-32bits"
                 case 43620:
-                    sys.stdout.write("AArch64 (ARM-64, 64-bit)")
+                    # IAArch64 (ARM-64, 64-bit)
                     binary_type = "ARM-64bits"
                 case _:
-                    sys.stdout.write(f"Unknown architecture {machine}")
                     binary_type = None
         return binary_type
 

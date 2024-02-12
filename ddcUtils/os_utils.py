@@ -25,12 +25,10 @@ class OsUtils:
         :return:
         """
 
-        if platform.system() == "Windows":
-            return True
-        return False
+        return True if platform.system().lower() == "windows" else False
 
     @staticmethod
-    def get_current_path() -> Path:
+    def get_current_path() -> Path | None:
         """
         Returns the current working directory
         :return: Path
