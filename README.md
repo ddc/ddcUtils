@@ -101,6 +101,14 @@ fu = FileUtils()
         download_file(remote_file_url, local_file_path) -> bool
         ```
 
++ DOWNLOAD_GITHUB_DIR
+    + Download directory from remote url to local and returns True or False
+        Need to specify the branch on remote url
+            example: https://github.com/ddc/ddcutils/blob/master/ddcutils/databases
+        ```
+        download_github_dir(self, remote_dir_url: str, local_dir_path: str) -> bool
+        ```
++ 
 + GET_EXE_BINARY_TYPE
     + Returns the binary type of the given windows EXE file
         ```

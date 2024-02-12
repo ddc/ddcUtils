@@ -2,6 +2,7 @@
 import configparser
 import errno
 import gzip
+import json
 import os
 import shutil
 import struct
@@ -250,7 +251,55 @@ class FileUtils:
             if req.status_code == 200:
                 with open(local_file_path, "wb") as outfile:
                     outfile.write(req.content)
+                return True
         except requests.HTTPError as e:
+            sys.stderr.write(get_exception(e))
+        return False
+
+    def download_github_dir(self, remote_dir_url: str, local_dir_path: str) -> bool:
+        """
+        Download directory from remote url to local and returns True or False
+        Need to specify the branch on remote url
+            example: https://github.com/ddc/ddcutils/blob/master/ddcutils/databases
+
+        :param remote_dir_url:
+        :param local_dir_path:
+        :return:
+        """
+
+        try:
+            if not os.path.exists(local_dir_path):
+                os.makedirs(local_dir_path, exist_ok=True)
+
+            req_dir = requests.get(remote_dir_url)
+            if req_dir.status_code == 200:
+                data_dict = json.loads(req_dir.content)
+                files_list = data_dict["payload"]["tree"]["items"]
+                for file in files_list:
+                    remote_file_url = f"{remote_dir_url}/{file['name']}"
+                    local_file_path = f"{local_dir_path}/{file['name']}"
+                    if file["contentType"] == "directory":
+                        self.download_github_dir(remote_file_url, local_file_path)
+                    else:
+                        req_file = requests.get(remote_file_url)
+                        if req_file.status_code == 200:
+                            data_dict = json.loads(req_file.content)
+                            content = data_dict["payload"]["blob"]["rawLines"]
+                            if not content:
+                                payload = data_dict['payload']
+                                url = (f"https://raw.githubusercontent.com/"
+                                       f"{payload['repo']['ownerLogin']}/"
+                                       f"{payload['repo']['name']}/"
+                                       "master/"
+                                       f"{payload['path']}")
+                                req_file = requests.get(url)
+                                with open(local_file_path, "wb") as outfile:
+                                    outfile.write(req_file.content)
+                            else:
+                                with open(local_file_path, "w") as outfile:
+                                    outfile.writelines([f"{line}\n" for line in content])
+
+        except Exception as e:
             sys.stderr.write(get_exception(e))
             return False
         return True

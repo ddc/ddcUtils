@@ -19,6 +19,7 @@ urllib3 = "^2.2.0"
 requests = "^2.31.0"
 cryptography = "^42.0.2"
 fsspec = "^2024.2.0"
+bs4 = "^0.0.2"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.4"
