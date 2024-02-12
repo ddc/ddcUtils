@@ -3,6 +3,7 @@ import gzip
 import logging.handlers
 import os
 import sys
+from .exceptions import get_exception
 
 
 class Log:
@@ -38,7 +39,7 @@ class Log:
         try:
             os.makedirs(self.dir, exist_ok=True) if not os.path.isdir(self.dir) else None
         except Exception as e:
-            sys.stderr.write(f"[ERROR]:[Unable to create logs directory]:{str(e)}: {self.dir}\n")
+            sys.stderr.write(f"[ERROR]:[Unable to create logs directory]:{get_exception(e)}: {self.dir}\n")
             sys.exit(1)
 
         log_file_path = os.path.join(self.dir, f"{self.filename}.log")
@@ -46,7 +47,7 @@ class Log:
         try:
             open(log_file_path, "a+").close()
         except IOError as e:
-            sys.stderr.write(f"[ERROR]:[Unable to open log file for writing]:{str(e)}: {log_file_path}\n")
+            sys.stderr.write(f"[ERROR]:[Unable to open log file for writing]:{get_exception(e)}: {log_file_path}\n")
             sys.exit(1)
 
         _debug_formatt = ""
@@ -96,7 +97,7 @@ class GZipRotator:
                         fout.writelines(fin)
                 os.remove(source)
             except Exception as e:
-                sys.stderr.write(f"[ERROR]:[Unable to zip log file]:{str(e)}: {source}\n")
+                sys.stderr.write(f"[ERROR]:[Unable to zip log file]:{get_exception(e)}: {source}\n")
 
 
 class RemoveOldLogs:
@@ -109,7 +110,7 @@ class RemoveOldLogs:
                 try:
                     os.remove(file_path)
                 except Exception as e:
-                    sys.stderr.write(f"[ERROR]:[Unable to remove old logs]:{str(e)}: {file_path}\n")
+                    sys.stderr.write(f"[ERROR]:[Unable to remove old logs]:{get_exception(e)}: {file_path}\n")
 
     @staticmethod
     def _is_file_older_than_x_days(file_path, days_to_keep):

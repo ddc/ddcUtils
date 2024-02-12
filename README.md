@@ -45,11 +45,11 @@ from ddcUtils import FileUtils
 fu = FileUtils()
 ```
 
-+ OPEN_FILE
-    + Open the given file and returns 0 for success and 1 for failed access to the file
++ SHOW
+    + Open the given file or directory in explorer or notepad and returns True for success or False for failed access
         ```
         @staticmethod
-        open_file(file_path: str) -> int
+        show(path: str) -> bool
         ```
 
 + LIST_FILES

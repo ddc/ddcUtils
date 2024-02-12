@@ -89,28 +89,28 @@ class FileUtils:
         return final_data
 
     @staticmethod
-    def open_file(file_path: str) -> int:
+    def show(path: str) -> bool:
         """
-        Open the given file and returns 0 for success or 1 for failed access to the file
-        :param file_path:
-        :return: 0 | 1
+        Open the given file or directory in explorer or notepad and returns True for success or False for failed access
+        :param path:
+        :return: bool
         """
 
-        if not os.path.isfile(file_path):
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
+        if not os.path.exists(path):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
         try:
             match OsUtils.get_os_name():
                 case "Windows":
-                    os.startfile(file_path)
+                    os.startfile(path)
                     return_code = 0
                 case "Darwin":
-                    return_code = subprocess.call(("open", file_path))
+                    return_code = subprocess.call(("open", path))
                 case _:
-                    return_code = subprocess.call(("xdg-open", file_path))
-            return return_code
+                    return_code = subprocess.call(("xdg-open", path))
+            return not bool(return_code)
         except Exception as e:
             sys.stderr.write(get_exception(e))
-            return 1
+            return False
 
     @staticmethod
     def list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list:
