@@ -53,7 +53,7 @@ fu = FileUtils()
         ```
 
 + LIST_FILES
-    + List all files in the given directory and returns them in a list
+    + List all files in the given directory and returns them in a list sorted by modification time
         ```
         @staticmethod
         list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list
@@ -150,6 +150,20 @@ Example of file.ini:
         set_file_value(file_path: str, section_name: str, config_name: str, new_value) -> bool:
         ```
 
++ IS_FILE_OLDER_THAN_X_DAYS
+    + Check if a file is older than the specified number of days
+        ```
+        @staticmethod
+        def is_file_older_than_x_days(file_path: str, days: int) -> bool
+        ```
+
++ COPY
+    + Copy a file to another location
+        ```
+        @staticmethod
+        def copy(src_path, dst_path)
+        ```
+
 + DOWNLOAD_FILESYSTEM_DIRECTORY
     + Uses fsspec 
     + Downloads a filesystem directory and save it to a local directory
@@ -205,10 +219,10 @@ mu = MiscUtils()
         ```
 
 + GET_ACTIVE_BRANCH_NAME
-    + This function will return the name of the active branch
+    + Returns the name of the active branch if found, else returns the "master" branch
         ```
         @staticmethod
-        get_active_branch_name() -> str | None
+        def get_active_branch_name(git_dir: str, master_branch_name: str = "master") -> str | None
         ```
 
 + GET_CURRENT_DATE_TIME
@@ -304,12 +318,13 @@ ou = OsUtils()
 ```python
 from ddcUtils import Log
 log = Log(
-    dir_logs: str = "logs",
-    filename: str = "app",
-    days_to_keep: int = 7,
-    when: str = "midnight",
-    utc: bool = True,
-    level: str = "info"
+    dir_logs = "./logs",
+    level = "info",
+    filename = "app.log",
+    encoding = "UTF-8",
+    days_to_keep = 7,
+    when = "midnight",
+    utc = True
 )
 log.setup_logging()
 ```

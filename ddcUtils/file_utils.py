@@ -8,6 +8,7 @@ import shutil
 import struct
 import subprocess
 import sys
+from datetime import datetime, timedelta
 from pathlib import Path
 from zipfile import ZipFile
 import fsspec
@@ -99,10 +100,10 @@ class FileUtils:
         if not os.path.exists(path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
         try:
+            return_code = 0
             match OsUtils.get_os_name():
                 case "Windows":
                     os.startfile(path)
-                    return_code = 0
                 case "Darwin":
                     return_code = subprocess.call(("open", path))
                 case _:
@@ -110,34 +111,38 @@ class FileUtils:
             return not bool(return_code)
         except Exception as e:
             sys.stderr.write(get_exception(e))
-            return False
+            raise e
 
     @staticmethod
     def list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list:
         """
-        List all files in the given directory and returns them in a list
+        List all files in the given directory and returns them in a list sorted by modification time
         :param directory:
         :param starts_with:
         :param ends_with:
         :return: list
         """
 
-        result_list = []
-        if os.path.isdir(directory):
-            if starts_with and ends_with:
-                result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                               f.lower().startswith(starts_with.lower()) and
-                               f.lower().endswith(ends_with.lower())]
-            elif starts_with:
-                result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                               f.lower().startswith(starts_with.lower())]
-            elif ends_with:
-                result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                               f.lower().endswith(ends_with.lower())]
-            else:
-                result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
-            result_list.sort(key=os.path.getctime)
-        return result_list
+        try:
+            result_list = []
+            if os.path.isdir(directory):
+                if starts_with and ends_with:
+                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                                   f.lower().startswith(starts_with.lower()) and
+                                   f.lower().endswith(ends_with.lower())]
+                elif starts_with:
+                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                                   f.lower().startswith(starts_with.lower())]
+                elif ends_with:
+                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                                   f.lower().endswith(ends_with.lower())]
+                else:
+                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
+                result_list.sort(key=os.path.getmtime)
+            return result_list
+        except Exception as e:
+            sys.stderr.write(get_exception(e))
+            raise e
 
     @staticmethod
     def gzip(file_path: str) -> Path | None:
@@ -159,7 +164,7 @@ class FileUtils:
             sys.stderr.write(get_exception(e))
             if os.path.isfile(gz_out_file_path):
                 os.remove(gz_out_file_path)
-        return None
+            raise e
 
     @staticmethod
     def unzip(file_path: str, out_path: str = None) -> ZipFile | None:
@@ -177,7 +182,7 @@ class FileUtils:
             return zipf
         except Exception as e:
             sys.stderr.write(get_exception(e))
-            return None
+            raise e
 
     @staticmethod
     def remove(path: str) -> bool:
@@ -189,12 +194,14 @@ class FileUtils:
         try:
             if os.path.isfile(path):
                 os.remove(path)
+                return True
             elif os.path.exists(path):
                 shutil.rmtree(path)
+                return True
         except OSError as e:
             sys.stderr.write(get_exception(e))
-            return False
-        return True
+            raise e
+        return False
 
     @staticmethod
     def rename(from_name: str, to_name: str) -> bool:
@@ -208,10 +215,11 @@ class FileUtils:
         try:
             if os.path.exists(from_name):
                 os.rename(from_name, to_name)
+                return True
         except OSError as e:
             sys.stderr.write(get_exception(e))
-            return False
-        return True
+            raise e
+        return False
 
     @staticmethod
     def copy_dir(src, dst, symlinks=False, ignore=None) -> bool:
@@ -426,6 +434,42 @@ class FileUtils:
         return True
 
     @staticmethod
+    def is_file_older_than_x_days(file_path: str, days: int) -> bool:
+        """
+        Check if a file is older than the specified number of days
+        :param file_path:
+        :param days:
+        :return:
+        """
+
+        file_time = datetime.fromtimestamp(os.path.getctime(file_path))
+        if int(days) == 1:
+            cutoff_time = datetime.today()
+        else:
+            cutoff_time = datetime.today() - timedelta(days=int(days))
+        file_time = file_time.replace(hour=0, minute=0, second=0, microsecond=0)
+        cutoff_time = cutoff_time.replace(hour=0, minute=0, second=0, microsecond=0)
+        if file_time < cutoff_time:
+            return True
+        return False
+
+    @staticmethod
+    def copy(src_path, dst_path):
+        """
+        Copy a file to another location
+        :param src_path:
+        :param dst_path:
+        :return:
+        """
+
+        try:
+
+            shutil.copy(src_path, dst_path)
+        except Exception as e:
+            return e
+        return True
+
+    @staticmethod
     def download_filesystem_directory(org: str,
                                       repo: str,
                                       branch: str,
@@ -436,7 +480,7 @@ class FileUtils:
                                       parents: bool = True,
                                       recursive: bool = False) -> bool:
         """
-        Downloads a GitHub directory and save it to a local directory
+        Downloads a filesystem directory and save it to a local directory
         :param org:
         :param repo:
         :param branch:

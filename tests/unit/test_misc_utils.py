@@ -21,8 +21,9 @@ class TestMiscUtils:
     def test_get_active_branch_name(self):
         # test nonexistent git file
         constants.BASE_DIR = "/tmp"
-        result = MiscUtils.get_active_branch_name()
-        assert result is None
+        master_branch_name = "master"
+        result = MiscUtils.get_active_branch_name(master_branch_name)
+        assert result is master_branch_name
 
     def test_convert_datetime_to_str_long(self):
         now_utc = datetime.now(timezone.utc)

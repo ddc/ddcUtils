@@ -50,13 +50,13 @@ class MiscUtils:
             pass
 
     @staticmethod
-    def get_active_branch_name() -> str | None:
+    def get_active_branch_name(git_dir: str, master_branch_name: str = "master") -> str | None:
         """
-        Returns the name of the active branch
+        Returns the name of the active branch if found, else returns the "master" branch
         :return: str
         """
 
-        head_dir = Path(os.path.join(constants.BASE_DIR, ".git", "HEAD"))
+        head_dir = Path(os.path.join(git_dir, "HEAD"))
         try:
             with head_dir.open("r") as f:
                 content = f.read().splitlines()
@@ -64,7 +64,7 @@ class MiscUtils:
                 if line[0:4] == "ref:":
                     return line.partition("refs/heads/")[2]
         except FileNotFoundError:
-            return None
+            return master_branch_name
 
     @staticmethod
     def get_current_date_time() -> datetime:
