@@ -3,6 +3,7 @@ from ..exceptions import (
     DBAddException,
     DBExecuteException,
     DBFetchAllException,
+    DBFetchOneException,
     DBFetchValueException
 )
 
@@ -48,7 +49,7 @@ class DBUtils:
             cursor = self.session.execute(stmt)
         except Exception as e:
             self.session.rollback()
-            raise DBFetchAllException(e)
+            raise DBFetchOneException(e)
         else:
             self.session.commit()
             return cursor.mappings().first()
@@ -110,7 +111,7 @@ class DBUtilsAsync:
             cursor = await self.session.execute(stmt)
         except Exception as e:
             self.session.rollback()
-            raise DBFetchAllException(e)
+            raise DBFetchOneException(e)
         else:
             await self.session.commit()
             return cursor.mappings().first()

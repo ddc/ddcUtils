@@ -34,5 +34,9 @@ class DBFetchAllException(CustomBaseException):
     pass
 
 
+class DBFetchOneException(CustomBaseException):
+    pass
+
+
 class DBFetchValueException(CustomBaseException):
     pass
