@@ -3,15 +3,17 @@ import os
 from pathlib import Path
 import pytest
 from ddcUtils import constants, FileUtils
+import tempfile
 
 
 class TestFileUtils:
     @classmethod
     def setup_class(cls):
-        cls.test_files_dir = os.path.join(constants.BASE_DIR, "tests", "data", "test_files")
+        cls.test_files_dir = os.path.join(constants.BASE_DIR, "tests", "data", "files")
         cls.test_file = os.path.join(cls.test_files_dir, "test_file.ini")
         cls.test_zip_file = os.path.join(cls.test_files_dir, "test_file.zip")
         cls.unknown_file = os.path.join(cls.test_files_dir, "unknown.ini")
+        cls.output_test_dir = tempfile.gettempdir()
 
     @classmethod
     def teardown_class(cls):
@@ -43,17 +45,15 @@ class TestFileUtils:
 
     def test_gzip_file(self):
         # test gzip file and delete afterwards
-        file_name = os.path.basename(self.test_file)
-        result_file_path = os.path.join(self.test_files_dir, f"{file_name}.gz")
-        result = FileUtils.gzip(self.test_file)
-        assert result == Path(result_file_path)
-        FileUtils.remove(str(result_file_path))
+        result_file = FileUtils.gzip(self.test_file, self.output_test_dir)
+        assert os.path.isfile(result_file)
+        FileUtils.remove(str(result_file))
 
     def test_unzip_file(self):
         # test unzip file and delete afterwards
         result = FileUtils.unzip(self.test_zip_file)
         assert result is not None
-        test_file = os.path.join(self.test_files_dir, result.filelist[0].filename)
+        test_file = os.path.join(self.output_test_dir, result.filelist[0].filename)
         files_list = FileUtils.list_files(self.test_files_dir)
         assert Path(test_file) in files_list
         FileUtils.remove(test_file)

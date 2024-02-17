@@ -63,11 +63,11 @@ fu = FileUtils()
     + Compress the given file and returns the Path for success or None if failed
         ```
         @staticmethod
-        gzip(file_path: str) -> Path | None:
+        def gzip(input_file_path: str, output_dir: str = None) -> Path | None
         ```
 
 + UNZIP
-    + Unzips the given file and returns ZipFile for success or None if failed
+    + Unzips the given file.zip and returns ZipFile for success or None if failed
         ```
         @staticmethod
         unzip(file_path: str, out_path: str = None) -> ZipFile | None

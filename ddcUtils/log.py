@@ -10,7 +10,7 @@ from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 
 class TimedRotatingLog:
     """
-    Logging class
+    TimedRotatingLog class
 
     Current 'when' events supported:
     S - Seconds
@@ -23,21 +23,21 @@ class TimedRotatingLog:
 
     def __init__(
         self,
-        directory: str = "./logs",
         level: str = "info",
+        directory: str = "./logs",
         filename: str = "app.log",
         encoding: str = "UTF-8",
         days_to_keep: int = 7,
         when: str = "midnight",
         utc: bool = True,
     ):
+        self.level = _get_level(level)
         self.directory = directory
         self.filename = filename
         self.encoding = encoding
         self.days_to_keep = days_to_keep
         self.when = when
         self.utc = utc
-        self.level = _get_level(level)
 
     def init(self):
         log_file_path = _get_log_path(self.directory, self.filename)
@@ -51,24 +51,24 @@ class TimedRotatingLog:
 
 class SizeRotatingLog:
     """
-    Logging class
+    SizeRotatingLog class
     """
 
     def __init__(
         self,
+        level: str = "info",
         directory: str = "./logs",
         filename: str = "app.log",
         encoding: str = "UTF-8",
         days_to_keep: int = 7,
-        level: str = "info",
         max_mbytes: int = 5
     ):
+        self.level = _get_level(level)
         self.directory = directory
         self.filename = filename
         self.encoding = encoding
         self.days_to_keep = days_to_keep
         self.max_mbytes = max_mbytes
-        self.level = _get_level(level)
 
     def init(self):
         log_file_path = _get_log_path(self.directory, self.filename)

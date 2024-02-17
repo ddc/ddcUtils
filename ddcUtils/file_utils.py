@@ -145,31 +145,36 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def gzip(file_path: str) -> Path | None:
+    def gzip(input_file_path: str, output_dir: str = None) -> Path | None:
         """
         Compress the given file and returns the Path for success or None if failed
-        :param file_path:
+        :param input_file_path:
+        :param output_dir:
         :return: Path | None:
         """
 
-        file_name = os.path.basename(file_path)
-        gz_out_file_path = os.path.join(os.path.dirname(file_path), f"{file_name}.gz")
+        if not output_dir:
+            output_dir = os.path.dirname(input_file_path)
+
+        input_file_name = os.path.basename(input_file_path)
+        output_filename = f"{os.path.splitext(input_file_name)[0]}.gz"
+        output_file = os.path.join(output_dir, output_filename)
 
         try:
-            with open(file_path, "rb") as fin:
-                with gzip.open(gz_out_file_path, "wb") as fout:
+            with open(input_file_path, "rb") as fin:
+                with gzip.open(output_file, "wb") as fout:
                     fout.writelines(fin)
-            return Path(gz_out_file_path)
+            return Path(output_file)
         except Exception as e:
             sys.stderr.write(get_exception(e))
-            if os.path.isfile(gz_out_file_path):
-                os.remove(gz_out_file_path)
+            if os.path.isfile(output_file):
+                os.remove(output_file)
             raise e
 
     @staticmethod
     def unzip(file_path: str, out_path: str = None) -> ZipFile | None:
         """
-        Unzips the given file and returns ZipFile for success or None if failed
+        Unzips the given file.zip and returns ZipFile for success or None if failed
         :param file_path:
         :param out_path:
         :return: ZipFile | None
