@@ -9,7 +9,6 @@
 # Install
 ```shell
 pip install ddcUtils
-pip install git+https://github.com/ddc/ddcUtils
 ```
 
 # Cryptography
@@ -39,6 +38,47 @@ cp = Cryptography()
         ```
 
 
+# Conf File Utils
+```python
+from ddcUtils import ConfFileUtils
+cfu = ConfFileUtils()
+```
+
+File example - file.ini:
+
+    [main]
+    files=5
+    path="/tmp/test_dir"
+    port=5432
+    list=1,2,3,4,5,6
+
+
++ GET_ALL_VALUES
+    + Get all values from an .ini config file structure and returns them as a dictionary
+    + mixed_values will return all values as an object instead of dict
+        ```
+        get_all_values(file_path: str, mixed_values: bool = False) -> dict
+        ```
+
++ GET_SECTION_VALUES
+    + Get all section values from an .ini config file structure and returns them as a dictionary
+        ```
+        get_section_values(file_path: str, section: str) -> dict
+        ```
+
++ GET_VALUE
+    + Get value from an .ini config file structure and returns it
+        ```
+        get_value(file_path: str, section: str, config_name: str) -> str | int | None:
+        ```
+
++ SET_VALUE
+    + Set value from an .ini config file structure and returns True or False
+        ```
+        set_value(file_path: str, section_name: str, config_name: str, new_value) -> bool:
+        ```
+
+
 # File Utils
 ```python
 from ddcUtils import FileUtils
@@ -53,7 +93,7 @@ fu = FileUtils()
         ```
 
 + LIST_FILES
-    + List all files in the given directory and returns them in a list
+    + List all files in the given directory and returns them in a list sorted by creation time in ascending order
         ```
         @staticmethod
         list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list
@@ -63,11 +103,11 @@ fu = FileUtils()
     + Compress the given file and returns the Path for success or None if failed
         ```
         @staticmethod
-        gzip(file_path: str) -> Path | None:
+        def gzip(input_file_path: str, output_dir: str = None) -> Path | None
         ```
 
 + UNZIP
-    + Unzips the given file and returns ZipFile for success or None if failed
+    + Unzips the given file.zip and returns ZipFile for success or None if failed
         ```
         @staticmethod
         unzip(file_path: str, out_path: str = None) -> ZipFile | None
@@ -116,38 +156,18 @@ fu = FileUtils()
         get_exe_binary_type(file_path: str) -> str | None
         ```
 
-### Functions for .ini/.conf config file structure
-Example of file.ini:
-
-    [main]
-    files=5
-    path="/tmp/test_dir"
-    port=5432
-    list=1,2,3,4,5,6
-
-
-+ GET_FILE_VALUES
-    + Get all values from an .ini config file structure and returns them as a dictionary
++ IS_OLDER_THAN_X_DAYS
+    + Check if a file or directory is older than the specified number of days
         ```
-        get_file_values(file_path: str, mixed_values: bool = False) -> dict
+        @staticmethod
+        def is_older_than_x_days(path: str, days: int) -> bool
         ```
 
-+ GET_FILE_SECTION_VALUES
-    + Get all section values from an .ini config file structure and returns them as a dictionary
++ COPY
+    + Copy a file to another location
         ```
-        get_file_section_values(file_path: str, section: str) -> dict
-        ```
-
-+ GET_FILE_VALUE
-    + Get value from an .ini config file structure and returns it
-        ```
-        get_file_value(file_path: str, section: str, config_name: str) -> str | int | None:
-        ```
-
-+ SET_FILE_VALUE
-    + Set value from an .ini config file structure and returns True or False
-        ```
-        set_file_value(file_path: str, section_name: str, config_name: str, new_value) -> bool:
+        @staticmethod
+        def copy(src_path, dst_path)
         ```
 
 + DOWNLOAD_FILESYSTEM_DIRECTORY
@@ -205,10 +225,10 @@ mu = MiscUtils()
         ```
 
 + GET_ACTIVE_BRANCH_NAME
-    + This function will return the name of the active branch
+    + Returns the name of the active branch if found, else returns the "master" branch
         ```
         @staticmethod
-        get_active_branch_name() -> str | None
+        def get_active_branch_name(git_dir: str, master_branch_name: str = "master") -> str | None
         ```
 
 + GET_CURRENT_DATE_TIME
@@ -304,12 +324,13 @@ ou = OsUtils()
 ```python
 from ddcUtils import Log
 log = Log(
-    dir_logs: str = "logs",
-    filename: str = "app",
-    days_to_keep: int = 7,
-    when: str = "midnight",
-    utc: bool = True,
-    level: str = "info"
+    dir_logs = "./logs",
+    level = "info",
+    filename = "app.log",
+    encoding = "UTF-8",
+    days_to_keep = 7,
+    when = "midnight",
+    utc = True
 )
 log.setup_logging()
 ```
