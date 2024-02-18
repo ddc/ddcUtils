@@ -2,6 +2,7 @@
 import os
 import pytest
 from ddcUtils import constants, ConfFileUtils
+import tempfile
 
 
 class TestConfFileUtils:
@@ -70,7 +71,7 @@ class TestConfFileUtils:
         # setting value and retrieving to check
         section_name = "main"
         config_name = "path_logs"
-        new_value = "/tmp/test_dir"
+        new_value = f"{tempfile.gettempdir()}/test_dir"
         result = ConfFileUtils().set_value(self.test_file, section_name, config_name, new_value)
         assert result is True
         result = ConfFileUtils().get_value(self.test_file, section_name, config_name)
