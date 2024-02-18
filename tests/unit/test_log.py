@@ -1,15 +1,15 @@
 # -*- encoding: utf-8 -*-
-import datetime
 import os
 import tempfile
-from ddcUtils import FileUtils, TimedRotatingLog
+from datetime import datetime
+from ddcUtils import FileUtils, TimedRotatingLog, SizeRotatingLog
 
 
-class TestLog:
+class TestLogs:
     @classmethod
     def setup_class(cls):
         cls.level = "debug"
-        cls.directory = os.path.join(tempfile.gettempdir())
+        cls.directory = tempfile.gettempdir()
         cls.filename = "TestFileUtils.log"
         cls.file_path = os.path.join(cls.directory, cls.filename)
 
@@ -17,13 +17,36 @@ class TestLog:
     def teardown_class(cls):
         FileUtils.remove(str(os.path.join(cls.directory, cls.filename)))
 
-    def test_midnight_timed_rotating_log(self):
+    def test_timed_rotating_log(self):
+        year = 2020
+        month = 10
+        day = 10
+
         log = TimedRotatingLog(directory=self.directory, level=self.level, filename=self.filename).init()
         log.debug("start")
-
-        epoch_times = datetime.datetime(2020, 1, 1, 1, 1, 1).timestamp()
+        epoch_times = datetime(year, month, day, 1, 1, 1).timestamp()
         os.utime(self.file_path, (epoch_times, epoch_times))
 
+        log = TimedRotatingLog(directory=self.directory, level=self.level, filename=self.filename).init()
         log.debug("end")
+        gz_file_name = f"{os.path.splitext(self.filename)[0]}_{year}{month}{day}.log.gz"
+        gz_file_path = os.path.join(tempfile.gettempdir(), gz_file_name)
+        assert os.path.exists(gz_file_path)
+        FileUtils.remove(str(gz_file_path))
 
-        assert os.path.exists(self.file_path)
+    def test_sized_rotating_log(self):
+        # creating file with 5MB
+        with open(self.file_path, "wb") as f:
+            f.seek((5 * 1024 * 1024) - 1)
+            f.write(b"\0")
+
+        max_mbytes = 1
+        log = SizeRotatingLog(directory=self.directory,
+                              level=self.level,
+                              filename=self.filename,
+                              max_mbytes=max_mbytes).init()
+        log.debug("start")
+        gz_file_name = f"{os.path.splitext(self.filename)[0]}_1.log.gz"
+        gz_file_path = os.path.join(tempfile.gettempdir(), gz_file_name)
+        assert os.path.exists(gz_file_path)
+        FileUtils.remove(str(gz_file_path))

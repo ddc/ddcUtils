@@ -15,7 +15,7 @@ packages = [{include = "ddcUtils"}]
 [tool.poetry.dependencies]
 python = "^3.11.0"
 SQLAlchemy = "^2.0.25"
-urllib3 = "^2.2.0"
+urllib3 = "^2.2.1"
 requests = "^2.31.0"
 cryptography = "^42.0.2"
 fsspec = "^2024.2.0"

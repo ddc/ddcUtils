@@ -9,7 +9,6 @@
 # Install
 ```shell
 pip install ddcUtils
-pip install git+https://github.com/ddc/ddcUtils
 ```
 
 # Cryptography
@@ -39,6 +38,47 @@ cp = Cryptography()
         ```
 
 
+# Conf File Utils
+```python
+from ddcUtils import ConfFileUtils
+cfu = ConfFileUtils()
+```
+
+File example - file.ini:
+
+    [main]
+    files=5
+    path="/tmp/test_dir"
+    port=5432
+    list=1,2,3,4,5,6
+
+
++ GET_ALL_VALUES
+    + Get all values from an .ini config file structure and returns them as a dictionary
+    + mixed_values will return all values as an object instead of dict
+        ```
+        get_all_values(file_path: str, mixed_values: bool = False) -> dict
+        ```
+
++ GET_SECTION_VALUES
+    + Get all section values from an .ini config file structure and returns them as a dictionary
+        ```
+        get_section_values(file_path: str, section: str) -> dict
+        ```
+
++ GET_VALUE
+    + Get value from an .ini config file structure and returns it
+        ```
+        get_value(file_path: str, section: str, config_name: str) -> str | int | None:
+        ```
+
++ SET_VALUE
+    + Set value from an .ini config file structure and returns True or False
+        ```
+        set_value(file_path: str, section_name: str, config_name: str, new_value) -> bool:
+        ```
+
+
 # File Utils
 ```python
 from ddcUtils import FileUtils
@@ -53,7 +93,7 @@ fu = FileUtils()
         ```
 
 + LIST_FILES
-    + List all files in the given directory and returns them in a list sorted by modification time
+    + List all files in the given directory and returns them in a list sorted by creation time in ascending order
         ```
         @staticmethod
         list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list
@@ -116,45 +156,11 @@ fu = FileUtils()
         get_exe_binary_type(file_path: str) -> str | None
         ```
 
-### Functions for .ini/.conf config file structure
-Example of file.ini:
-
-    [main]
-    files=5
-    path="/tmp/test_dir"
-    port=5432
-    list=1,2,3,4,5,6
-
-
-+ GET_FILE_VALUES
-    + Get all values from an .ini config file structure and returns them as a dictionary
-        ```
-        get_file_values(file_path: str, mixed_values: bool = False) -> dict
-        ```
-
-+ GET_FILE_SECTION_VALUES
-    + Get all section values from an .ini config file structure and returns them as a dictionary
-        ```
-        get_file_section_values(file_path: str, section: str) -> dict
-        ```
-
-+ GET_FILE_VALUE
-    + Get value from an .ini config file structure and returns it
-        ```
-        get_file_value(file_path: str, section: str, config_name: str) -> str | int | None:
-        ```
-
-+ SET_FILE_VALUE
-    + Set value from an .ini config file structure and returns True or False
-        ```
-        set_file_value(file_path: str, section_name: str, config_name: str, new_value) -> bool:
-        ```
-
-+ IS_FILE_OLDER_THAN_X_DAYS
-    + Check if a file is older than the specified number of days
++ IS_OLDER_THAN_X_DAYS
+    + Check if a file or directory is older than the specified number of days
         ```
         @staticmethod
-        def is_file_older_than_x_days(file_path: str, days: int) -> bool
+        def is_older_than_x_days(path: str, days: int) -> bool
         ```
 
 + COPY
