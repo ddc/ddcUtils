@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from datetime import datetime, timezone
 from ddcUtils import constants, MiscUtils, Object
+import tempfile
 
 
 class TestMiscUtils:
@@ -20,7 +21,7 @@ class TestMiscUtils:
 
     def test_get_active_branch_name(self):
         # test nonexistent git file
-        constants.BASE_DIR = "/tmp"
+        constants.BASE_DIR = tempfile.gettempdir()
         master_branch_name = "master"
         result = MiscUtils.get_active_branch_name(master_branch_name)
         assert result is master_branch_name

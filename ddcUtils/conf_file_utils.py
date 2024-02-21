@@ -150,8 +150,6 @@ class ConfFileUtils:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         parser = self._get_default_parser()
         parser.read(file_path)
-        if isinstance(new_value, str):
-            new_value = f'"{new_value}"'
         parser.set(section_name, config_name, new_value)
         try:
             with open(file_path, "w") as configfile:
