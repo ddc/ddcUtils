@@ -132,14 +132,12 @@ class FileUtils:
         try:
             if os.path.isfile(path):
                 os.remove(path)
-                return True
             elif os.path.exists(path):
                 shutil.rmtree(path)
-                return True
         except OSError as e:
             sys.stderr.write(get_exception(e))
             raise e
-        return False
+        return True
 
     @staticmethod
     def rename(from_name: str, to_name: str) -> bool:
@@ -153,11 +151,10 @@ class FileUtils:
         try:
             if os.path.exists(from_name):
                 os.rename(from_name, to_name)
-                return True
         except OSError as e:
             sys.stderr.write(get_exception(e))
             raise e
-        return False
+        return True
 
     @staticmethod
     def copy_dir(src, dst, symlinks=False, ignore=None) -> bool:
