@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-import configparser
 import errno
 import gzip
 import json

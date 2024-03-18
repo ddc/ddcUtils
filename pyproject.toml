@@ -18,7 +18,7 @@ SQLAlchemy = "^2.0.28"
 urllib3 = "^2.2.1"
 requests = "^2.31.0"
 cryptography = "^42.0.5"
-fsspec = "^2024.2.0"
+fsspec = "^2024.3.0"
 bs4 = "^0.0.2"
 
 [tool.poetry.group.test.dependencies]
