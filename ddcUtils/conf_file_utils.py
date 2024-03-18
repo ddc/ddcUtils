@@ -136,13 +136,14 @@ class ConfFileUtils:
         value = self._get_parser_value(parser, section, config_name)
         return value
 
-    def set_value(self, file_path: str, section_name: str, config_name: str, new_value) -> bool:
+    def set_value(self, file_path: str, section_name: str, config_name: str, new_value, commas: bool = False) -> bool:
         """
         Set value from an .ini config file structure and returns True or False
         :param file_path:
         :param section_name:
         :param config_name:
         :param new_value:
+        :param commas:
         :return: True or False
         """
 
@@ -150,6 +151,8 @@ class ConfFileUtils:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
         parser = self._get_default_parser()
         parser.read(file_path)
+        if commas:
+            new_value = f'"{new_value}"'
         parser.set(section_name, config_name, new_value)
         try:
             with open(file_path, "w") as configfile:

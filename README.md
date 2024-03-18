@@ -69,13 +69,13 @@ File example - file.ini:
 + GET_VALUE
     + Get value from an .ini config file structure and returns it
         ```
-        get_value(file_path: str, section: str, config_name: str) -> str | int | None:
+        get_value(file_path: str, section: str, config_name: str) -> str | int | None
         ```
 
 + SET_VALUE
     + Set value from an .ini config file structure and returns True or False
         ```
-        set_value(file_path: str, section_name: str, config_name: str, new_value) -> bool:
+        set_value(file_path: str, section_name: str, config_name: str, new_value, commas: bool = False) -> bool
         ```
 
 
@@ -146,7 +146,7 @@ fu = FileUtils()
         Need to specify the branch on remote url
             example: https://github.com/ddc/ddcutils/blob/master/ddcutils/databases
         ```
-        download_github_dir(self, remote_dir_url: str, local_dir_path: str) -> bool
+        download_github_dir(remote_dir_url: str, local_dir_path: str) -> bool
         ```
 + 
 + GET_EXE_BINARY_TYPE
