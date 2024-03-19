@@ -353,6 +353,7 @@ with dbsqlite.session() as session:
 ```
 
 + DBPOSTGRES
++ Using driver "psycopg2"
 ```python
 import sqlalchemy as sa
 from ddcUtils.databases import DBPostgres, DBUtils
@@ -371,6 +372,7 @@ with dbpostgres.session() as session:
 ```
 
 + DBPOSTGRES ASYNC
++ + Using driver "psycopg2"
 ```python
 import sqlalchemy as sa
 from ddcUtils.databases import DBPostgresAsync, DBUtilsAsync
