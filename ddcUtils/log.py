@@ -97,8 +97,9 @@ class GZipRotatorSize:
             old_gz_files_list = FileUtils.list_files(self.dir, ends_with=".gz")
             if old_gz_files_list:
                 try:
-                    oldest_file_number = int(old_gz_files_list[-1].name.split(".")[0].split("_")[1])
-                    new_file_number = oldest_file_number + 1
+                    oldest_file_name = old_gz_files_list[-1].name.split(".")[0].split("_")
+                    if len(oldest_file_name) > 1:
+                        new_file_number = int(oldest_file_name.split("_")[1]) + 1
                 except ValueError as e:
                     _write_stderr(f"[Unable to get old zip log file number]:{get_exception(e)}: {old_gz_files_list[-1].name}")
             _gzip_file(source, new_file_number)

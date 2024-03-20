@@ -35,9 +35,9 @@ class TestLogs:
         FileUtils.remove(str(gz_file_path))
 
     def test_sized_rotating_log(self):
-        # creating file with 5MB
+        # creating file with 2MB
         with open(self.file_path, "wb") as f:
-            f.seek((5 * 1024 * 1024) - 1)
+            f.seek((2 * 1024 * 1024) - 1)
             f.write(b"\0")
 
         max_mbytes = 1
@@ -45,7 +45,7 @@ class TestLogs:
                               level=self.level,
                               filename=self.filename,
                               max_mbytes=max_mbytes).init()
-        log.debug("start")
+        log.debug("test")
         gz_file_name = f"{os.path.splitext(self.filename)[0]}_1.log.gz"
         gz_file_path = os.path.join(tempfile.gettempdir(), gz_file_name)
         assert os.path.exists(gz_file_path)
