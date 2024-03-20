@@ -46,32 +46,32 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list:
+    def list_files(directory: str, starts_with: str | tuple[str, ...] | list[str] = None, ends_with: str | tuple[str, ...] | list[str] = None) -> tuple:
         """
         List all files in the given directory and returns them in a list sorted by creation time in ascending order
         :param directory:
         :param starts_with:
         :param ends_with:
-        :return: list
+        :return: tuple
         """
 
         try:
-            result_list = []
+            result = []
             if os.path.isdir(directory):
                 if starts_with and ends_with:
-                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                   f.lower().startswith(starts_with.lower()) and
-                                   f.lower().endswith(ends_with.lower())]
+                    result = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                              f.lower().startswith(tuple(starts_with)) and
+                              f.lower().endswith(tuple(ends_with))]
                 elif starts_with:
-                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                   f.lower().startswith(starts_with.lower())]
+                    result = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                              f.lower().startswith(tuple(starts_with))]
                 elif ends_with:
-                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                   f.lower().endswith(ends_with.lower())]
+                    result = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                              f.lower().endswith(tuple(ends_with))]
                 else:
-                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
-                result_list.sort(key=os.path.getctime)
-            return result_list
+                    result = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
+                result.sort(key=os.path.getctime)
+            return tuple(result)
         except Exception as e:
             sys.stderr.write(get_exception(e))
             raise e
