@@ -32,7 +32,7 @@ class FileUtils:
         if not os.path.exists(path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
         try:
-            return_code = 0
+            return_code: int = 0
             match OsUtils.get_os_name():
                 case "Windows":
                     os.startfile(path)
@@ -56,20 +56,20 @@ class FileUtils:
         """
 
         try:
-            result = []
+            result: list = []
             if os.path.isdir(directory):
                 if starts_with and ends_with:
-                    result = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                              f.lower().startswith(tuple(starts_with)) and
-                              f.lower().endswith(tuple(ends_with))]
+                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                                    f.lower().startswith(tuple(starts_with)) and
+                                    f.lower().endswith(tuple(ends_with))]
                 elif starts_with:
-                    result = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                              f.lower().startswith(tuple(starts_with))]
+                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                                    f.lower().startswith(tuple(starts_with))]
                 elif ends_with:
-                    result = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                              f.lower().endswith(tuple(ends_with))]
+                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                                    f.lower().endswith(tuple(ends_with))]
                 else:
-                    result = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
+                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
                 result.sort(key=os.path.getctime)
             return tuple(result)
         except Exception as e:
@@ -113,7 +113,7 @@ class FileUtils:
         """
 
         try:
-            out_path = out_path or os.path.dirname(file_path)
+            out_path: str = out_path or os.path.dirname(file_path)
             with ZipFile(file_path) as zipf:
                 zipf.extractall(out_path)
             return zipf
