@@ -51,11 +51,15 @@ class DBUtils:
             cursor.close() if cursor is not None else None
 
     def fetch_value(self, stmt):
+        cursor = None
         try:
-            return self.session.scalars(stmt).one()
+            cursor = self.session.execute(stmt)
+            return cursor.first()[0]
         except Exception as e:
             self.session.rollback()
             raise DBFetchValueException(e)
+        finally:
+            cursor.close() if cursor is not None else None
 
 
 class DBUtilsAsync:
@@ -101,8 +105,12 @@ class DBUtilsAsync:
             cursor.close() if cursor is not None else None
 
     async def fetch_value(self, stmt):
+        cursor = None
         try:
-            return await self.session.scalars(stmt).one()
+            cursor = await self.session.execute(stmt)
+            return cursor.first()[0]
         except Exception as e:
-            await self.session.rollback()
+            self.session.rollback()
             raise DBFetchValueException(e)
+        finally:
+            cursor.close() if cursor is not None else None
