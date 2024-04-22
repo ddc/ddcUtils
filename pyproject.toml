@@ -11,14 +11,14 @@ license = "MIT"
 authors = ["Daniel Costa <danieldcsta@gmail.com>"]
 homepage = "https://github.com/ddc/ddcUtils"
 packages = [{include = "ddcUtils"}]
+package-mode = true
 
 [tool.poetry.dependencies]
 python = "^3.11.0"
-SQLAlchemy = "^2.0.28"
+SQLAlchemy = "^2.0.29"
 urllib3 = "^2.2.1"
 requests = "^2.31.0"
 cryptography = "^42.0.5"
-fsspec = "^2024.3.1"
 bs4 = "^0.0.2"
 
 [tool.poetry.group.test.dependencies]

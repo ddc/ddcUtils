@@ -10,7 +10,6 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from zipfile import ZipFile
-import fsspec
 import requests
 from .exceptions import get_exception
 from .os_utils import OsUtils
@@ -321,39 +320,4 @@ class FileUtils:
             shutil.copy(src_path, dst_path)
         except Exception as e:
             return e
-        return True
-
-    @staticmethod
-    def download_filesystem_directory(org: str,
-                                      repo: str,
-                                      branch: str,
-                                      remote_dir: str,
-                                      local_dir: str,
-                                      filesystem: str = "github",
-                                      exist_ok: bool = True,
-                                      parents: bool = True,
-                                      recursive: bool = False) -> bool:
-        """
-        Downloads a filesystem directory and save it to a local directory
-        :param org:
-        :param repo:
-        :param branch:
-        :param remote_dir:
-        :param local_dir:
-        :param filesystem:
-        :param exist_ok:
-        :param parents:
-        :param recursive:
-        :return:
-        """
-
-        try:
-            destination = Path(local_dir)
-            destination.mkdir(exist_ok=exist_ok, parents=parents)
-            fs = fsspec.filesystem(filesystem, org=org, repo=repo, sha=branch)
-            remote_files = fs.ls(remote_dir)
-            fs.get(remote_files, destination.as_posix(), recursive=recursive)
-        except requests.HTTPError as e:
-            sys.stderr.write(get_exception(e))
-            return False
         return True

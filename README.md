@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/github/license/ddc/ddcUtils.svg?style=plastic)](https://github.com/ddc/ddcUtils/blob/master/LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg?style=plastic)](https://www.python.org)
 [![PyPi](https://img.shields.io/pypi/v/ddcUtils.svg?style=plastic)](https://pypi.python.org/pypi/ddcUtils)
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fddc%2FddcUtils%2Fbadge%3Fref%3Dmain&style=plastic&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A//actions-badge.atrox.dev/ddc/ddcUtils/badge?ref=main&style=plastic&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
 
 
 # Install
@@ -170,30 +170,6 @@ fu = FileUtils()
         copy(src_path, dst_path)
         ```
 
-+ DOWNLOAD_FILESYSTEM_DIRECTORY
-    + Uses fsspec 
-    + Downloads a filesystem directory and save it to a local directory
-        ```
-        @staticmethod
-        download_filesystem_directory(org: str,
-                                          repo: str,
-                                          branch: str,
-                                          remote_dir: str,
-                                          local_dir: str,
-                                          filesystem: str = "github",
-                                          exist_ok: bool = True,
-                                          parents: bool = True,
-                                          recursive: bool = False) -> bool
-        ```
-  + Github example:
-    ```python
-    from ddcUtils import FileUtils
-    fu = FileUtils()
-    res = fu.download_filesystem_directory(org="ddc", repo="ddcutils", branch="main", remote_dir="tests", local_dir="tests")
-    if not res:
-        print("error")
-    ```
-
 
 # Object
 + This class is used for creating a simple class object
@@ -353,7 +329,7 @@ with dbsqlite.session() as session:
 ```
 
 + DBPOSTGRES
-+ Using driver "psycopg2"
+  + Using driver "psycopg2"
 ```python
 import sqlalchemy as sa
 from ddcUtils.databases import DBPostgres, DBUtils
@@ -372,7 +348,7 @@ with dbpostgres.session() as session:
 ```
 
 + DBPOSTGRES ASYNC
-+ + Using driver "psycopg2"
+  + Using driver "psycopg2"
 ```python
 import sqlalchemy as sa
 from ddcUtils.databases import DBPostgresAsync, DBUtilsAsync
