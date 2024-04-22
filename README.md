@@ -148,7 +148,7 @@ fu = FileUtils()
         ```
         download_github_dir(remote_dir_url: str, local_dir_path: str) -> bool
         ```
-+ 
+
 + GET_EXE_BINARY_TYPE
     + Returns the binary type of the given windows EXE file
         ```
