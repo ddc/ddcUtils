@@ -10,7 +10,6 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from zipfile import ZipFile
-import fsspec
 import requests
 from .exceptions import get_exception
 from .os_utils import OsUtils
@@ -32,7 +31,7 @@ class FileUtils:
         if not os.path.exists(path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
         try:
-            return_code = 0
+            return_code: int = 0
             match OsUtils.get_os_name():
                 case "Windows":
                     os.startfile(path)
@@ -46,32 +45,32 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list:
+    def list_files(directory: str, starts_with: str | tuple[str, ...] | list[str] = None, ends_with: str | tuple[str, ...] | list[str] = None) -> tuple:
         """
         List all files in the given directory and returns them in a list sorted by creation time in ascending order
         :param directory:
         :param starts_with:
         :param ends_with:
-        :return: list
+        :return: tuple
         """
 
         try:
-            result_list = []
+            result: list = []
             if os.path.isdir(directory):
                 if starts_with and ends_with:
-                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                   f.lower().startswith(starts_with.lower()) and
-                                   f.lower().endswith(ends_with.lower())]
+                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                                    f.lower().startswith(tuple(starts_with)) and
+                                    f.lower().endswith(tuple(ends_with))]
                 elif starts_with:
-                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                   f.lower().startswith(starts_with.lower())]
+                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                                    f.lower().startswith(tuple(starts_with))]
                 elif ends_with:
-                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                   f.lower().endswith(ends_with.lower())]
+                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
+                                    f.lower().endswith(tuple(ends_with))]
                 else:
-                    result_list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
-                result_list.sort(key=os.path.getctime)
-            return result_list
+                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
+                result.sort(key=os.path.getctime)
+            return tuple(result)
         except Exception as e:
             sys.stderr.write(get_exception(e))
             raise e
@@ -113,7 +112,7 @@ class FileUtils:
         """
 
         try:
-            out_path = out_path or os.path.dirname(file_path)
+            out_path: str = out_path or os.path.dirname(file_path)
             with ZipFile(file_path) as zipf:
                 zipf.extractall(out_path)
             return zipf
@@ -321,39 +320,4 @@ class FileUtils:
             shutil.copy(src_path, dst_path)
         except Exception as e:
             return e
-        return True
-
-    @staticmethod
-    def download_filesystem_directory(org: str,
-                                      repo: str,
-                                      branch: str,
-                                      remote_dir: str,
-                                      local_dir: str,
-                                      filesystem: str = "github",
-                                      exist_ok: bool = True,
-                                      parents: bool = True,
-                                      recursive: bool = False) -> bool:
-        """
-        Downloads a filesystem directory and save it to a local directory
-        :param org:
-        :param repo:
-        :param branch:
-        :param remote_dir:
-        :param local_dir:
-        :param filesystem:
-        :param exist_ok:
-        :param parents:
-        :param recursive:
-        :return:
-        """
-
-        try:
-            destination = Path(local_dir)
-            destination.mkdir(exist_ok=exist_ok, parents=parents)
-            fs = fsspec.filesystem(filesystem, org=org, repo=repo, sha=branch)
-            remote_files = fs.ls(remote_dir)
-            fs.get(remote_files, destination.as_posix(), recursive=recursive)
-        except requests.HTTPError as e:
-            sys.stderr.write(get_exception(e))
-            return False
         return True

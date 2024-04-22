@@ -15,31 +15,27 @@ class DBUtils:
     def add(self, stmt):
         try:
             self.session.add(stmt)
+            self.session.commit()
         except Exception as e:
             self.session.rollback()
             raise DBAddException(e)
-        else:
-            self.session.commit()
 
     def execute(self, stmt):
         try:
             self.session.execute(stmt)
+            self.session.commit()
         except Exception as e:
             self.session.rollback()
             raise DBExecuteException(e)
-        else:
-            self.session.commit()
 
     def fetchall(self, stmt):
         cursor = None
         try:
             cursor = self.session.execute(stmt)
+            return cursor.mappings().all()
         except Exception as e:
             self.session.rollback()
             raise DBFetchAllException(e)
-        else:
-            self.session.commit()
-            return cursor.mappings().all()
         finally:
             cursor.close() if cursor is not None else None
 
@@ -47,12 +43,10 @@ class DBUtils:
         cursor = None
         try:
             cursor = self.session.execute(stmt)
+            return cursor.mappings().first()
         except Exception as e:
             self.session.rollback()
             raise DBFetchOneException(e)
-        else:
-            self.session.commit()
-            return cursor.mappings().first()
         finally:
             cursor.close() if cursor is not None else None
 
@@ -60,12 +54,10 @@ class DBUtils:
         cursor = None
         try:
             cursor = self.session.execute(stmt)
+            return cursor.first()[0]
         except Exception as e:
             self.session.rollback()
             raise DBFetchValueException(e)
-        else:
-            self.session.commit()
-            return cursor.first()[0]
         finally:
             cursor.close() if cursor is not None else None
 
@@ -77,31 +69,27 @@ class DBUtilsAsync:
     async def add(self, stmt):
         try:
             self.session.add(stmt)
+            await self.session.commit()
         except Exception as e:
             self.session.rollback()
             raise DBAddException(e)
-        else:
-            await self.session.commit()
 
     async def execute(self, stmt):
         try:
             await self.session.execute(stmt)
-        except Exception as e:
-            self.session.rollback()
-            raise DBExecuteException(e)
-        else:
             await self.session.commit()
+        except Exception as e:
+            await self.session.rollback()
+            raise DBExecuteException(e)
 
     async def fetchall(self, stmt):
         cursor = None
         try:
             cursor = await self.session.execute(stmt)
-        except Exception as e:
-            self.session.rollback()
-            raise DBFetchAllException(e)
-        else:
-            await self.session.commit()
             return cursor.mappings().all()
+        except Exception as e:
+            await self.session.rollback()
+            raise DBFetchAllException(e)
         finally:
             cursor.close() if cursor is not None else None
 
@@ -109,12 +97,10 @@ class DBUtilsAsync:
         cursor = None
         try:
             cursor = await self.session.execute(stmt)
-        except Exception as e:
-            self.session.rollback()
-            raise DBFetchOneException(e)
-        else:
-            await self.session.commit()
             return cursor.mappings().first()
+        except Exception as e:
+            await self.session.rollback()
+            raise DBFetchOneException(e)
         finally:
             cursor.close() if cursor is not None else None
 
@@ -122,11 +108,9 @@ class DBUtilsAsync:
         cursor = None
         try:
             cursor = await self.session.execute(stmt)
+            return cursor.first()[0]
         except Exception as e:
             self.session.rollback()
             raise DBFetchValueException(e)
-        else:
-            await self.session.commit()
-            return cursor.first()[0]
         finally:
             cursor.close() if cursor is not None else None

@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/github/license/ddc/ddcUtils.svg?style=plastic)](https://github.com/ddc/ddcUtils/blob/master/LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg?style=plastic)](https://www.python.org)
 [![PyPi](https://img.shields.io/pypi/v/ddcUtils.svg?style=plastic)](https://pypi.python.org/pypi/ddcUtils)
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fddc%2FddcUtils%2Fbadge%3Fref%3Dmain&style=plastic&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A//actions-badge.atrox.dev/ddc/ddcUtils/badge?ref=main&style=plastic&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
 
 
 # Install
@@ -93,17 +93,17 @@ fu = FileUtils()
         ```
 
 + LIST_FILES
-    + List all files in the given directory and returns them in a list sorted by creation time in ascending order
+    + List all files in the given directory and returns them in a tuple sorted by creation time in ascending order
         ```
         @staticmethod
-        list_files(directory: str, starts_with: str = None, ends_with: str = None) -> list
+        list_files(directory: str, starts_with: str | tuple[str, ...] | list[str] = None, ends_with: str | tuple[str, ...] | list[str] = None) -> tuple
         ```
 
 + GZIP
     + Compress the given file and returns the Path for success or None if failed
         ```
         @staticmethod
-        def gzip(input_file_path: str, output_dir: str = None) -> Path | None
+        gzip(input_file_path: str, output_dir: str = None) -> Path | None
         ```
 
 + UNZIP
@@ -160,39 +160,15 @@ fu = FileUtils()
     + Check if a file or directory is older than the specified number of days
         ```
         @staticmethod
-        def is_older_than_x_days(path: str, days: int) -> bool
+        is_older_than_x_days(path: str, days: int) -> bool
         ```
 
 + COPY
     + Copy a file to another location
         ```
         @staticmethod
-        def copy(src_path, dst_path)
+        copy(src_path, dst_path)
         ```
-
-+ DOWNLOAD_FILESYSTEM_DIRECTORY
-    + Uses fsspec 
-    + Downloads a filesystem directory and save it to a local directory
-        ```
-        @staticmethod
-        def download_filesystem_directory(org: str,
-                                          repo: str,
-                                          branch: str,
-                                          remote_dir: str,
-                                          local_dir: str,
-                                          filesystem: str = "github",
-                                          exist_ok: bool = True,
-                                          parents: bool = True,
-                                          recursive: bool = False) -> bool
-        ```
-  + Github example:
-    ```python
-    from ddcUtils import FileUtils
-    fu = FileUtils()
-    res = fu.download_filesystem_directory(org="ddc", repo="ddcutils", branch="main", remote_dir="tests", local_dir="tests")
-    if not res:
-        print("error")
-    ```
 
 
 # Object
@@ -228,7 +204,7 @@ mu = MiscUtils()
     + Returns the name of the active branch if found, else returns the "master" branch
         ```
         @staticmethod
-        def get_active_branch_name(git_dir: str, master_branch_name: str = "master") -> str | None
+        get_active_branch_name(git_dir: str, master_branch_name: str = "master") -> str | None
         ```
 
 + GET_CURRENT_DATE_TIME
@@ -353,6 +329,7 @@ with dbsqlite.session() as session:
 ```
 
 + DBPOSTGRES
+  + Using driver "psycopg2"
 ```python
 import sqlalchemy as sa
 from ddcUtils.databases import DBPostgres, DBUtils
@@ -371,6 +348,7 @@ with dbpostgres.session() as session:
 ```
 
 + DBPOSTGRES ASYNC
+  + Using driver "psycopg2"
 ```python
 import sqlalchemy as sa
 from ddcUtils.databases import DBPostgresAsync, DBUtilsAsync
