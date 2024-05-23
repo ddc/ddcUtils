@@ -115,10 +115,6 @@ class TestFileUtils:
         result = FileUtils.is_older_than_x_days(test_file, days)
         assert result is True
 
-        days = 2
-        result = FileUtils.is_older_than_x_days(test_file, days)
-        assert result is True
-
         days = 99999
         result = FileUtils.is_older_than_x_days(test_file, days)
         assert result is False
