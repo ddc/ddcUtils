@@ -24,7 +24,7 @@ cp = Cryptography()
         @staticmethod
         generate_private_key() -> str
         ```
-      
+
 + ENCODE
     + Encodes a given string
         ```
@@ -141,14 +141,6 @@ fu = FileUtils()
         download_file(remote_file_url, local_file_path) -> bool
         ```
 
-+ DOWNLOAD_GITHUB_DIR
-    + Download directory from remote url to local and returns True or False
-        Need to specify the branch on remote url
-            example: https://github.com/ddc/ddcutils/blob/master/ddcutils/databases
-        ```
-        download_github_dir(remote_dir_url: str, local_dir_path: str) -> bool
-        ```
-+ 
 + GET_EXE_BINARY_TYPE
     + Returns the binary type of the given windows EXE file
         ```
@@ -258,7 +250,7 @@ ou = OsUtils()
         @staticmethod
         get_os_name() -> str
         ```
-      
+
 + IS_WINDOWS
     + Check if OS is Windows
         ```
@@ -396,6 +388,7 @@ await db_utils.fetch_value(stmt)
 ```shell
 poetry build
 ```
+
 
 ### Run Tests
 ```shell

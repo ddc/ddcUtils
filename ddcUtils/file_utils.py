@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 import errno
 import gzip
-import json
 import os
 import shutil
 import struct
@@ -121,17 +120,35 @@ class FileUtils:
             raise e
 
     @staticmethod
+    def copy(src_path, dst_path):
+        """
+        Copy a file to another location
+        :param src_path:
+        :param dst_path:
+        :return:
+        """
+
+        try:
+
+            shutil.copy(src_path, dst_path)
+        except Exception as e:
+            return e
+        return True
+
+    @staticmethod
     def remove(path: str) -> bool:
         """
         Remove the given file and returns True if the file was successfully removed
         :param path:
-        :return:
+        :return: True
         """
         try:
             if os.path.isfile(path):
                 os.remove(path)
             elif os.path.exists(path):
                 shutil.rmtree(path)
+            else:
+                raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
         except OSError as e:
             sys.stderr.write(get_exception(e))
             raise e
@@ -140,10 +157,10 @@ class FileUtils:
     @staticmethod
     def rename(from_name: str, to_name: str) -> bool:
         """
-        Rename the given file and returns True if the file was successfully
+        Rename the given file and returns True if the file was successfully renamed
         :param from_name:
         :param to_name:
-        :return: bool
+        :return: True
         """
 
         try:
@@ -157,34 +174,28 @@ class FileUtils:
     @staticmethod
     def copy_dir(src, dst, symlinks=False, ignore=None) -> bool:
         """
-        Copy files from src to dst and returns True or False
+        Copy files from src to dst and returns True if the copy was successfull
         :param src:
         :param dst:
         :param symlinks:
         :param ignore:
-        :return: True or False
+        :return: True
         """
 
         try:
-            for item in os.listdir(src):
-                s = os.path.join(src, item)
-                d = os.path.join(dst, item)
-                if os.path.isdir(s):
-                    shutil.copytree(s, d, symlinks, ignore)
-                else:
-                    shutil.copy2(s, d)
+            shutil.copytree(src, dst, symlinks, ignore, dirs_exist_ok=True)
         except IOError as e:
             sys.stderr.write(get_exception(e))
-            return False
+            raise e
         return True
 
     @staticmethod
     def download_file(remote_file_url, local_file_path) -> bool:
         """
-        Download file from remote url to local and returns True or False
+        Download file from remote url to local and returns True if the download was successfull
         :param remote_file_url:
         :param local_file_path:
-        :return: True or False
+        :return: True
         """
 
         try:
@@ -192,57 +203,9 @@ class FileUtils:
             if req.status_code == 200:
                 with open(local_file_path, "wb") as outfile:
                     outfile.write(req.content)
-                return True
         except requests.HTTPError as e:
             sys.stderr.write(get_exception(e))
-        return False
-
-    def download_github_dir(self, remote_dir_url: str, local_dir_path: str) -> bool:
-        """
-        Download directory from remote url to local and returns True or False
-        Need to specify the branch on remote url
-            example: https://github.com/ddc/ddcutils/blob/master/ddcutils/databases
-
-        :param remote_dir_url:
-        :param local_dir_path:
-        :return:
-        """
-
-        try:
-            if not os.path.exists(local_dir_path):
-                os.makedirs(local_dir_path, exist_ok=True)
-
-            req_dir = requests.get(remote_dir_url)
-            if req_dir.status_code == 200:
-                data_dict = json.loads(req_dir.content)
-                files_list = data_dict["payload"]["tree"]["items"]
-                for file in files_list:
-                    remote_file_url = f"{remote_dir_url}/{file['name']}"
-                    local_file_path = f"{local_dir_path}/{file['name']}"
-                    if file["contentType"] == "directory":
-                        self.download_github_dir(remote_file_url, local_file_path)
-                    else:
-                        req_file = requests.get(remote_file_url)
-                        if req_file.status_code == 200:
-                            data_dict = json.loads(req_file.content)
-                            content = data_dict["payload"]["blob"]["rawLines"]
-                            if not content:
-                                payload = data_dict['payload']
-                                url = (f"https://raw.githubusercontent.com/"
-                                       f"{payload['repo']['ownerLogin']}/"
-                                       f"{payload['repo']['name']}/"
-                                       "master/"
-                                       f"{payload['path']}")
-                                req_file = requests.get(url)
-                                with open(local_file_path, "wb") as outfile:
-                                    outfile.write(req_file.content)
-                            else:
-                                with open(local_file_path, "w") as outfile:
-                                    outfile.writelines([f"{line}\n" for line in content])
-
-        except Exception as e:
-            sys.stderr.write(get_exception(e))
-            return False
+            raise e
         return True
 
     @staticmethod
@@ -305,19 +268,3 @@ class FileUtils:
         if stats.st_ctime < days_epoch:
             return True
         return False
-
-    @staticmethod
-    def copy(src_path, dst_path):
-        """
-        Copy a file to another location
-        :param src_path:
-        :param dst_path:
-        :return:
-        """
-
-        try:
-
-            shutil.copy(src_path, dst_path)
-        except Exception as e:
-            return e
-        return True
