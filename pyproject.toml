@@ -17,8 +17,8 @@ package-mode = true
 python = "^3.11.0"
 SQLAlchemy = "^2.0.29"
 urllib3 = "^2.2.1"
-requests = "^2.31.0"
-cryptography = "^42.0.5"
+requests = "^2.32.2"
+cryptography = "^42.0.7"
 bs4 = "^0.0.2"
 
 [tool.poetry.group.test.dependencies]
