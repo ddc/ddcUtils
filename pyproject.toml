@@ -6,10 +6,12 @@ build-backend = "poetry.core.masonry.api"
 name = "ddcUtils"
 version = "1.0.26"
 description = "Few Utilities"
-readme = "README.md"
 license = "MIT"
+readme = "README.md"
 authors = ["Daniel Costa <danieldcsta@gmail.com>"]
+repository = "https://github.com/ddc/ddcUtils"
 homepage = "https://github.com/ddc/ddcUtils"
+keywords = ["utils", "log", "custom-log", "file-utils", "miscutils", "os-utils"]
 packages = [{include = "ddcUtils"}]
 package-mode = true
 
