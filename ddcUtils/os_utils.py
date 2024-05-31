@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 import os
-import platform
+import sys
 from pathlib import Path
 
 
@@ -16,7 +16,7 @@ class OsUtils:
         :return:
         """
 
-        return platform.system()
+        return sys.platform
 
     @staticmethod
     def is_windows() -> bool:
@@ -25,7 +25,7 @@ class OsUtils:
         :return:
         """
 
-        return True if platform.system().lower() == "windows" else False
+        return True if sys.platform.startswith("win") or (sys.platform == "cli" and os.name == "nt") else False
 
     @staticmethod
     def get_current_path() -> Path | None:
