@@ -20,7 +20,7 @@ python = "^3.12"
 SQLAlchemy = "^2.0.29"
 urllib3 = "^2.2.1"
 requests = "^2.32.3"
-cryptography = "^42.0.7"
+cryptography = "^42.0.8"
 bs4 = "^0.0.2"
 
 [tool.poetry.group.test.dependencies]
