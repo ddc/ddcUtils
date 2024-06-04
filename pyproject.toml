@@ -14,7 +14,7 @@ repository = "https://github.com/ddc/ddcUtils"
 homepage = "https://github.com/ddc/ddcUtils"
 packages = [{include = "ddcUtils"}]
 package-mode = true
-keywords = ["utils", "log", "custom-log", "file-utils", "miscutils", "os-utils"]
+keywords = ["python3", "utility", "utilities", "utils", "utility-library", "utils-library", "utilities-library"]
 classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Development Status :: 5 - Production/Stable",
