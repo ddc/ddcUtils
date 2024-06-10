@@ -167,10 +167,10 @@ mu = MiscUtils()
         ```
 
 + GET_ACTIVE_BRANCH_NAME
-    + Returns the name of the active branch if found, else returns the "master" branch
+    + Returns the name of the active branch if found, else returns None
         ```
         @staticmethod
-        get_active_branch_name(git_dir: str, master_branch_name: str = "master") -> str | None
+        get_active_branch_name(git_dir: str = ".git") -> str | None:
         ```
 
 + GET_CURRENT_DATE_TIME
