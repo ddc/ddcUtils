@@ -252,32 +252,6 @@ ou = OsUtils()
         ```
 
 
-# Logs
-+ SETUP_LOGGING
-    + Logs will rotate based on `when` variable to a `.tar.gz` file, defaults to `midnight`
-    + Logs will be deleted based on the `days_to_keep` variable, defaults to 7
-    + Current 'when' events supported:
-        + S - Seconds
-        + M - Minutes
-        + H - Hours
-        + D - Days
-        + midnight - roll over at midnight
-        + W{0-6} - roll over on a certain day; 0 - Monday
-```python
-from ddcUtils import Log
-log = Log(
-    dir_logs = "./logs",
-    level = "info",
-    filename = "app.log",
-    encoding = "UTF-8",
-    days_to_keep = 7,
-    when = "midnight",
-    utc = True
-)
-log.setup_logging()
-```
-
-
 # Databases
 + DBSQLITE
 ```
