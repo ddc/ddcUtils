@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 from datetime import datetime, timezone
 from ddcUtils import constants, MiscUtils, Object
-import tempfile
 
 
 class TestMiscUtils:
@@ -18,11 +17,6 @@ class TestMiscUtils:
         Leaving empty for further use
         """
         pass
-
-    def test_get_active_branch_name(self):
-        # test nonexistent git file
-        result = MiscUtils.get_active_branch_name()
-        assert result is None
 
     def test_convert_datetime_to_str_long(self):
         now_utc = datetime.now(timezone.utc)

@@ -4,7 +4,6 @@ from typing import Literal, NamedTuple
 from .conf_file_utils import ConfFileUtils
 from .exceptions import get_exception
 from .file_utils import FileUtils
-from .log import SizeRotatingLog, TimedRotatingLog
 from .misc_utils import MiscUtils, Object
 from .os_utils import OsUtils
 
@@ -13,8 +12,6 @@ __all__ = (
     "ConfFileUtils",
     "get_exception",
     "FileUtils",
-    "TimedRotatingLog",
-    "SizeRotatingLog",
     "MiscUtils",
     "Object",
     "OsUtils"
@@ -25,7 +22,7 @@ __author__ = "Daniel Costa"
 __email__ = "danieldcsta@gmail.com>"
 __license__ = "MIT"
 __copyright__ = "Copyright 2023-present ddc"
-_req_python_version = (3, 11, 0)
+_req_python_version = (3, 10, 0)
 
 
 try:
