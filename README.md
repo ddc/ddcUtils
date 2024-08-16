@@ -11,32 +11,6 @@
 pip install ddcUtils
 ```
 
-# Cryptography
-```python
-from ddcUtils import Cryptography
-cp = Cryptography()
-```
-
-+ GENERATE_PRIVATE_KEY
-    + Generates a private key to be used instead of default one
-    + But keep in mind that this private key will be needed to decode further strings
-        ```
-        @staticmethod
-        generate_private_key() -> str
-        ```
-
-+ ENCODE
-    + Encodes a given string
-        ```
-        encode(str_to_encode: str) -> str
-         ```     
-
-+ DECODE
-    + Decodes a given string
-        ```
-        decode(str_to_decode: str) -> str
-        ```
-
 
 # Conf File Utils
 ```python
@@ -193,10 +167,10 @@ mu = MiscUtils()
         ```
 
 + GET_ACTIVE_BRANCH_NAME
-    + Returns the name of the active branch if found, else returns the "master" branch
+    + Returns the name of the active branch if found, else returns None
         ```
         @staticmethod
-        get_active_branch_name(git_dir: str, master_branch_name: str = "master") -> str | None
+        get_active_branch_name(git_dir: str = ".git") -> str | None:
         ```
 
 + GET_CURRENT_DATE_TIME
@@ -276,111 +250,6 @@ ou = OsUtils()
         ```
         get_downloads_path() -> Path
         ```
-
-
-# Logs
-+ SETUP_LOGGING
-    + Logs will rotate based on `when` variable to a `.tar.gz` file, defaults to `midnight`
-    + Logs will be deleted based on the `days_to_keep` variable, defaults to 7
-    + Current 'when' events supported:
-        + S - Seconds
-        + M - Minutes
-        + H - Hours
-        + D - Days
-        + midnight - roll over at midnight
-        + W{0-6} - roll over on a certain day; 0 - Monday
-```python
-from ddcUtils import Log
-log = Log(
-    dir_logs = "./logs",
-    level = "info",
-    filename = "app.log",
-    encoding = "UTF-8",
-    days_to_keep = 7,
-    when = "midnight",
-    utc = True
-)
-log.setup_logging()
-```
-
-
-# Databases
-+ DBSQLITE
-```
-class DBSqlite(db_file_path: str, batch_size=100, echo=False)
-```
-
-```python
-import sqlalchemy as sa
-from ddcUtils.databases import DBSqlite, DBUtils
-dbsqlite = DBSqlite(database_file_path)
-with dbsqlite.session() as session:
-    stmt = sa.select(Table).where(Table.id == 1)
-    db_utils = DBUtils(session)
-    results = db_utils.fetchall(stmt)
-```
-
-+ DBPOSTGRES
-  + Using driver "psycopg2"
-```python
-import sqlalchemy as sa
-from ddcUtils.databases import DBPostgres, DBUtils
-db_configs = {
-    "username": username,
-    "password": password,
-    "host": host,
-    "port": port,
-    "database": database
-}
-dbpostgres = DBPostgres(**db_configs)
-with dbpostgres.session() as session:
-    stmt = sa.select(Table).where(Table.id == 1)
-    db_utils = DBUtils(session)
-    results = db_utils.fetchall(stmt)
-```
-
-+ DBPOSTGRES ASYNC
-  + Using driver "psycopg2"
-```python
-import sqlalchemy as sa
-from ddcUtils.databases import DBPostgresAsync, DBUtilsAsync
-db_configs = {
-    "username": username,
-    "password": password,
-    "host": host,
-    "port": port,
-    "database": database
-}
-dbpostgres = DBPostgresAsync(**db_configs)
-async with dbpostgres.session() as session:
-    stmt = sa.select(Table).where(Table.id == 1)
-    db_utils = DBUtilsAsync(session)
-    results = await db_utils.fetchall(stmt)
-```
-
-+ DBUTILS
-  + Uses SQLAlchemy statements
-```python
-from ddcUtils.databases import DBUtils
-db_utils = DBUtils(session)
-db_utils.add(stmt)
-db_utils.execute(stmt)
-db_utils.fetchall(stmt)
-db_utils.fetchone(stmt)
-db_utils.fetch_value(stmt)
-```
-
-+ DBUTILS ASYNC
-  + Uses SQLAlchemy statements
-```python
-from ddcUtils.databases import DBUtilsAsync
-db_utils = DBUtilsAsync(session)
-await db_utils.add(stmt)
-await db_utils.execute(stmt)
-await db_utils.fetchall(stmt)
-await db_utils.fetchone(stmt)
-await db_utils.fetch_value(stmt)
-```
 
 
 # Source Code

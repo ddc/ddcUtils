@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-import sys
 
 
 def get_exception(e) -> str:
@@ -15,28 +14,3 @@ def get_exception(e) -> str:
     else:
         module_and_exception = f"[{module}.{e.__class__.__name__}]:[{e}]"
     return module_and_exception.replace("\r\n", " ").replace("\n", " ")
-
-
-class CustomBaseException(Exception):
-    def __init__(self, msg):
-        sys.stderr.write(get_exception(msg))
-
-
-class DBAddException(CustomBaseException):
-    pass
-
-
-class DBExecuteException(CustomBaseException):
-    pass
-
-
-class DBFetchAllException(CustomBaseException):
-    pass
-
-
-class DBFetchOneException(CustomBaseException):
-    pass
-
-
-class DBFetchValueException(CustomBaseException):
-    pass
