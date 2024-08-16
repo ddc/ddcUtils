@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "ddcUtils"
 version = "1.0.27"
-description = "Few Utilities"
+description = "Few File Utilities"
 license = "MIT"
 readme = "README.md"
 authors = ["Daniel Costa <danieldcsta@gmail.com>"]
@@ -31,9 +31,9 @@ python = "^3.10"
 requests = "^2.32.3"
 
 [tool.poetry.group.test.dependencies]
-pytest = "^8.1.1"
-coverage = "^7.4.4"
-poethepoet = "^0.26.1"
+pytest = "^8.3.2"
+coverage = "^7.6.1"
+poethepoet = "^0.27.0"
 
 [tool.poe.tasks]
 test = "poetry run coverage run -m pytest -v"
