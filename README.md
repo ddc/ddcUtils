@@ -1,4 +1,5 @@
 # Few Utility Functions
+Few personal utilities functions written in python3 and hosted on PyPI such as open and read conf/ini files and some OS functions.
 
 [![License](https://img.shields.io/github/license/ddc/ddcUtils.svg?style=plastic)](https://github.com/ddc/ddcUtils/blob/master/LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg?style=plastic)](https://www.python.org)
@@ -261,13 +262,13 @@ poetry build
 
 ### Run Tests
 ```shell
-poe test
+poetry run coverage run -m pytest -v
 ```
 
 
 ### Get Coverage Report
 ```shell
-poe coverage
+poetry run coverage report
 ```
 
 
