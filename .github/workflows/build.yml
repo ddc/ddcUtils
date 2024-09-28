@@ -34,6 +34,12 @@ jobs:
         run: |  
           python -m poetry build
 
+      - name: Store the distribution packages to publish to pypi
+        uses: actions/upload-artifact@master
+        with:
+          name: python-package-distributions
+          path: dist/
+
   release:
     runs-on: ubuntu-latest
     needs:
