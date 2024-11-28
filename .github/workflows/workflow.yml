@@ -28,7 +28,6 @@ jobs:
       - name: Install poetry dependencies
         run: |  
           python -m poetry update --with test
-          python -m poetry install --extras all
 
       - name: Run tests
         run: |  
