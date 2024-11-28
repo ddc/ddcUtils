@@ -25,7 +25,11 @@ class OsUtils:
         :return:
         """
 
-        return True if sys.platform.startswith("win") or (sys.platform == "cli" and os.name == "nt") else False
+        if (sys.platform.startswith("win")
+            or (sys.platform == "cli" and os.name == "nt")):
+            return True
+        return False
+
 
     @staticmethod
     def get_current_path() -> Path | None:

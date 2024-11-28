@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from zipfile import ZipFile
 import requests
-from .exceptions import get_exception
 from .os_utils import OsUtils
 
 
@@ -22,7 +21,9 @@ class FileUtils:
     @staticmethod
     def show(path: str) -> bool:
         """
-        Open the given file or directory in explorer or notepad and returns True for success or False for failed access
+        Open the given file or directory in explorer or notepad
+            and returns True for success or False for failed access
+
         :param path:
         :return: bool
         """
@@ -40,13 +41,20 @@ class FileUtils:
                     return_code = subprocess.call(("xdg-open", path))
             return not bool(return_code)
         except Exception as e:
-            sys.stderr.write(get_exception(e))
+            sys.stderr.write(repr(e))
             raise e
 
     @staticmethod
-    def list_files(directory: str, starts_with: str | tuple[str, ...] | list[str] = None, ends_with: str | tuple[str, ...] | list[str] = None) -> tuple:
+    def list_files(
+        directory: str,
+        starts_with: str | tuple[str, ...] | list[str] = None,
+        ends_with: str | tuple[str, ...] | list[str] = None
+    ) -> tuple:
+
         """
-        List all files in the given directory and returns them in a list sorted by creation time in ascending order
+        List all files in the given directory and returns them in a list
+            sorted by creation time in ascending order
+
         :param directory:
         :param starts_with:
         :param ends_with:
@@ -71,13 +79,14 @@ class FileUtils:
                 result.sort(key=os.path.getctime)
             return tuple(result)
         except Exception as e:
-            sys.stderr.write(get_exception(e))
+            sys.stderr.write(repr(e))
             raise e
 
     @staticmethod
     def gzip(input_file_path: str, output_dir: str = None) -> Path | None:
         """
         Compress the given file and returns the Path for success or None if failed
+
         :param input_file_path:
         :param output_dir:
         :return: Path | None:
@@ -96,7 +105,7 @@ class FileUtils:
                     fout.writelines(fin)
             return Path(output_file)
         except Exception as e:
-            sys.stderr.write(get_exception(e))
+            sys.stderr.write(repr(e))
             if os.path.isfile(output_file):
                 os.remove(output_file)
             raise e
@@ -105,6 +114,7 @@ class FileUtils:
     def unzip(file_path: str, out_path: str = None) -> ZipFile | None:
         """
         Unzips the given file.zip and returns ZipFile for success or None if failed
+
         :param file_path:
         :param out_path:
         :return: ZipFile | None
@@ -116,13 +126,14 @@ class FileUtils:
                 zipf.extractall(out_path)
             return zipf
         except Exception as e:
-            sys.stderr.write(get_exception(e))
+            sys.stderr.write(repr(e))
             raise e
 
     @staticmethod
     def copy(src_path, dst_path):
         """
         Copy a file to another location
+
         :param src_path:
         :param dst_path:
         :return:
@@ -139,6 +150,7 @@ class FileUtils:
     def remove(path: str) -> bool:
         """
         Remove the given file and returns True if the file was successfully removed
+
         :param path:
         :return: True
         """
@@ -150,7 +162,7 @@ class FileUtils:
             else:
                 raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
         except OSError as e:
-            sys.stderr.write(get_exception(e))
+            sys.stderr.write(repr(e))
             raise e
         return True
 
@@ -158,6 +170,7 @@ class FileUtils:
     def rename(from_name: str, to_name: str) -> bool:
         """
         Rename the given file and returns True if the file was successfully renamed
+
         :param from_name:
         :param to_name:
         :return: True
@@ -167,7 +180,7 @@ class FileUtils:
             if os.path.exists(from_name):
                 os.rename(from_name, to_name)
         except OSError as e:
-            sys.stderr.write(get_exception(e))
+            sys.stderr.write(repr(e))
             raise e
         return True
 
@@ -175,6 +188,7 @@ class FileUtils:
     def copy_dir(src, dst, symlinks=False, ignore=None) -> bool:
         """
         Copy files from src to dst and returns True if the copy was successfull
+
         :param src:
         :param dst:
         :param symlinks:
@@ -185,14 +199,16 @@ class FileUtils:
         try:
             shutil.copytree(src, dst, symlinks, ignore, dirs_exist_ok=True)
         except IOError as e:
-            sys.stderr.write(get_exception(e))
+            sys.stderr.write(repr(e))
             raise e
         return True
 
     @staticmethod
     def download_file(remote_file_url, local_file_path) -> bool:
         """
-        Download file from remote url to local and returns True if the download was successfull
+        Download file from remote url to local
+            and returns True if the download was successfull
+
         :param remote_file_url:
         :param local_file_path:
         :return: True
@@ -204,7 +220,7 @@ class FileUtils:
                 with open(local_file_path, "wb") as outfile:
                     outfile.write(req.content)
         except requests.HTTPError as e:
-            sys.stderr.write(get_exception(e))
+            sys.stderr.write(repr(e))
             raise e
         return True
 
@@ -212,6 +228,7 @@ class FileUtils:
     def get_exe_binary_type(file_path: str) -> str | None:
         """
         Returns the binary type of the given EXE file
+
         :param file_path:
         :return: str | None
         """
@@ -250,6 +267,7 @@ class FileUtils:
     def is_older_than_x_days(path: str, days: int) -> bool:
         """
         Check if a file or directory is older than the specified number of days
+
         :param path:
         :param days:
         :return:

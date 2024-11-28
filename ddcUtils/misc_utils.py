@@ -93,7 +93,9 @@ class MiscUtils:
         :return: str
         """
 
-        return date.strftime(f"{constants.DATE_FORMATTER} {constants.TIME_FORMATTER}")
+        return date.strftime(
+            f"{constants.DATE_FORMATTER} {constants.TIME_FORMATTER}"
+        )
 
     @staticmethod
     def convert_str_to_datetime_short(datetime_str: str) -> datetime:
@@ -103,7 +105,10 @@ class MiscUtils:
         :return: datetime
         """
 
-        return datetime.strptime(datetime_str, f"{constants.DATE_FORMATTER} {constants.TIME_FORMATTER}")
+        return datetime.strptime(
+            datetime_str,
+            f"{constants.DATE_FORMATTER} {constants.TIME_FORMATTER}"
+        )
 
     def get_current_date_time_str_long(self) -> str:
         """

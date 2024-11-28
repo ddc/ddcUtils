@@ -2,7 +2,6 @@ import logging
 from importlib.metadata import version
 from typing import Literal, NamedTuple
 from .conf_file_utils import ConfFileUtils
-from .exceptions import get_exception
 from .file_utils import FileUtils
 from .misc_utils import MiscUtils, Object
 from .os_utils import OsUtils
@@ -10,7 +9,6 @@ from .os_utils import OsUtils
 
 __all__ = (
     "ConfFileUtils",
-    "get_exception",
     "FileUtils",
     "MiscUtils",
     "Object",
