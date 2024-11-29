@@ -5,9 +5,8 @@ from pathlib import Path
 
 
 class OsUtils:
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
+    def __init__(self):
+        pass
 
     @staticmethod
     def get_os_name() -> str:

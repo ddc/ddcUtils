@@ -3,6 +3,7 @@ import configparser
 import errno
 import os
 import sys
+from typing import Optional
 
 
 class ConfFileUtils:
@@ -64,8 +65,8 @@ class ConfFileUtils:
         parser: configparser.ConfigParser,
         section: str,
         final_data: dict,
-        mixed_values: bool = True,
-        include_section_name: bool = False
+        mixed_values: Optional[bool] = True,
+        include_section_name: Optional[bool] = False
     ) -> dict:
 
         """
@@ -90,7 +91,7 @@ class ConfFileUtils:
                 final_data[section_name][config_name] = value
         return final_data
 
-    def get_all_values(self, file_path: str, mixed_values: bool = False) -> dict:
+    def get_all_values(self, file_path: str, mixed_values: Optional[bool] = False) -> dict:
         """
         Get all values from an .ini config file structure and returns them as a dictionary
         :param file_path:
@@ -154,7 +155,7 @@ class ConfFileUtils:
         section_name: str,
         config_name: str,
         new_value,
-        commas: bool = False
+        commas: Optional[bool] = False
     ) -> bool:
 
         """

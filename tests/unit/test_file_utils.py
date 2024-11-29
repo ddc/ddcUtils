@@ -22,10 +22,10 @@ class TestFileUtils:
         """
         pass
 
-    def test_show_file(self):
+    def test_open_file(self):
         # nonexistent file
         with pytest.raises(FileNotFoundError) as exc_info:
-            FileUtils.show(self.unknown_file)
+            FileUtils.open(self.unknown_file)
         assert exc_info.value.args[0] == 2
         assert exc_info.value.args[1] == "No such file or directory"
         assert exc_info.typename == "FileNotFoundError"

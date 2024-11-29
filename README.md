@@ -1,4 +1,4 @@
-# Few Utility Functions
+# File Utilities
 Few personal utilities functions written in python3 and hosted on PyPI such as open and read conf/ini files and some OS functions.
 
 [![License](https://img.shields.io/github/license/ddc/ddcUtils.svg?style=plastic)](https://github.com/ddc/ddcUtils/blob/master/LICENSE)
@@ -7,17 +7,13 @@ Few personal utilities functions written in python3 and hosted on PyPI such as o
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A//actions-badge.atrox.dev/ddc/ddcUtils/badge?ref=main&style=plastic&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
 
 
-# Install
+## Install
 ```shell
 pip install ddcUtils
 ```
 
 
-# Conf File Utils
-```python
-from ddcUtils import ConfFileUtils
-cfu = ConfFileUtils()
-```
+## Conf File Utils
 
 File example - file.ini:
 
@@ -29,116 +25,158 @@ File example - file.ini:
 
 
 + GET_ALL_VALUES
-    + Get all values from an .ini config file structure and returns them as a dictionary
-    + mixed_values will return all values as an object instead of dict
-        ```
-        get_all_values(file_path: str, mixed_values: bool = False) -> dict
-        ```
+  + Get all values from an .ini config file structure and returns them as a dictionary
+  + mixed_values will return all values as an object instead of dict
+```python
+from ddcUtils import ConfFileUtils
+cfu = ConfFileUtils()
+cfu.get_all_values(file_path, mixed_values=False)
+```
+
+
 
 + GET_SECTION_VALUES
-    + Get all section values from an .ini config file structure and returns them as a dictionary
-        ```
-        get_section_values(file_path: str, section: str) -> dict
-        ```
+  + Get all section values from an .ini config file structure and returns them as a dictionary
+```python
+from ddcUtils import ConfFileUtils
+cfu = ConfFileUtils()
+cfu.get_section_values(file_path, section)
+```
+
+
 
 + GET_VALUE
-    + Get value from an .ini config file structure and returns it
-        ```
-        get_value(file_path: str, section: str, config_name: str) -> str | int | None
-        ```
+  + Get value from an .ini config file structure and returns it
+```python
+from ddcUtils import ConfFileUtils
+cfu = ConfFileUtils()
+cfu.get_value(file_path, section, config_name)
+```
+
+
 
 + SET_VALUE
-    + Set value from an .ini config file structure and returns True or False
-        ```
-        set_value(file_path: str, section_name: str, config_name: str, new_value, commas: bool = False) -> bool
-        ```
+  + Set value from an .ini config file structure and returns True or False
+```python
+from ddcUtils import ConfFileUtils
+cfu = ConfFileUtils()
+cfu.set_value(file_path, section_name, config_name, new_value, commas=False)
+```
 
 
-# File Utils
+## File Utils
+
++ OPEN
+  + Open the given file or directory in explorer or notepad and returns True for success or False for failed access
 ```python
 from ddcUtils import FileUtils
 fu = FileUtils()
+fu.open(path)
 ```
 
-+ SHOW
-    + Open the given file or directory in explorer or notepad and returns True for success or False for failed access
-        ```
-        @staticmethod
-        show(path: str) -> bool
-        ```
+
 
 + LIST_FILES
-    + List all files in the given directory and returns them in a tuple sorted by creation time in ascending order
-        ```
-        @staticmethod
-        list_files(directory: str, starts_with: str | tuple[str, ...] | list[str] = None, ends_with: str | tuple[str, ...] | list[str] = None) -> tuple
-        ```
+  + List all files in the given directory and returns them in a tuple sorted by creation time in ascending order
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+fu.list_files(directory, starts_with, ends_with)
+```
+
+
 
 + GZIP
-    + Compress the given file and returns the Path for success or None if failed
-        ```
-        @staticmethod
-        gzip(input_file_path: str, output_dir: str = None) -> Path | None
-        ```
+  + Compress the given file and returns the Path for success or None if failed
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+fu.gzip(input_file_path, output_dir=None)
+```
+
+
 
 + UNZIP
-    + Unzips the given file.zip and returns ZipFile for success or None if failed
-        ```
-        @staticmethod
-        unzip(file_path: str, out_path: str = None) -> ZipFile | None
-        ```
+  + Unzips the given file.zip and returns ZipFile for success or None if failed
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+fu.unzip(file_path, out_pathNone)
+```
+
+
 
 + REMOVE
-    + Remove the given file or dir and returns True if it was successfully removed
-        ```
-        @staticmethod
-        remove(path: str) -> bool
-        ```
+  + Remove the given file or dir and returns True if it was successfully removed
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+fu.remove(path)
+```
+
+
 
 + RENAME
-    + Rename the given file and returns True if the file was successfully
-        ```
-        @staticmethod
-        rename(from_name: str, to_name: str) -> bool
-        ```
+  + Rename the given file and returns True if the file was successfully
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+fu.rename(from_name, to_name)
+```
+
+
 
 + COPY_DIR
-    + Copy files from src to dst and returns True or False
-        ```
-        @staticmethod
-        copy_dir(src, dst, symlinks=False, ignore=None) -> bool
-        ```
+  + Copy files from src to dst and returns True or False
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+fu.copy_dir(src, dst, symlinks=False, ignore=None)
+```
+
+
 
 + DOWNLOAD_FILE
-    + Download file from remote url to local and returns True or False
-        ```
-        @staticmethod
-        download_file(remote_file_url, local_file_path) -> bool
-        ```
+  + Download file from remote url to local and returns True or False
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+fu.download_file(remote_file_url, local_file_path)
+```
+
+
 
 + GET_EXE_BINARY_TYPE
-    + Returns the binary type of the given windows EXE file
-        ```
-        @staticmethod
-        get_exe_binary_type(file_path: str) -> str | None
-        ```
+  + Returns the binary type of the given windows EXE file
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+fu.get_exe_binary_type(file_path)
+```
+
+
 
 + IS_OLDER_THAN_X_DAYS
-    + Check if a file or directory is older than the specified number of days
-        ```
-        @staticmethod
-        is_older_than_x_days(path: str, days: int) -> bool
-        ```
+  + Check if a file or directory is older than the specified number of days
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+fu.is_older_than_x_days(path, days)
+```
+
+
 
 + COPY
-    + Copy a file to another location
-        ```
-        @staticmethod
-        copy(src_path, dst_path)
-        ```
+  + Copy a file to another location
+```python
+from ddcUtils import FileUtils
+fu = FileUtils()
+copy(src_path, dst_path)
+```
 
 
-# Object
+
+## Object
 + This class is used for creating a simple class object
  ```python
 from ddcUtils import Object
@@ -147,130 +185,155 @@ obj.test = "test"
 ```   
 
 
-# Misc Utils
+## Misc Utils
+
++ CLEAR_SCREEN
+  + Clears the terminal screen
 ```python
 from ddcUtils import MiscUtils
 mu = MiscUtils()
+mu.clear_screen()
 ```
 
-+ CLEAR_SCREEN
-    + Clears the terminal screen
-        ```
-        @staticmethod
-        clear_screen() -> None
-        ```
+
 
 + USER_CHOICE
-    + This function will ask the user to select an option
-        ```
-        @staticmethod
-        user_choice() -> input
-        ```
+  + This function will ask the user to select an option
+```python
+from ddcUtils import MiscUtils
+mu = MiscUtils()
+mu.user_choice()
+```
+
+
 
 + GET_ACTIVE_BRANCH_NAME
-    + Returns the name of the active branch if found, else returns None
-        ```
-        @staticmethod
-        get_active_branch_name(git_dir: str = ".git") -> str | None:
-        ```
+  + Returns the name of the active branch if found, else returns None
+```python
+from ddcUtils import MiscUtils
+mu = MiscUtils()
+mu.get_active_branch_name(git_dir=".git")
+```
+
+
 
 + GET_CURRENT_DATE_TIME
-    + Returns the current date and time on UTC timezone
-        ```
-        @staticmethod
-        get_current_date_time() -> datetime
-        ```
+  + Returns the current date and time on UTC timezone
+```python
+from ddcUtils import MiscUtils
+mu = MiscUtils()
+mu.get_current_date_time()
+```
+
+
 
 + CONVERT_DATETIME_TO_STR_LONG
-    + Converts a datetime object to a long string
-    + returns: "Mon Jan 01 2024 21:43:04"
-        ```
-        @staticmethod
-        convert_datetime_to_str_long(date: datetime) -> str
-        ```
+  + Converts a datetime object to a long string
+  + returns: "Mon Jan 01 2024 21:43:04"
+```python
+from ddcUtils import MiscUtils
+mu = MiscUtils()
+mu.convert_datetime_to_str_long(date)
+```
+
+
 
 + CONVERT_DATETIME_TO_STR_SHORT
-    + Converts a datetime object to a short string
-    + returns: "2024-01-01 00:00:00.000000"
-        ```
-        @staticmethod
-        convert_datetime_to_str_short(date: datetime) -> str
-        ```
+  + Converts a datetime object to a short string
+  + returns: "2024-01-01 00:00:00.000000"
+```python
+from ddcUtils import MiscUtils
+mu = MiscUtils()
+mu.convert_datetime_to_str_short(date)
+```
+
+
 
 + CONVERT_STR_TO_DATETIME_SHORT
-    + Converts a str to a datetime
-    + input: "2024-01-01 00:00:00.000000"
-        ```
-        @staticmethod
-        convert_str_to_datetime_short(datetime_str: str) -> datetime
-        ```
+  + Converts a str to a datetime
+  + input: "2024-01-01 00:00:00.000000"
+```python
+from ddcUtils import MiscUtils
+mu = MiscUtils()
+mu.convert_str_to_datetime_short(datetime_str)
+```
+
+
 
 + GET_CURRENT_DATE_TIME_STR_LONG
-    + Returns the current date and time as string
-    + returns: "Mon Jan 01 2024 21:47:00"
-        ```
-        get_current_date_time_str_long() -> str
-        ```
+  + Returns the current date and time as string
+  + returns: "Mon Jan 01 2024 21:47:00"
+```python
+from ddcUtils import MiscUtils
+mu = MiscUtils()
+mu.get_current_date_time_str_long()
+```
 
 
-# OS Utils
+## OS Utils
+
+
++ GET_OS_NAME
+  + Get OS name
 ```python
 from ddcUtils import OsUtils
 ou = OsUtils()
+get_os_name()
 ```
 
-+ GET_OS_NAME
-    + Get OS name
-        ```
-        @staticmethod
-        get_os_name() -> str
-        ```
+
 
 + IS_WINDOWS
-    + Check if OS is Windows
-        ```
-        @staticmethod
-        is_windows() -> bool
-        ```
+  + Check if OS is Windows
+```python
+from ddcUtils import OsUtils
+ou = OsUtils()
+is_windows()
+```
+
+
 
 + GET_CURRENT_PATH
-    + Returns the current working directory
-        ```
-        @staticmethod
-        get_current_path() -> Path
-        ```
+  + Returns the current working directory
+```python
+from ddcUtils import OsUtils
+ou = OsUtils()
+get_current_path()
+```
+
+
 
 + GET_PICTURES_PATH
-    + Returns the pictures directory inside the user's home directory
-        ```
-        get_pictures_path() -> Path
-        ```
+  + Returns the pictures directory inside the user's home directory
+```python
+from ddcUtils import OsUtils
+ou = OsUtils()
+get_pictures_path()
+```
+
+
 
 + GET_DOWNLOADS_PATH
-    + Returns the download directory inside the user's home directory
-        ```
-        get_downloads_path() -> Path
-        ```
+  + Returns the download directory inside the user's home directory
+```python
+from ddcUtils import OsUtils
+ou = OsUtils()
+get_downloads_path()
+```
 
 
-# Source Code
+## Source Code
 ### Build
 ```shell
-poetry build
+poetry build -f wheel
 ```
 
 
-### Run Tests
+### Run Tests and Get Coverage Report
 ```shell
-poetry run coverage run -m pytest -v
+poetry run coverage run --omit=./tests/* --source=./ddcUtils -m pytest -v && poetry run coverage report
 ```
 
 
-### Get Coverage Report
-```shell
-poetry run coverage report
-```
-
-
-# License
+## License
 Released under the [MIT License](LICENSE)

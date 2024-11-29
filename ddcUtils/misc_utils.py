@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
-from datetime import datetime, timezone
 import json
 import os
+from datetime import datetime, timezone
 from pathlib import Path
-from .os_utils import OsUtils
+from typing import Optional
 from . import constants
+from .os_utils import OsUtils
 
 
 class Object:
@@ -16,16 +17,20 @@ class Object:
         self._created = datetime.now().isoformat()
 
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return json.dumps(
+            self,
+            default=lambda o: o.__dict__,
+            sort_keys=True,
+            indent=4
+        )
 
     def to_dict(self):
         return json.loads(self.to_json())
 
 
 class MiscUtils:
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
+    def __init__(self):
+        pass
 
     @staticmethod
     def clear_screen() -> None:
@@ -50,7 +55,7 @@ class MiscUtils:
             pass
 
     @staticmethod
-    def get_active_branch_name(git_dir: str = ".git") -> str | None:
+    def get_active_branch_name(git_dir: Optional[str] = ".git") -> str | None:
         """
         Returns the name of the active branch if found, else returns None
         :return: str

@@ -30,14 +30,10 @@ jobs:
           python -m poetry update --with test
 
       - name: Run tests
-        run: |  
+        run: |
           python -m poetry run coverage run --omit=./tests/* --source=./ddcUtils -m pytest -v
 
-      - name: Generate Coverage Report
-        run: |  
-          python -m poetry run coverage report
-
-      - name: Build package with poetry
+      - name: Build package
         run: |  
           python -m poetry build
 
@@ -47,7 +43,7 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-  create_release:
+  release:
     runs-on: ubuntu-latest
     needs:
       - test_and_build
@@ -72,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     needs:
-      - create_release
+      - release
     permissions:
       id-token: write
     steps:
@@ -90,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     needs:
-      - create_release
+      - release
     permissions:
       id-token: write
     steps:

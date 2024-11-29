@@ -8,6 +8,7 @@ import subprocess
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Optional
 from zipfile import ZipFile
 import requests
 from .os_utils import OsUtils
@@ -19,7 +20,7 @@ class FileUtils:
         self.kwargs = kwargs
 
     @staticmethod
-    def show(path: str) -> bool:
+    def open(path: str) -> bool:
         """
         Open the given file or directory in explorer or notepad
             and returns True for success or False for failed access
@@ -47,8 +48,8 @@ class FileUtils:
     @staticmethod
     def list_files(
         directory: str,
-        starts_with: str | tuple[str, ...] | list[str] = None,
-        ends_with: str | tuple[str, ...] | list[str] = None
+        starts_with: Optional[str | tuple[str, ...] | list[str]] = None,
+        ends_with: Optional[str | tuple[str, ...] | list[str]] = None
     ) -> tuple:
 
         """
@@ -83,7 +84,7 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def gzip(input_file_path: str, output_dir: str = None) -> Path | None:
+    def gzip(input_file_path: str, output_dir: Optional[str] = None) -> Path | None:
         """
         Compress the given file and returns the Path for success or None if failed
 
@@ -111,7 +112,7 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def unzip(file_path: str, out_path: str = None) -> ZipFile | None:
+    def unzip(file_path: str, out_path: Optional[str]  = None) -> ZipFile | None:
         """
         Unzips the given file.zip and returns ZipFile for success or None if failed
 
@@ -130,7 +131,7 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def copy(src_path, dst_path):
+    def copy(src_path: str, dst_path: str) -> bool:
         """
         Copy a file to another location
 
@@ -142,9 +143,11 @@ class FileUtils:
         try:
 
             shutil.copy(src_path, dst_path)
+            return True
         except Exception as e:
-            return e
-        return True
+            sys.stderr.write(repr(e))
+            raise e
+
 
     @staticmethod
     def remove(path: str) -> bool:
@@ -179,13 +182,19 @@ class FileUtils:
         try:
             if os.path.exists(from_name):
                 os.rename(from_name, to_name)
+            return True
         except OSError as e:
             sys.stderr.write(repr(e))
             raise e
-        return True
 
     @staticmethod
-    def copy_dir(src, dst, symlinks=False, ignore=None) -> bool:
+    def copy_dir(
+        src: str,
+        dst: str,
+        symlinks: Optional[bool] = False,
+        ignore: Optional = None
+    ) -> bool:
+
         """
         Copy files from src to dst and returns True if the copy was successfull
 
@@ -204,7 +213,7 @@ class FileUtils:
         return True
 
     @staticmethod
-    def download_file(remote_file_url, local_file_path) -> bool:
+    def download_file(remote_file_url: str, local_file_path: str) -> bool:
         """
         Download file from remote url to local
             and returns True if the download was successfull
