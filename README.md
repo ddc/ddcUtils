@@ -1,5 +1,5 @@
 # File Utilities
-Few personal utilities functions written in python3 and hosted on PyPI such as open and read conf/ini files and some OS functions.
+Few File Utilities and some OS Functions
 
 [![License](https://img.shields.io/github/license/ddc/ddcUtils.svg)](https://github.com/ddc/ddcUtils/blob/master/LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org)
