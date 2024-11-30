@@ -1,19 +1,20 @@
 # File Utilities
 Few personal utilities functions written in python3 and hosted on PyPI such as open and read conf/ini files and some OS functions.
 
-[![License](https://img.shields.io/github/license/ddc/ddcUtils.svg?style=plastic)](https://github.com/ddc/ddcUtils/blob/master/LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg?style=plastic)](https://www.python.org)
-[![PyPi](https://img.shields.io/pypi/v/ddcUtils.svg?style=plastic)](https://pypi.python.org/pypi/ddcUtils)
-[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A//actions-badge.atrox.dev/ddc/ddcUtils/badge?ref=main&style=plastic&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
+[![License](https://img.shields.io/github/license/ddc/ddcUtils.svg)](https://github.com/ddc/ddcUtils/blob/master/LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org)
+[![PyPi](https://img.shields.io/pypi/v/ddcUtils.svg)](https://pypi.python.org/pypi/ddcUtils)
+[![PyPI Downloads](https://static.pepy.tech/badge/ddcUtils)](https://pepy.tech/projects/ddcUtils)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A//actions-badge.atrox.dev/ddc/ddcUtils/badge?ref=main&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
 
 
-## Install
+# Install
 ```shell
 pip install ddcUtils
 ```
 
 
-## Conf File Utils
+# Conf File Utils
 
 File example - file.ini:
 
@@ -64,7 +65,7 @@ cfu.set_value(file_path, section_name, config_name, new_value, commas=False)
 ```
 
 
-## File Utils
+# File Utils
 
 + OPEN
   + Open the given file or directory in explorer or notepad and returns True for success or False for failed access
@@ -176,7 +177,7 @@ copy(src_path, dst_path)
 
 
 
-## Object
+# Object
 + This class is used for creating a simple class object
  ```python
 from ddcUtils import Object
@@ -185,7 +186,7 @@ obj.test = "test"
 ```   
 
 
-## Misc Utils
+# Misc Utils
 
 + CLEAR_SCREEN
   + Clears the terminal screen
@@ -270,8 +271,7 @@ mu.get_current_date_time_str_long()
 ```
 
 
-## OS Utils
-
+# OS Utils
 
 + GET_OS_NAME
   + Get OS name
@@ -322,18 +322,25 @@ get_downloads_path()
 ```
 
 
-## Source Code
+# Source Code
 ### Build
 ```shell
 poetry build -f wheel
 ```
 
 
-### Run Tests and Get Coverage Report
+# Run Tests and Get Coverage Report
 ```shell
 poetry run coverage run --omit=./tests/* --source=./ddcUtils -m pytest -v && poetry run coverage report
 ```
 
 
-## License
+# License
 Released under the [MIT License](LICENSE)
+
+
+
+# Buy me a cup of coffee
++ [GitHub Sponsor](https://github.com/sponsors/ddc)
++ [ko-fi](https://ko-fi.com/ddcsta)
++ [Paypal](https://www.paypal.com/ncp/payment/6G9Z78QHUD4RJ)
