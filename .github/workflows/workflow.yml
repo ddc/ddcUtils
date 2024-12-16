@@ -33,6 +33,17 @@ jobs:
         run: |
           python -m poetry run coverage run --omit=./tests/* --source=./ddcUtils -m pytest -v
 
+      - name: Generate Coverage Report
+        run: |  
+          python -m poetry run coverage report
+          python -m poetry run coverage xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            slug: ddc/ddcUtils
+
       - name: Build package
         run: |  
           python -m poetry build

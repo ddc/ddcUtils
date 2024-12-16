@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "ddcUtils"
-version = "1.0.36"
+version = "1.0.37"
 description = "Few File Utilities and some OS Functions"
 license = "MIT"
 readme = "README.md"
@@ -35,13 +35,13 @@ classifiers = [
 optional = true
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4.0"
-requests = ">=2.32.3"
+python = "^3.10"
+requests = "^2.32.3"
 
 [tool.poetry.group.test.dependencies]
-coverage = ">=7.6.8"
-poethepoet = ">=0.31.1"
-pytest = ">=8.3.3"
+coverage = "^7.6.8"
+poethepoet = "^0.31.1"
+pytest = "^8.3.3"
 
 [tool.poe.tasks]
 _test = "poetry run coverage run --omit=./tests/* --source=./ddcUtils -m pytest -v"
