@@ -48,8 +48,8 @@ class FileUtils:
     @staticmethod
     def list_files(
         directory: str,
-        starts_with: Optional[str | tuple[str, ...] | list[str]] = None,
-        ends_with: Optional[str | tuple[str, ...] | list[str]] = None
+        starts_with: Optional[str] = None,
+        ends_with: Optional[str] = None
     ) -> tuple:
 
         """
@@ -67,14 +67,14 @@ class FileUtils:
             if os.path.isdir(directory):
                 if starts_with and ends_with:
                     result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                    f.lower().startswith(tuple(starts_with)) and
-                                    f.lower().endswith(tuple(ends_with))]
+                                    f.lower().startswith(starts_with) and
+                                    f.lower().endswith(ends_with.lower())]
                 elif starts_with:
                     result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                    f.lower().startswith(tuple(starts_with))]
+                                    f.lower().startswith(starts_with.lower())]
                 elif ends_with:
                     result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                    f.lower().endswith(tuple(ends_with))]
+                                    f.lower().endswith(ends_with.lower())]
                 else:
                     result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
                 result.sort(key=os.path.getctime)
