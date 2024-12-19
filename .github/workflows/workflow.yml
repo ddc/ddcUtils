@@ -31,7 +31,7 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m poetry run coverage run --omit=./tests/* --source=./ddcUtils -m pytest -v
+          python -m poetry run coverage run --omit=./tests/* -m pytest -v
 
       - name: Generate Coverage Report
         run: |  
