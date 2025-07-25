@@ -10,6 +10,45 @@ Few File Utilities and some OS Functions
 [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A//actions-badge.atrox.dev/ddc/ddcUtils/badge?ref=main&label=build&logo=none)](https://actions-badge.atrox.dev/ddc/ddcUtils/goto?ref=main)
 [![Python](https://img.shields.io/pypi/pyversions/ddcUtils.svg)](https://www.python.org)
 
+## Table of Contents
+- [Install](#install)
+- [Conf File Utils](#conf-file-utils)
+  - [GET_ALL_VALUES](#get_all_values)
+  - [GET_SECTION_VALUES](#get_section_values)
+  - [GET_VALUE](#get_value)
+  - [SET_VALUE](#set_value)
+- [File Utils](#file-utils)
+  - [OPEN](#open)
+  - [LIST_FILES](#list_files)
+  - [GZIP](#gzip)
+  - [UNZIP](#unzip)
+  - [REMOVE](#remove)
+  - [RENAME](#rename)
+  - [COPY_DIR](#copy_dir)
+  - [DOWNLOAD_FILE](#download_file)
+  - [GET_EXE_BINARY_TYPE](#get_exe_binary_type)
+  - [IS_OLDER_THAN_X_DAYS](#is_older_than_x_days)
+  - [COPY](#copy)
+- [Object](#object)
+- [Misc Utils](#misc-utils)
+  - [CLEAR_SCREEN](#clear_screen)
+  - [USER_CHOICE](#user_choice)
+  - [GET_ACTIVE_BRANCH_NAME](#get_active_branch_name)
+  - [GET_CURRENT_DATE_TIME](#get_current_date_time)
+  - [CONVERT_DATETIME_TO_STR_LONG](#convert_datetime_to_str_long)
+  - [CONVERT_DATETIME_TO_STR_SHORT](#convert_datetime_to_str_short)
+  - [CONVERT_STR_TO_DATETIME_SHORT](#convert_str_to_datetime_short)
+  - [GET_CURRENT_DATE_TIME_STR_LONG](#get_current_date_time_str_long)
+- [OS Utils](#os-utils)
+  - [GET_OS_NAME](#get_os_name)
+  - [IS_WINDOWS](#is_windows)
+  - [GET_CURRENT_PATH](#get_current_path)
+  - [GET_PICTURES_PATH](#get_pictures_path)
+  - [GET_DOWNLOADS_PATH](#get_downloads_path)
+- [Development](#development)
+- [License](#license)
+- [Support](#support)
+
 
 # Install
 ```shell
@@ -325,15 +364,14 @@ get_downloads_path()
 ```
 
 
-# Source Code
-### Build
+# Development
+
+### Building from Source
 ```shell
 poetry build -f wheel
 ```
 
-
-
-# Run Tests and Get Coverage Report using Poe
+### Running Tests
 ```shell
 poetry update --with test
 poe tests
@@ -346,7 +384,9 @@ Released under the [MIT License](LICENSE)
 
 
 
-# Buy me a cup of coffee
-+ [GitHub Sponsor](https://github.com/sponsors/ddc)
-+ [ko-fi](https://ko-fi.com/ddcsta)
-+ [Paypal](https://www.paypal.com/ncp/payment/6G9Z78QHUD4RJ)
+# Support
+If you find this project helpful, consider supporting development:
+
+- [GitHub Sponsor](https://github.com/sponsors/ddc)
+- [ko-fi](https://ko-fi.com/ddcsta)
+- [PayPal](https://www.paypal.com/ncp/payment/6G9Z78QHUD4RJ)

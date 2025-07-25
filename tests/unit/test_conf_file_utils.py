@@ -76,3 +76,54 @@ class TestConfFileUtils:
         assert result is True
         result = ConfFileUtils().get_value(self.test_file, section_name, config_name)
         assert result == new_value
+
+    def test_get_default_parser(self):
+        parser = ConfFileUtils._get_default_parser()
+        assert parser is not None
+        assert hasattr(parser, 'read')
+        assert hasattr(parser, 'get')
+
+    def test_get_parser_value_with_commas(self):
+        # Test with comma-separated values
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
+            f.write("[section]\nkey=1,2,3,4,5\n")
+            temp_file = f.name
+        
+        try:
+            parser = ConfFileUtils._get_default_parser()
+            parser.read(temp_file)
+            result = ConfFileUtils._get_parser_value(parser, "section", "key")
+            assert isinstance(result, list)
+            assert result == [1, 2, 3, 4, 5]
+        finally:
+            os.unlink(temp_file)
+
+    def test_get_parser_value_with_string(self):
+        # Test with string values
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
+            f.write("[section]\nkey=\"test_value\"\n")
+            temp_file = f.name
+        
+        try:
+            parser = ConfFileUtils._get_default_parser()
+            parser.read(temp_file)
+            result = ConfFileUtils._get_parser_value(parser, "section", "key")
+            assert result == "test_value"
+        finally:
+            os.unlink(temp_file)
+
+    def test_set_value_with_commas(self):
+        # Test setting value with commas
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
+            f.write("[section]\nkey=old_value\n")
+            temp_file = f.name
+        
+        try:
+            result = ConfFileUtils().set_value(temp_file, "section", "key", "1,2,3", commas=True)
+            assert result is True
+            
+            # Verify the value was set (it gets parsed as a list)
+            value = ConfFileUtils().get_value(temp_file, "section", "key")
+            assert value == [1, 2, 3]
+        finally:
+            os.unlink(temp_file)

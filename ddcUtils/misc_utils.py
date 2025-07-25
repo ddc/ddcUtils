@@ -29,8 +29,7 @@ class Object:
 
 
 class MiscUtils:
-    def __init__(self):
-        pass
+    pass
 
     @staticmethod
     def clear_screen() -> None:
@@ -64,10 +63,9 @@ class MiscUtils:
         head_dir = Path(os.path.join(git_dir, "HEAD"))
         try:
             with head_dir.open("r") as f:
-                content = f.read().splitlines()
-            for line in content:
-                if line[0:4] == "ref:":
-                    return line.partition("refs/heads/")[2]
+                content = f.read().strip()
+            if content.startswith("ref:"):
+                return content.split("refs/heads/", 1)[-1]
         except FileNotFoundError:
             return None
 

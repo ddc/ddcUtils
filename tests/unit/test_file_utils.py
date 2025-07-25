@@ -30,6 +30,51 @@ class TestFileUtils:
         assert exc_info.value.args[1] == "No such file or directory"
         assert exc_info.typename == "FileNotFoundError"
 
+    def test_file_utils_init(self):
+        # Test FileUtils constructor
+        fu = FileUtils("arg1", "arg2", key1="value1", key2="value2")
+        assert fu.args == ("arg1", "arg2")
+        assert fu.kwargs == {"key1": "value1", "key2": "value2"}
+
+    def test_open_with_exception(self):
+        # Test open method exception handling
+        import unittest.mock
+        
+        with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', side_effect=Exception("Test error")):
+            with pytest.raises(Exception) as exc_info:
+                FileUtils.open(self.test_file)
+            assert "Test error" in str(exc_info.value)
+
+    def test_open_darwin(self):
+        # Test open on Darwin (macOS)
+        import unittest.mock
+        
+        with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', return_value='Darwin'):
+            with unittest.mock.patch('subprocess.call', return_value=0) as mock_call:
+                result = FileUtils.open(self.test_file)
+                assert result is True
+                mock_call.assert_called_once_with(('open', self.test_file))
+
+    def test_open_linux(self):
+        # Test open on Linux
+        import unittest.mock
+        
+        with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', return_value='linux'):
+            with unittest.mock.patch('subprocess.call', return_value=0) as mock_call:
+                result = FileUtils.open(self.test_file)
+                assert result is True
+                mock_call.assert_called_once_with(('xdg-open', self.test_file))
+
+    def test_open_linux_failure(self):
+        # Test open on Linux with failure
+        import unittest.mock
+        
+        with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', return_value='linux'):
+            with unittest.mock.patch('subprocess.call', return_value=1) as mock_call:
+                result = FileUtils.open(self.test_file)
+                assert result is False
+                mock_call.assert_called_once_with(('xdg-open', self.test_file))
+
     def test_list_files(self):
         # list all files
         result = FileUtils.list_files(self.test_files_dir)
@@ -42,6 +87,25 @@ class TestFileUtils:
         # list all files by exntension
         result = FileUtils.list_files(directory=self.test_files_dir, ends_with=".zip")
         assert Path(self.test_zip_file) in result
+
+    def test_list_files_with_both_filters(self):
+        # Test with both starts_with and ends_with
+        result = FileUtils.list_files(self.test_files_dir, starts_with="test", ends_with=".ini")
+        assert Path(self.test_file) in result
+
+    def test_list_files_non_directory(self):
+        # Test with non-directory path
+        result = FileUtils.list_files("/nonexistent/directory")
+        assert result == ()
+
+    def test_list_files_exception(self):
+        # Test exception handling in list_files
+        import unittest.mock
+        
+        with unittest.mock.patch('os.path.isdir', side_effect=Exception("Test error")):
+            with pytest.raises(Exception) as exc_info:
+                FileUtils.list_files(self.test_files_dir)
+            assert "Test error" in str(exc_info.value)
 
     def test_gzip_file(self):
         # test gzip file and delete afterwards
@@ -94,11 +158,30 @@ class TestFileUtils:
         assert result is True
 
     def test_download_file(self):
-        # test downlaod file - delete afterward
-        remote_url = "https://raw.githubusercontent.com/ddc/ddcUtils/main/README.md"
-        dst_file = os.path.join(self.test_files_dir, "README.md")
-        result = FileUtils.download_file(remote_url, dst_file)
-        assert result is True
+        # test download file with mock - delete afterward
+        import unittest.mock
+        import requests
+        
+        dst_file = os.path.join(self.test_files_dir, "test_download.txt")
+        
+        # Mock the requests.get to avoid actual network call
+        mock_response = unittest.mock.MagicMock()
+        mock_response.status_code = 200
+        mock_response.iter_content.return_value = [b"test content chunk"]
+        mock_response.__enter__.return_value = mock_response
+        mock_response.__exit__.return_value = None
+        
+        with unittest.mock.patch('requests.get', return_value=mock_response):
+            result = FileUtils.download_file("http://example.com/test.txt", dst_file)
+            assert result is True
+            
+        # Verify file was created and has content
+        assert os.path.exists(dst_file)
+        with open(dst_file, 'rb') as f:
+            content = f.read()
+            assert content == b"test content chunk"
+            
+        # Clean up
         result = FileUtils.remove(dst_file)
         assert result is True
 
@@ -125,3 +208,84 @@ class TestFileUtils:
         assert exc_info.value.args[0] == 2
         assert exc_info.value.args[1] == "No such file or directory"
         assert exc_info.typename == "FileNotFoundError"
+
+    def test_gzip_file_no_output_dir(self):
+        # test gzip file without specifying output directory
+        result_file = FileUtils.gzip(self.test_file)
+        assert os.path.isfile(result_file)
+        assert result_file.parent == Path(self.test_file).parent
+        FileUtils.remove(str(result_file))
+
+    def test_gzip_file_exception(self):
+        # Test gzip with invalid input file
+        with pytest.raises(Exception):
+            FileUtils.gzip("/nonexistent/file.txt")
+
+    def test_unzip_file_no_output_path(self):
+        # test unzip file without specifying output path
+        result = FileUtils.unzip(self.test_zip_file)
+        assert result is not None
+        # Clean up extracted files
+        for file_info in result.filelist:
+            extracted_file = os.path.join(self.test_files_dir, file_info.filename)
+            if os.path.exists(extracted_file):
+                FileUtils.remove(extracted_file)
+
+    def test_unzip_file_exception(self):
+        # Test unzip with invalid file
+        with pytest.raises(Exception):
+            FileUtils.unzip("/nonexistent/file.zip")
+
+    def test_copy_exception(self):
+        # Test copy with exception
+        with pytest.raises(Exception):
+            FileUtils.copy("/nonexistent/file.txt", "/some/destination.txt")
+
+    def test_rename_nonexistent_file(self):
+        # Test rename with non-existent file (should still return True)
+        result = FileUtils.rename("/nonexistent/file.txt", "/some/newname.txt")
+        assert result is True
+
+    def test_rename_exception(self):
+        # Test rename with OS error
+        import unittest.mock
+        
+        with unittest.mock.patch('os.path.exists', return_value=True):
+            with unittest.mock.patch('os.rename', side_effect=OSError("Permission denied")):
+                with pytest.raises(OSError):
+                    FileUtils.rename(self.test_file, "/invalid/path/newname.txt")
+
+    def test_copy_dir_with_symlinks(self):
+        # test copy directory with symlinks enabled
+        dst_dir = os.path.join(self.test_files_dir, "test_dir_symlinks")
+        result = FileUtils.copy_dir(self.test_files_dir, dst_dir, symlinks=True)
+        assert result is True
+        result = FileUtils.remove(dst_dir)
+        assert result is True
+
+    def test_copy_dir_exception(self):
+        # Test copy_dir with IO error
+        with pytest.raises(Exception):
+            FileUtils.copy_dir("/nonexistent/source", "/invalid/destination")
+
+    def test_download_file_exception(self):
+        # Test download with request exception
+        import unittest.mock
+        import requests
+        
+        dst_file = os.path.join(self.test_files_dir, "test_download_fail.txt")
+        
+        with unittest.mock.patch('requests.get', side_effect=requests.RequestException("Network error")):
+            with pytest.raises(requests.RequestException):
+                FileUtils.download_file("http://example.com/test.txt", dst_file)
+
+    def test_open_windows(self):
+        # Test open on Windows with mock
+        import unittest.mock
+        
+        with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', return_value='Windows'):
+            with unittest.mock.patch.object(os, 'startfile', create=True) as mock_startfile:
+                result = FileUtils.open(self.test_file)
+                assert result is True
+                mock_startfile.assert_called_once_with(self.test_file)
+

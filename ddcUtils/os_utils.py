@@ -5,8 +5,7 @@ from pathlib import Path
 
 
 class OsUtils:
-    def __init__(self):
-        pass
+    pass
 
     @staticmethod
     def get_os_name() -> str:
@@ -24,10 +23,8 @@ class OsUtils:
         :return:
         """
 
-        if (sys.platform.startswith("win")
-            or (sys.platform == "cli" and os.name == "nt")):
-            return True
-        return False
+        return (sys.platform.startswith("win")
+                or (sys.platform == "cli" and os.name == "nt"))
 
 
     @staticmethod
@@ -37,8 +34,7 @@ class OsUtils:
         :return: Path
         """
 
-        path = os.path.abspath(os.getcwd())
-        return Path(os.path.normpath(path)) if path else None
+        return Path.cwd().resolve()
 
     def get_pictures_path(self) -> Path:
         """

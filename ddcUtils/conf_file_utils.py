@@ -39,21 +39,14 @@ class ConfFileUtils:
         """
 
         try:
-            value = parser.get(section, config_name).replace("\"", "")
-            lst_value = list(value.split(","))
-            if len(lst_value) > 1:
-                values = []
-                for each in lst_value:
-                    values.append(int(each.strip()) if each.strip().isnumeric() else each.strip())
-                value = values
-            elif value is not None and type(value) is str:
-                if len(value) == 0:
-                    value = None
-                elif value.isnumeric():
-                    value = int(value)
-                elif "," in value:
-                    value = sorted([x.strip() for x in value.split(",")])
-            else:
+            value = parser.get(section, config_name).replace('"', "")
+            if "," in value:
+                # Handle comma-separated values
+                value = [int(item.strip()) if item.strip().isnumeric() else item.strip() 
+                        for item in value.split(",")]
+            elif value.isnumeric():
+                value = int(value)
+            elif not value:
                 value = None
         except Exception as e:
             sys.stderr.write(repr(e))

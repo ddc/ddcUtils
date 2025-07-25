@@ -32,15 +32,15 @@ class FileUtils:
         if not os.path.exists(path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
         try:
-            return_code: int = 0
             match OsUtils.get_os_name():
                 case "Windows":
                     os.startfile(path)
+                    return True
                 case "Darwin":
                     return_code = subprocess.call(("open", path))
                 case _:
                     return_code = subprocess.call(("xdg-open", path))
-            return not bool(return_code)
+            return return_code == 0
         except Exception as e:
             sys.stderr.write(repr(e))
             raise e
@@ -63,21 +63,21 @@ class FileUtils:
         """
 
         try:
-            result: list = []
+            result = []
             if os.path.isdir(directory):
                 if starts_with and ends_with:
-                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                    f.lower().startswith(starts_with) and
-                                    f.lower().endswith(ends_with.lower())]
+                    result = [Path(directory, f) for f in os.listdir(directory) if
+                              f.lower().startswith(starts_with.lower()) and
+                              f.lower().endswith(ends_with.lower())]
                 elif starts_with:
-                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                    f.lower().startswith(starts_with.lower())]
+                    result = [Path(directory, f) for f in os.listdir(directory) if
+                              f.lower().startswith(starts_with.lower())]
                 elif ends_with:
-                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                    f.lower().endswith(ends_with.lower())]
+                    result = [Path(directory, f) for f in os.listdir(directory) if
+                              f.lower().endswith(ends_with.lower())]
                 else:
-                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
-                result.sort(key=os.path.getctime)
+                    result = [Path(directory, f) for f in os.listdir(directory)]
+                result.sort(key=lambda p: p.stat().st_ctime)
             return tuple(result)
         except Exception as e:
             sys.stderr.write(repr(e))
@@ -122,10 +122,10 @@ class FileUtils:
         """
 
         try:
-            out_path: str = out_path or os.path.dirname(file_path)
+            out_path = out_path or os.path.dirname(file_path)
             with ZipFile(file_path) as zipf:
                 zipf.extractall(out_path)
-            return zipf
+                return zipf
         except Exception as e:
             sys.stderr.write(repr(e))
             raise e
@@ -141,7 +141,6 @@ class FileUtils:
         """
 
         try:
-
             shutil.copy(src_path, dst_path)
             return True
         except Exception as e:
@@ -224,11 +223,12 @@ class FileUtils:
         """
 
         try:
-            req = requests.get(remote_file_url)
-            if req.status_code == 200:
+            with requests.get(remote_file_url, stream=True) as req:
+                req.raise_for_status()
                 with open(local_file_path, "wb") as outfile:
-                    outfile.write(req.content)
-        except requests.HTTPError as e:
+                    for chunk in req.iter_content(chunk_size=8192):
+                        outfile.write(chunk)
+        except requests.RequestException as e:
             sys.stderr.write(repr(e))
             raise e
         return True
@@ -285,13 +285,8 @@ class FileUtils:
         if not os.path.exists(path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
-        if int(days) == 1:
-            cutoff_time = datetime.today()
-        else:
-            cutoff_time = datetime.today() - timedelta(days=int(days))
+        days = int(days)
+        cutoff_time = datetime.now() if days == 1 else datetime.now() - timedelta(days=days)
 
-        stats = os.stat(path)
-        days_epoch = cutoff_time.timestamp()
-        if stats.st_ctime < days_epoch:
-            return True
-        return False
+        file_ctime = os.stat(path).st_ctime
+        return file_ctime < cutoff_time.timestamp()
