@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import configparser
 import errno
 import os
@@ -24,12 +23,7 @@ class ConfFileUtils:
         return parser
 
     @staticmethod
-    def _get_parser_value(
-        parser: configparser.ConfigParser,
-        section: str,
-        config_name: str
-    ) -> str | int | None:
-
+    def _get_parser_value(parser: configparser.ConfigParser, section: str, config_name: str) -> str | int | None:
         """
         Returns the value of the specified section in the given parser
         :param parser:
@@ -39,21 +33,13 @@ class ConfFileUtils:
         """
 
         try:
-            value = parser.get(section, config_name).replace("\"", "")
-            lst_value = list(value.split(","))
-            if len(lst_value) > 1:
-                values = []
-                for each in lst_value:
-                    values.append(int(each.strip()) if each.strip().isnumeric() else each.strip())
-                value = values
-            elif value is not None and type(value) is str:
-                if len(value) == 0:
-                    value = None
-                elif value.isnumeric():
-                    value = int(value)
-                elif "," in value:
-                    value = sorted([x.strip() for x in value.split(",")])
-            else:
+            value = parser.get(section, config_name).replace('"', "")
+            if "," in value:
+                # Handle comma-separated values
+                value = [int(item.strip()) if item.strip().isnumeric() else item.strip() for item in value.split(",")]
+            elif value.isnumeric():
+                value = int(value)
+            elif not value:
                 value = None
         except Exception as e:
             sys.stderr.write(repr(e))
@@ -66,9 +52,8 @@ class ConfFileUtils:
         section: str,
         final_data: dict,
         mixed_values: Optional[bool] = True,
-        include_section_name: Optional[bool] = False
+        include_section_name: Optional[bool] = False,
     ) -> dict:
-
         """
         Returns the section data from the given parser
         :param parser:
@@ -150,14 +135,8 @@ class ConfFileUtils:
         return value
 
     def set_value(
-        self,
-        file_path: str,
-        section_name: str,
-        config_name: str,
-        new_value,
-        commas: Optional[bool] = False
+        self, file_path: str, section_name: str, config_name: str, new_value, commas: Optional[bool] = False
     ) -> bool:
-
         """
         Set value from an .ini config file structure and returns True or False
         :param file_path:

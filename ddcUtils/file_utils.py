@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import errno
 import gzip
 import os
@@ -11,7 +10,7 @@ from pathlib import Path
 from typing import Optional
 from zipfile import ZipFile
 import requests
-from .os_utils import OsUtils
+from ddcUtils.os_utils import OsUtils
 
 
 class FileUtils:
@@ -32,26 +31,21 @@ class FileUtils:
         if not os.path.exists(path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
         try:
-            return_code: int = 0
             match OsUtils.get_os_name():
                 case "Windows":
                     os.startfile(path)
+                    return True
                 case "Darwin":
                     return_code = subprocess.call(("open", path))
                 case _:
                     return_code = subprocess.call(("xdg-open", path))
-            return not bool(return_code)
+            return return_code == 0
         except Exception as e:
             sys.stderr.write(repr(e))
             raise e
 
     @staticmethod
-    def list_files(
-        directory: str,
-        starts_with: Optional[str] = None,
-        ends_with: Optional[str] = None
-    ) -> tuple:
-
+    def list_files(directory: str, starts_with: Optional[str] = None, ends_with: Optional[str] = None) -> tuple:
         """
         List all files in the given directory and returns them in a list
             sorted by creation time in ascending order
@@ -63,21 +57,25 @@ class FileUtils:
         """
 
         try:
-            result: list = []
+            result = []
             if os.path.isdir(directory):
                 if starts_with and ends_with:
-                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                    f.lower().startswith(starts_with) and
-                                    f.lower().endswith(ends_with.lower())]
+                    result = [
+                        Path(directory, f)
+                        for f in os.listdir(directory)
+                        if f.lower().startswith(starts_with.lower()) and f.lower().endswith(ends_with.lower())
+                    ]
                 elif starts_with:
-                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                    f.lower().startswith(starts_with.lower())]
+                    result = [
+                        Path(directory, f) for f in os.listdir(directory) if f.lower().startswith(starts_with.lower())
+                    ]
                 elif ends_with:
-                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory) if
-                                    f.lower().endswith(ends_with.lower())]
+                    result = [
+                        Path(directory, f) for f in os.listdir(directory) if f.lower().endswith(ends_with.lower())
+                    ]
                 else:
-                    result: list = [Path(os.path.join(directory, f)) for f in os.listdir(directory)]
-                result.sort(key=os.path.getctime)
+                    result = [Path(directory, f) for f in os.listdir(directory)]
+                result.sort(key=lambda p: p.stat().st_ctime)
             return tuple(result)
         except Exception as e:
             sys.stderr.write(repr(e))
@@ -112,7 +110,7 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def unzip(file_path: str, out_path: Optional[str]  = None) -> ZipFile | None:
+    def unzip(file_path: str, out_path: Optional[str] = None) -> ZipFile | None:
         """
         Unzips the given file.zip and returns ZipFile for success or None if failed
 
@@ -122,10 +120,10 @@ class FileUtils:
         """
 
         try:
-            out_path: str = out_path or os.path.dirname(file_path)
+            out_path = out_path or os.path.dirname(file_path)
             with ZipFile(file_path) as zipf:
                 zipf.extractall(out_path)
-            return zipf
+                return zipf
         except Exception as e:
             sys.stderr.write(repr(e))
             raise e
@@ -141,13 +139,11 @@ class FileUtils:
         """
 
         try:
-
             shutil.copy(src_path, dst_path)
             return True
         except Exception as e:
             sys.stderr.write(repr(e))
             raise e
-
 
     @staticmethod
     def remove(path: str) -> bool:
@@ -188,13 +184,7 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def copy_dir(
-        src: str,
-        dst: str,
-        symlinks: Optional[bool] = False,
-        ignore: Optional = None
-    ) -> bool:
-
+    def copy_dir(src: str, dst: str, symlinks: Optional[bool] = False, ignore: Optional = None) -> bool:
         """
         Copy files from src to dst and returns True if the copy was successfull
 
@@ -224,11 +214,12 @@ class FileUtils:
         """
 
         try:
-            req = requests.get(remote_file_url)
-            if req.status_code == 200:
+            with requests.get(remote_file_url, stream=True) as req:
+                req.raise_for_status()
                 with open(local_file_path, "wb") as outfile:
-                    outfile.write(req.content)
-        except requests.HTTPError as e:
+                    for chunk in req.iter_content(chunk_size=8192):
+                        outfile.write(chunk)
+        except requests.RequestException as e:
             sys.stderr.write(repr(e))
             raise e
         return True
@@ -285,13 +276,14 @@ class FileUtils:
         if not os.path.exists(path):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
-        if int(days) == 1:
-            cutoff_time = datetime.today()
-        else:
-            cutoff_time = datetime.today() - timedelta(days=int(days))
+        days = int(days)
+        try:
+            cutoff_time = datetime.now() - timedelta(days=days)
+            cutoff_timestamp = cutoff_time.timestamp()
+        except (OSError, ValueError, OverflowError):
+            # Handle cases where the resulting datetime is out of range
+            # For very large day values, assume the file is not older
+            return False
 
-        stats = os.stat(path)
-        days_epoch = cutoff_time.timestamp()
-        if stats.st_ctime < days_epoch:
-            return True
-        return False
+        file_mtime = os.stat(path).st_mtime
+        return file_mtime < cutoff_timestamp
