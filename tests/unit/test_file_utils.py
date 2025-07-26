@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import os
 import tempfile
 from pathlib import Path
@@ -39,7 +38,7 @@ class TestFileUtils:
     def test_open_with_exception(self):
         # Test open method exception handling
         import unittest.mock
-        
+
         with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', side_effect=Exception("Test error")):
             with pytest.raises(Exception) as exc_info:
                 FileUtils.open(self.test_file)
@@ -48,7 +47,7 @@ class TestFileUtils:
     def test_open_darwin(self):
         # Test open on Darwin (macOS)
         import unittest.mock
-        
+
         with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', return_value='Darwin'):
             with unittest.mock.patch('subprocess.call', return_value=0) as mock_call:
                 result = FileUtils.open(self.test_file)
@@ -58,7 +57,7 @@ class TestFileUtils:
     def test_open_linux(self):
         # Test open on Linux
         import unittest.mock
-        
+
         with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', return_value='linux'):
             with unittest.mock.patch('subprocess.call', return_value=0) as mock_call:
                 result = FileUtils.open(self.test_file)
@@ -68,7 +67,7 @@ class TestFileUtils:
     def test_open_linux_failure(self):
         # Test open on Linux with failure
         import unittest.mock
-        
+
         with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', return_value='linux'):
             with unittest.mock.patch('subprocess.call', return_value=1) as mock_call:
                 result = FileUtils.open(self.test_file)
@@ -101,31 +100,30 @@ class TestFileUtils:
     def test_list_files_exception(self):
         # Test exception handling in list_files
         import unittest.mock
-        
+
         with unittest.mock.patch('os.path.isdir', side_effect=Exception("Test error")):
             with pytest.raises(Exception) as exc_info:
                 FileUtils.list_files(self.test_files_dir)
             assert "Test error" in str(exc_info.value)
 
     def test_gzip_file(self):
-        # test gzip file and delete afterwards
+        # test gzip file and delete afterward
         result_file = FileUtils.gzip(self.test_file, self.temp_test_dir)
         assert os.path.isfile(result_file)
         FileUtils.remove(str(result_file))
 
+    @pytest.mark.skipif(os.name == 'nt', reason="Windows-specific test moved to test_file_utils_windows.py")
     def test_unzip_file(self):
-        # test unzip file and delete afterwards
+        # test unzip file and delete afterwards (Unix/Linux)
         result = FileUtils.unzip(self.test_zip_file, self.temp_test_dir)
         assert result is not None
         test_file = os.path.join(self.temp_test_dir, result.filelist[0].filename)
         files_list = FileUtils.list_files(self.temp_test_dir)
         assert Path(test_file) in files_list
-        # Ensure file handle is closed before removal on Windows
-        if os.path.exists(test_file):
-            FileUtils.remove(test_file)
+        FileUtils.remove(test_file)
 
     def test_copy_and_remove(self):
-        # test copy - delete afterwards
+        # test copy - delete afterward
         dst_file = os.path.join(self.test_files_dir, "test_copy.ini")
         result = FileUtils.copy(self.test_file, dst_file)
         assert result is True
@@ -141,7 +139,7 @@ class TestFileUtils:
         assert exc_info.typename == "FileNotFoundError"
 
     def test_rename(self):
-        # test copy and rename file - delete afterwards
+        # test copy and rename file - delete afterward
         dst_file = os.path.join(self.test_files_dir, "test_copy.ini")
         result = FileUtils.copy(self.test_file, dst_file)
         assert result is True
@@ -162,27 +160,26 @@ class TestFileUtils:
     def test_download_file(self):
         # test download file with mock - delete afterward
         import unittest.mock
-        import requests
-        
+
         dst_file = os.path.join(self.test_files_dir, "test_download.txt")
-        
+
         # Mock the requests.get to avoid actual network call
         mock_response = unittest.mock.MagicMock()
         mock_response.status_code = 200
         mock_response.iter_content.return_value = [b"test content chunk"]
         mock_response.__enter__.return_value = mock_response
         mock_response.__exit__.return_value = None
-        
+
         with unittest.mock.patch('requests.get', return_value=mock_response):
             result = FileUtils.download_file("https://example.com/test.txt", dst_file)
             assert result is True
-            
+
         # Verify file was created and has content
         assert os.path.exists(dst_file)
         with open(dst_file, 'rb') as f:
             content = f.read()
             assert content == b"test content chunk"
-            
+
         # Clean up
         result = FileUtils.remove(dst_file)
         assert result is True
@@ -192,49 +189,15 @@ class TestFileUtils:
         result = FileUtils.get_exe_binary_type(self.test_file)
         assert result == "Not an EXE file"
 
-    @pytest.mark.skipif(os.name != 'nt', reason="Windows-specific test")
-    def test_is_older_than_x_days_windows(self):
-        # Create a temporary file and set its modification time on Windows
-        import time
+    @pytest.mark.skipif(os.name == 'nt', reason="Windows-specific test moved to test_file_utils_windows.py")
+    def test_is_older_than_x_days(self):
+        # Create a temporary file and set its modification time (Unix/Linux)
         from datetime import datetime, timedelta
-        
-        temp_file = os.path.join(self.temp_test_dir, "test_old_file_win.txt")
-        with open(temp_file, 'w') as f:
-            f.write("test content")
-        
-        # Set file time to 2 days ago
-        two_days_ago = datetime.now() - timedelta(days=2)
-        old_timestamp = two_days_ago.timestamp()
-        os.utime(temp_file, (old_timestamp, old_timestamp))
 
-        # Test file is older than 1 day
-        result = FileUtils.is_older_than_x_days(temp_file, 1)
-        assert result is True
-
-        # Test file is not older than 99999 days
-        result = FileUtils.is_older_than_x_days(temp_file, 99999)
-        assert result is False
-
-        # Clean up
-        FileUtils.remove(temp_file)
-
-        # nonexistent file
-        with pytest.raises(FileNotFoundError) as exc_info:
-            FileUtils.is_older_than_x_days(self.unknown_file, 1)
-        assert exc_info.value.args[0] == 2
-        assert exc_info.value.args[1] == "No such file or directory"
-        assert exc_info.typename == "FileNotFoundError"
-
-    @pytest.mark.skipif(os.name == 'nt', reason="Unix/Linux-specific test")
-    def test_is_older_than_x_days_unix(self):
-        # Create a temporary file and set its modification time on Unix/Linux
-        import time
-        from datetime import datetime, timedelta
-        
         temp_file = os.path.join(self.temp_test_dir, "test_old_file_unix.txt")
         with open(temp_file, 'w') as f:
             f.write("test content")
-        
+
         # Set file time to 2 days ago
         two_days_ago = datetime.now() - timedelta(days=2)
         old_timestamp = two_days_ago.timestamp()
@@ -298,7 +261,7 @@ class TestFileUtils:
     def test_rename_exception(self):
         # Test rename with OS error
         import unittest.mock
-        
+
         with unittest.mock.patch('os.path.exists', return_value=True):
             with unittest.mock.patch('os.rename', side_effect=OSError("Permission denied")):
                 with pytest.raises(OSError):
@@ -321,20 +284,9 @@ class TestFileUtils:
         # Test download with request exception
         import unittest.mock
         import requests
-        
+
         dst_file = os.path.join(self.test_files_dir, "test_download_fail.txt")
-        
+
         with unittest.mock.patch('requests.get', side_effect=requests.RequestException("Network error")):
             with pytest.raises(requests.RequestException):
                 FileUtils.download_file("https://example.com/test.txt", dst_file)
-
-    def test_open_windows(self):
-        # Test open on Windows with mock
-        import unittest.mock
-        
-        with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', return_value='Windows'):
-            with unittest.mock.patch.object(os, 'startfile', create=True) as mock_startfile:
-                result = FileUtils.open(self.test_file)
-                assert result is True
-                mock_startfile.assert_called_once_with(self.test_file)
-

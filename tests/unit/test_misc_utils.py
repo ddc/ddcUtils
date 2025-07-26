@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 from datetime import datetime, timezone
 from ddcUtils import constants, MiscUtils, Object
 
@@ -62,6 +61,7 @@ class TestMiscUtils:
     def test_user_choice(self):
         # Cannot easily test interactive input, but test structure
         import builtins
+
         original_input = builtins.input
         builtins.input = lambda _: "test input"
         try:

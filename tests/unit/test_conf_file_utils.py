@@ -1,8 +1,7 @@
-# -*- encoding: utf-8 -*-
 import os
-import pytest
-from ddcUtils import constants, ConfFileUtils
 import tempfile
+import pytest
+from ddcUtils import ConfFileUtils, constants
 
 
 class TestConfFileUtils:
@@ -88,7 +87,7 @@ class TestConfFileUtils:
         with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
             f.write("[section]\nkey=1,2,3,4,5\n")
             temp_file = f.name
-        
+
         try:
             parser = ConfFileUtils._get_default_parser()
             parser.read(temp_file)
@@ -103,7 +102,7 @@ class TestConfFileUtils:
         with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
             f.write("[section]\nkey=\"test_value\"\n")
             temp_file = f.name
-        
+
         try:
             parser = ConfFileUtils._get_default_parser()
             parser.read(temp_file)
@@ -117,11 +116,11 @@ class TestConfFileUtils:
         with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
             f.write("[section]\nkey=old_value\n")
             temp_file = f.name
-        
+
         try:
             result = ConfFileUtils().set_value(temp_file, "section", "key", "1,2,3", commas=True)
             assert result is True
-            
+
             # Verify the value was set (it gets parsed as a list)
             value = ConfFileUtils().get_value(temp_file, "section", "key")
             assert value == [1, 2, 3]

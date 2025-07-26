@@ -1,11 +1,10 @@
-# -*- encoding: utf-8 -*-
 import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
-from . import constants
-from .os_utils import OsUtils
+from ddcUtils import constants
+from ddcUtils.os_utils import OsUtils
 
 
 class Object:
@@ -17,12 +16,7 @@ class Object:
         self._created = datetime.now().isoformat()
 
     def to_json(self):
-        return json.dumps(
-            self,
-            default=lambda o: o.__dict__,
-            sort_keys=True,
-            indent=4
-        )
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
     def to_dict(self):
         return json.loads(self.to_json())
@@ -96,9 +90,7 @@ class MiscUtils:
         :return: str
         """
 
-        return date.strftime(
-            f"{constants.DATE_FORMATTER} {constants.TIME_FORMATTER}"
-        )
+        return date.strftime(f"{constants.DATE_FORMATTER} {constants.TIME_FORMATTER}")
 
     @staticmethod
     def convert_str_to_datetime_short(datetime_str: str) -> datetime:
@@ -108,10 +100,7 @@ class MiscUtils:
         :return: datetime
         """
 
-        return datetime.strptime(
-            datetime_str,
-            f"{constants.DATE_FORMATTER} {constants.TIME_FORMATTER}"
-        )
+        return datetime.strptime(datetime_str, f"{constants.DATE_FORMATTER} {constants.TIME_FORMATTER}")
 
     def get_current_date_time_str_long(self) -> str:
         """

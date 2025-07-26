@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import os
 import sys
 from pathlib import Path
@@ -23,9 +22,7 @@ class OsUtils:
         :return:
         """
 
-        return (sys.platform.startswith("win")
-                or (sys.platform == "cli" and os.name == "nt"))
-
+        return sys.platform.startswith("win") or (sys.platform == "cli" and os.name == "nt")
 
     @staticmethod
     def get_current_path() -> Path | None:
@@ -44,6 +41,7 @@ class OsUtils:
 
         if self.is_windows():
             import winreg
+
             sub_key = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
             pictures_guid = "My Pictures"
             with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
@@ -61,6 +59,7 @@ class OsUtils:
 
         if self.is_windows():
             import winreg
+
             sub_key = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
             downloads_guid = "{374DE290-123F-4565-9164-39C4925E467B}"
             with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:

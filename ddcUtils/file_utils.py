@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import errno
 import gzip
 import os
@@ -11,7 +10,7 @@ from pathlib import Path
 from typing import Optional
 from zipfile import ZipFile
 import requests
-from .os_utils import OsUtils
+from ddcUtils.os_utils import OsUtils
 
 
 class FileUtils:
@@ -46,12 +45,7 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def list_files(
-        directory: str,
-        starts_with: Optional[str] = None,
-        ends_with: Optional[str] = None
-    ) -> tuple:
-
+    def list_files(directory: str, starts_with: Optional[str] = None, ends_with: Optional[str] = None) -> tuple:
         """
         List all files in the given directory and returns them in a list
             sorted by creation time in ascending order
@@ -66,15 +60,19 @@ class FileUtils:
             result = []
             if os.path.isdir(directory):
                 if starts_with and ends_with:
-                    result = [Path(directory, f) for f in os.listdir(directory) if
-                              f.lower().startswith(starts_with.lower()) and
-                              f.lower().endswith(ends_with.lower())]
+                    result = [
+                        Path(directory, f)
+                        for f in os.listdir(directory)
+                        if f.lower().startswith(starts_with.lower()) and f.lower().endswith(ends_with.lower())
+                    ]
                 elif starts_with:
-                    result = [Path(directory, f) for f in os.listdir(directory) if
-                              f.lower().startswith(starts_with.lower())]
+                    result = [
+                        Path(directory, f) for f in os.listdir(directory) if f.lower().startswith(starts_with.lower())
+                    ]
                 elif ends_with:
-                    result = [Path(directory, f) for f in os.listdir(directory) if
-                              f.lower().endswith(ends_with.lower())]
+                    result = [
+                        Path(directory, f) for f in os.listdir(directory) if f.lower().endswith(ends_with.lower())
+                    ]
                 else:
                     result = [Path(directory, f) for f in os.listdir(directory)]
                 result.sort(key=lambda p: p.stat().st_ctime)
@@ -112,7 +110,7 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def unzip(file_path: str, out_path: Optional[str]  = None) -> ZipFile | None:
+    def unzip(file_path: str, out_path: Optional[str] = None) -> ZipFile | None:
         """
         Unzips the given file.zip and returns ZipFile for success or None if failed
 
@@ -146,7 +144,6 @@ class FileUtils:
         except Exception as e:
             sys.stderr.write(repr(e))
             raise e
-
 
     @staticmethod
     def remove(path: str) -> bool:
@@ -187,13 +184,7 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def copy_dir(
-        src: str,
-        dst: str,
-        symlinks: Optional[bool] = False,
-        ignore: Optional = None
-    ) -> bool:
-
+    def copy_dir(src: str, dst: str, symlinks: Optional[bool] = False, ignore: Optional = None) -> bool:
         """
         Copy files from src to dst and returns True if the copy was successfull
 
