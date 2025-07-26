@@ -120,7 +120,9 @@ class TestFileUtils:
         test_file = os.path.join(self.temp_test_dir, result.filelist[0].filename)
         files_list = FileUtils.list_files(self.temp_test_dir)
         assert Path(test_file) in files_list
-        FileUtils.remove(test_file)
+        # Ensure file handle is closed before removal on Windows
+        if os.path.exists(test_file):
+            FileUtils.remove(test_file)
 
     def test_copy_and_remove(self):
         # test copy - delete afterwards
@@ -172,7 +174,7 @@ class TestFileUtils:
         mock_response.__exit__.return_value = None
         
         with unittest.mock.patch('requests.get', return_value=mock_response):
-            result = FileUtils.download_file("http://example.com/test.txt", dst_file)
+            result = FileUtils.download_file("https://example.com/test.txt", dst_file)
             assert result is True
             
         # Verify file was created and has content
@@ -190,21 +192,68 @@ class TestFileUtils:
         result = FileUtils.get_exe_binary_type(self.test_file)
         assert result == "Not an EXE file"
 
-    def test_is_older_than_x_days(self):
-        # test if file is older than the specified number of days
-        test_file = os.path.join(constants.BASE_DIR, ".gitignore")
+    @pytest.mark.skipif(os.name != 'nt', reason="Windows-specific test")
+    def test_is_older_than_x_days_windows(self):
+        # Create a temporary file and set its modification time on Windows
+        import time
+        from datetime import datetime, timedelta
+        
+        temp_file = os.path.join(self.temp_test_dir, "test_old_file_win.txt")
+        with open(temp_file, 'w') as f:
+            f.write("test content")
+        
+        # Set file time to 2 days ago
+        two_days_ago = datetime.now() - timedelta(days=2)
+        old_timestamp = two_days_ago.timestamp()
+        os.utime(temp_file, (old_timestamp, old_timestamp))
 
-        days = 1
-        result = FileUtils.is_older_than_x_days(test_file, days)
+        # Test file is older than 1 day
+        result = FileUtils.is_older_than_x_days(temp_file, 1)
         assert result is True
 
-        days = 99999
-        result = FileUtils.is_older_than_x_days(test_file, days)
+        # Test file is not older than 99999 days
+        result = FileUtils.is_older_than_x_days(temp_file, 99999)
         assert result is False
+
+        # Clean up
+        FileUtils.remove(temp_file)
 
         # nonexistent file
         with pytest.raises(FileNotFoundError) as exc_info:
-            FileUtils.is_older_than_x_days(self.unknown_file, days)
+            FileUtils.is_older_than_x_days(self.unknown_file, 1)
+        assert exc_info.value.args[0] == 2
+        assert exc_info.value.args[1] == "No such file or directory"
+        assert exc_info.typename == "FileNotFoundError"
+
+    @pytest.mark.skipif(os.name == 'nt', reason="Unix/Linux-specific test")
+    def test_is_older_than_x_days_unix(self):
+        # Create a temporary file and set its modification time on Unix/Linux
+        import time
+        from datetime import datetime, timedelta
+        
+        temp_file = os.path.join(self.temp_test_dir, "test_old_file_unix.txt")
+        with open(temp_file, 'w') as f:
+            f.write("test content")
+        
+        # Set file time to 2 days ago
+        two_days_ago = datetime.now() - timedelta(days=2)
+        old_timestamp = two_days_ago.timestamp()
+        os.utime(temp_file, (old_timestamp, old_timestamp))
+
+        # Test file is older than 1 day
+        result = FileUtils.is_older_than_x_days(temp_file, 1)
+        assert result is True
+
+        # Test file is not older than 99999 days
+        result = FileUtils.is_older_than_x_days(temp_file, 99999)
+        assert result is False
+
+        # Clean up
+        FileUtils.remove(temp_file)
+
+        # nonexistent file
+        with pytest.raises(FileNotFoundError) as exc_info:
+            FileUtils.is_older_than_x_days(self.unknown_file, 1)
         assert exc_info.value.args[0] == 2
         assert exc_info.value.args[1] == "No such file or directory"
         assert exc_info.typename == "FileNotFoundError"
@@ -277,7 +326,7 @@ class TestFileUtils:
         
         with unittest.mock.patch('requests.get', side_effect=requests.RequestException("Network error")):
             with pytest.raises(requests.RequestException):
-                FileUtils.download_file("http://example.com/test.txt", dst_file)
+                FileUtils.download_file("https://example.com/test.txt", dst_file)
 
     def test_open_windows(self):
         # Test open on Windows with mock

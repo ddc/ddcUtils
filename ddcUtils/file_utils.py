@@ -286,7 +286,7 @@ class FileUtils:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
         days = int(days)
-        cutoff_time = datetime.now() if days == 1 else datetime.now() - timedelta(days=days)
+        cutoff_time = datetime.now() - timedelta(days=days)
 
-        file_ctime = os.stat(path).st_ctime
-        return file_ctime < cutoff_time.timestamp()
+        file_mtime = os.stat(path).st_mtime
+        return file_mtime < cutoff_time.timestamp()

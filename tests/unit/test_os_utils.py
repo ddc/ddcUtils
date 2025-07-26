@@ -58,12 +58,14 @@ class TestOsUtils:
         # Test Unix/Linux path
         import unittest.mock
         import os
+        from pathlib import Path
         
         with unittest.mock.patch('ddcUtils.os_utils.OsUtils.is_windows', return_value=False):
             with unittest.mock.patch.dict(os.environ, {'HOME': '/home/testuser'}):
                 ou = OsUtils()
                 result = ou.get_pictures_path()
-                assert str(result) == "/home/testuser/Pictures"
+                expected_path = Path("/home/testuser/Pictures")
+                assert str(result) == str(expected_path)
 
     def test_get_downloads_path_windows(self):
         # Test Windows downloads path with mock
@@ -85,12 +87,14 @@ class TestOsUtils:
         # Test Unix/Linux downloads path
         import unittest.mock
         import os
+        from pathlib import Path
         
         with unittest.mock.patch('ddcUtils.os_utils.OsUtils.is_windows', return_value=False):
             with unittest.mock.patch.dict(os.environ, {'HOME': '/home/testuser'}):
                 ou = OsUtils()
                 result = ou.get_downloads_path()
-                assert str(result) == "/home/testuser/Downloads"
+                expected_path = Path("/home/testuser/Downloads")
+                assert str(result) == str(expected_path)
 
     def test_is_windows_with_cli_platform(self):
         # Test Windows detection with CLI platform
