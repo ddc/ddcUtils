@@ -4,7 +4,6 @@ from pathlib import Path
 
 
 class OsUtils:
-    pass
 
     @staticmethod
     def get_os_name() -> str:

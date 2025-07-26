@@ -23,7 +23,6 @@ class Object:
 
 
 class MiscUtils:
-    pass
 
     @staticmethod
     def clear_screen() -> None:

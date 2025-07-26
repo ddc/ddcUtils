@@ -277,7 +277,13 @@ class FileUtils:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
         days = int(days)
-        cutoff_time = datetime.now() - timedelta(days=days)
+        try:
+            cutoff_time = datetime.now() - timedelta(days=days)
+            cutoff_timestamp = cutoff_time.timestamp()
+        except (OSError, ValueError, OverflowError):
+            # Handle cases where the resulting datetime is out of range
+            # For very large day values, assume the file is not older
+            return False
 
         file_mtime = os.stat(path).st_mtime
-        return file_mtime < cutoff_time.timestamp()
+        return file_mtime < cutoff_timestamp

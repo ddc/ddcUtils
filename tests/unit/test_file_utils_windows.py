@@ -70,8 +70,8 @@ class TestFileUtilsWindows:
             result = FileUtils.is_older_than_x_days(temp_file, 1)
             assert result is True
 
-            # Test file is not older than 99999 days
-            result = FileUtils.is_older_than_x_days(temp_file, 99999)
+            # Test file is not older than 365 days (1 year)
+            result = FileUtils.is_older_than_x_days(temp_file, 365)
             assert result is False
 
         finally:

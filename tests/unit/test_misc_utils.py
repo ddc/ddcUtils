@@ -54,7 +54,6 @@ class TestMiscUtils:
         # Test that clear_screen doesn't raise an exception
         try:
             MiscUtils.clear_screen()
-            assert True
         except Exception:
             assert False, "clear_screen should not raise an exception"
 
