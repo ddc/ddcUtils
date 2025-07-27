@@ -79,7 +79,8 @@ class TestFileUtilsWindows:
             if os.path.exists(temp_dir):
                 shutil.rmtree(temp_dir, ignore_errors=True)
 
-        # nonexistent file
+    def test_is_older_than_x_days_nonexistent_file_windows(self):
+        # Test FileNotFoundError for nonexistent file on Windows
         with pytest.raises(FileNotFoundError) as exc_info:
             FileUtils.is_older_than_x_days(self.unknown_file, 1)
         assert exc_info.value.args[0] == 2
