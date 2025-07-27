@@ -12,7 +12,7 @@ __all__ = (
     "FileUtils",
     "MiscUtils",
     "Object",
-    "OsUtils"
+    "OsUtils",
 )
 
 __title__ = "ddcUtils"
@@ -43,14 +43,14 @@ __version_info__: VersionInfo = VersionInfo(
     minor=__version__[1],
     micro=__version__[2],
     releaselevel="final",
-    serial=0
+    serial=0,
 )
 __req_python_version__: VersionInfo = VersionInfo(
     major=_req_python_version[0],
     minor=_req_python_version[1],
     micro=_req_python_version[2],
     releaselevel="final",
-    serial=0
+    serial=0,
 )
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())

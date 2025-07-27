@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "ddcUtils"
-version = "1.0.41"
+version = "2.0.0"
 description = "Few File Utilities and some OS Functions"
 license = "MIT"
 readme = "README.md"

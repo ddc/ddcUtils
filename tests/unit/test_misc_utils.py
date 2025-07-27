@@ -1,3 +1,4 @@
+import subprocess
 from datetime import datetime, timezone
 from ddcUtils import constants, MiscUtils, Object
 
@@ -54,7 +55,7 @@ class TestMiscUtils:
         # Test that clear_screen doesn't raise an exception
         try:
             MiscUtils.clear_screen()
-        except Exception:
+        except (OSError, subprocess.CalledProcessError):
             assert False, "clear_screen should not raise an exception"
 
     def test_user_choice(self):
@@ -82,11 +83,11 @@ class TestMiscUtils:
             git_dir = os.path.join(temp_dir, ".git")
             os.makedirs(git_dir)
             head_file = os.path.join(git_dir, "HEAD")
-            
+
             # Write a valid branch reference
             with open(head_file, 'w') as f:
                 f.write("ref: refs/heads/main\n")
-            
+
             result = MiscUtils.get_active_branch_name(git_dir)
             assert result == "main"
 
@@ -99,11 +100,11 @@ class TestMiscUtils:
             git_dir = os.path.join(temp_dir, ".git")
             os.makedirs(git_dir)
             head_file = os.path.join(git_dir, "HEAD")
-            
+
             # Write invalid content (not starting with "ref:")
             with open(head_file, 'w') as f:
                 f.write("invalid content\n")
-            
+
             result = MiscUtils.get_active_branch_name(git_dir)
             assert result is None
 

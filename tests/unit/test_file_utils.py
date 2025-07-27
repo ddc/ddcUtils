@@ -317,14 +317,14 @@ class TestFileUtils:
         def create_mock_file(machine_code):
             # Create properly structured PE file data
             mock_file = unittest.mock.mock_open()
-            
+
             # Set up the file reads in sequence
             read_calls = [
                 b'MZ',  # First read (2 bytes)
                 struct.pack('<L', 64),  # Header offset read (4 bytes)
-                struct.pack('<H', machine_code)  # Machine type read (2 bytes)
+                struct.pack('<H', machine_code),  # Machine type read (2 bytes)
             ]
-            
+
             mock_file.return_value.read.side_effect = read_calls
             return mock_file
 
@@ -361,7 +361,7 @@ class TestFileUtils:
     def test_is_older_than_x_days_overflow_error(self):
         # Test datetime overflow handling in is_older_than_x_days
         import unittest.mock
-        from datetime import datetime, timedelta
+        from datetime import datetime
 
         temp_file = os.path.join(self.temp_test_dir, "test_overflow.txt")
         with open(temp_file, 'w') as f:
@@ -372,7 +372,7 @@ class TestFileUtils:
             with unittest.mock.patch('ddcUtils.file_utils.datetime') as mock_datetime:
                 mock_datetime.now.return_value = datetime.now()
                 mock_datetime.timedelta.side_effect = OverflowError("Date out of range")
-                
+
                 result = FileUtils.is_older_than_x_days(temp_file, 999999999)
                 assert result is False
 
@@ -380,7 +380,7 @@ class TestFileUtils:
             with unittest.mock.patch('ddcUtils.file_utils.datetime') as mock_datetime:
                 mock_datetime.now.return_value = datetime.now()
                 mock_datetime.timedelta.side_effect = ValueError("Invalid date")
-                
+
                 result = FileUtils.is_older_than_x_days(temp_file, 999999999)
                 assert result is False
 
@@ -388,9 +388,61 @@ class TestFileUtils:
             with unittest.mock.patch('ddcUtils.file_utils.datetime') as mock_datetime:
                 mock_datetime.now.return_value = datetime.now()
                 mock_datetime.timedelta.side_effect = OSError("OS error")
-                
+
                 result = FileUtils.is_older_than_x_days(temp_file, 999999999)
                 assert result is False
 
         finally:
             FileUtils.remove(temp_file)
+
+    def test_open_exception_handling(self):
+        # Test exception handling in open method to cover lines 44-45
+        import unittest.mock
+
+        with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', return_value='Linux'):
+            with unittest.mock.patch('subprocess.call', side_effect=OSError("Process error")):
+                with pytest.raises(OSError):
+                    FileUtils.open(self.test_file)
+
+    def test_list_files_exception_handling(self):
+        # Test exception handling in list_files to cover lines 81-82
+        import unittest.mock
+
+        with unittest.mock.patch('os.path.isdir', return_value=True):
+            with unittest.mock.patch('os.listdir', side_effect=PermissionError("Permission denied")):
+                with pytest.raises(PermissionError):
+                    FileUtils.list_files("/some/directory")
+
+    def test_gzip_cleanup_on_exception(self):
+        # Test cleanup code in gzip exception handler to cover line 109
+        import unittest.mock
+        import tempfile
+
+        # Create a real input file
+        with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
+            f.write("test content")
+            input_file = f.name
+
+        # Create output directory
+        output_dir = tempfile.mkdtemp()
+
+        try:
+            # Create a mock that first creates a file, then raises exception
+            def mock_gzip_open(filename, mode):
+                # Create the output file first
+                with open(filename, 'w') as f:
+                    f.write("partial")
+                # Then raise an exception
+                raise IOError("Compression failed")
+
+            with unittest.mock.patch('gzip.open', side_effect=mock_gzip_open):
+                with pytest.raises(IOError):
+                    FileUtils.gzip(input_file, output_dir)
+        finally:
+            # Clean up
+            if os.path.exists(input_file):
+                os.remove(input_file)
+            import shutil
+
+            if os.path.exists(output_dir):
+                shutil.rmtree(output_dir)

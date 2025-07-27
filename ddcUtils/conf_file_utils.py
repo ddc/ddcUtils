@@ -2,7 +2,6 @@ import configparser
 import errno
 import os
 import sys
-from typing import Optional
 
 
 class ConfFileUtils:
@@ -23,7 +22,11 @@ class ConfFileUtils:
         return parser
 
     @staticmethod
-    def _get_parser_value(parser: configparser.ConfigParser, section: str, config_name: str) -> str | int | None:
+    def _get_parser_value(
+        parser: configparser.ConfigParser,
+        section: str,
+        config_name: str,
+    ) -> str | int | list | None:
         """
         Returns the value of the specified section in the given parser
         :param parser:
@@ -41,7 +44,7 @@ class ConfFileUtils:
                 value = int(value)
             elif not value:
                 value = None
-        except Exception as e:
+        except (configparser.Error, ValueError, AttributeError) as e:
             sys.stderr.write(repr(e))
             value = None
         return value
@@ -51,8 +54,8 @@ class ConfFileUtils:
         parser: configparser.ConfigParser,
         section: str,
         final_data: dict,
-        mixed_values: Optional[bool] = True,
-        include_section_name: Optional[bool] = False,
+        mixed_values: bool = True,
+        include_section_name: bool = False,
     ) -> dict:
         """
         Returns the section data from the given parser
@@ -76,7 +79,7 @@ class ConfFileUtils:
                 final_data[section_name][config_name] = value
         return final_data
 
-    def get_all_values(self, file_path: str, mixed_values: Optional[bool] = False) -> dict:
+    def get_all_values(self, file_path: str, mixed_values: bool = False) -> dict:
         """
         Get all values from an .ini config file structure and returns them as a dictionary
         :param file_path:
@@ -95,7 +98,7 @@ class ConfFileUtils:
                     section_name = section.replace(" ", "_")
                     final_data[section_name] = {}
                 final_data = self._get_section_data(parser, section, final_data, mixed_values, True)
-        except Exception as e:
+        except (configparser.Error, OSError, UnicodeDecodeError) as e:
             sys.stderr.write(repr(e))
         return final_data
 
@@ -114,7 +117,7 @@ class ConfFileUtils:
         try:
             parser.read(file_path)
             final_data = self._get_section_data(parser, section, final_data)
-        except Exception as e:
+        except (configparser.Error, OSError, UnicodeDecodeError) as e:
             sys.stderr.write(repr(e))
         return final_data
 
@@ -134,9 +137,7 @@ class ConfFileUtils:
         value = self._get_parser_value(parser, section, config_name)
         return value
 
-    def set_value(
-        self, file_path: str, section_name: str, config_name: str, new_value, commas: Optional[bool] = False
-    ) -> bool:
+    def set_value(self, file_path: str, section_name: str, config_name: str, new_value, commas: bool = False) -> bool:
         """
         Set value from an .ini config file structure and returns True or False
         :param file_path:

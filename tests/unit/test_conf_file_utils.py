@@ -1,3 +1,4 @@
+import configparser
 import os
 import tempfile
 import pytest
@@ -144,22 +145,22 @@ class TestConfFileUtils:
     def test_get_parser_value_exception(self):
         # Test exception handling in _get_parser_value
         import unittest.mock
-        
+
         parser = ConfFileUtils._get_default_parser()
-        with unittest.mock.patch.object(parser, 'get', side_effect=Exception("Test error")):
+        with unittest.mock.patch.object(parser, 'get', side_effect=ValueError("Test error")):
             result = ConfFileUtils._get_parser_value(parser, "section", "key")
             assert result is None
 
     def test_get_all_values_exception(self):
         # Test exception handling in get_all_values
         import unittest.mock
-        
+
         with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
             f.write("[section]\nkey=value\n")
             temp_file = f.name
 
         try:
-            with unittest.mock.patch('configparser.ConfigParser.read', side_effect=Exception("Parse error")):
+            with unittest.mock.patch('configparser.ConfigParser.read', side_effect=configparser.Error("Parse error")):
                 result = ConfFileUtils().get_all_values(temp_file)
                 assert result == {}
         finally:
@@ -168,13 +169,13 @@ class TestConfFileUtils:
     def test_get_section_values_exception(self):
         # Test exception handling in get_section_values
         import unittest.mock
-        
+
         with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
             f.write("[section]\nkey=value\n")
             temp_file = f.name
 
         try:
-            with unittest.mock.patch('configparser.ConfigParser.read', side_effect=Exception("Parse error")):
+            with unittest.mock.patch('configparser.ConfigParser.read', side_effect=configparser.Error("Parse error")):
                 result = ConfFileUtils().get_section_values(temp_file, "section")
                 assert result == {}
         finally:
@@ -192,3 +193,23 @@ class TestConfFileUtils:
             ConfFileUtils().set_value(self.unknown_file, "section", "key", "value")
         assert exc_info.value.args[0] == 2
 
+    def test_set_value_duplicate_option_error(self):
+        # Test DuplicateOptionError handling in set_value to cover lines 161-163
+        import unittest.mock
+        import tempfile
+        import configparser
+
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
+            f.write("[section]\nkey=value\n")
+            temp_file = f.name
+
+        try:
+            # Mock ConfigParser.write to raise DuplicateOptionError
+            with unittest.mock.patch(
+                'configparser.ConfigParser.write',
+                side_effect=configparser.DuplicateOptionError("section", "key", "source"),
+            ):
+                result = ConfFileUtils().set_value(temp_file, "section", "key", "new_value")
+                assert result is False
+        finally:
+            os.unlink(temp_file)

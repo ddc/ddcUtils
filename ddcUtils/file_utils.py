@@ -5,9 +5,9 @@ import shutil
 import struct
 import subprocess
 import sys
+import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional
 from zipfile import ZipFile
 import requests
 from ddcUtils.os_utils import OsUtils
@@ -40,12 +40,12 @@ class FileUtils:
                 case _:
                     return_code = subprocess.call(("xdg-open", path))
             return return_code == 0
-        except Exception as e:
+        except (OSError, subprocess.SubprocessError) as e:
             sys.stderr.write(repr(e))
             raise e
 
     @staticmethod
-    def list_files(directory: str, starts_with: Optional[str] = None, ends_with: Optional[str] = None) -> tuple:
+    def list_files(directory: str, starts_with: str | None = None, ends_with: str | None = None) -> tuple:
         """
         List all files in the given directory and returns them in a list
             sorted by creation time in ascending order
@@ -77,12 +77,12 @@ class FileUtils:
                     result = [Path(directory, f) for f in os.listdir(directory)]
                 result.sort(key=lambda p: p.stat().st_ctime)
             return tuple(result)
-        except Exception as e:
+        except OSError as e:
             sys.stderr.write(repr(e))
             raise e
 
     @staticmethod
-    def gzip(input_file_path: str, output_dir: Optional[str] = None) -> Path | None:
+    def gzip(input_file_path: str, output_dir: str | None = None) -> Path | None:
         """
         Compress the given file and returns the Path for success or None if failed
 
@@ -103,14 +103,14 @@ class FileUtils:
                 with gzip.open(output_file, "wb") as fout:
                     fout.writelines(fin)
             return Path(output_file)
-        except Exception as e:
+        except (OSError, IOError) as e:
             sys.stderr.write(repr(e))
             if os.path.isfile(output_file):
                 os.remove(output_file)
             raise e
 
     @staticmethod
-    def unzip(file_path: str, out_path: Optional[str] = None) -> ZipFile | None:
+    def unzip(file_path: str, out_path: str | None = None) -> ZipFile | None:
         """
         Unzips the given file.zip and returns ZipFile for success or None if failed
 
@@ -124,7 +124,7 @@ class FileUtils:
             with ZipFile(file_path) as zipf:
                 zipf.extractall(out_path)
                 return zipf
-        except Exception as e:
+        except (OSError, zipfile.BadZipFile) as e:
             sys.stderr.write(repr(e))
             raise e
 
@@ -141,7 +141,7 @@ class FileUtils:
         try:
             shutil.copy(src_path, dst_path)
             return True
-        except Exception as e:
+        except (OSError, shutil.Error) as e:
             sys.stderr.write(repr(e))
             raise e
 
@@ -184,7 +184,7 @@ class FileUtils:
             raise e
 
     @staticmethod
-    def copy_dir(src: str, dst: str, symlinks: Optional[bool] = False, ignore: Optional = None) -> bool:
+    def copy_dir(src: str, dst: str, symlinks: bool = False, ignore=None) -> bool:
         """
         Copy files from src to dst and returns True if the copy was successfull
 
@@ -234,15 +234,12 @@ class FileUtils:
         """
 
         with open(file_path, "rb") as f:
-            s = f.read(2)
-            if s != b"MZ":
+            if (_ := f.read(2)) != b"MZ":
                 return "Not an EXE file"
             f.seek(60)
-            s = f.read(4)
-            header_offset = struct.unpack("<L", s)[0]
+            header_offset = struct.unpack("<L", f.read(4))[0]
             f.seek(header_offset + 4)
-            s = f.read(2)
-            machine = struct.unpack("<H", s)[0]
+            machine = struct.unpack("<H", f.read(2))[0]
             match machine:
                 case 332:
                     # IA32 (32-bit x86)
