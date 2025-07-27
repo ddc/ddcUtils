@@ -141,7 +141,7 @@ class FileUtils:
         try:
             shutil.copy(src_path, dst_path)
             return True
-        except (OSError, shutil.Error) as e:
+        except OSError as e:
             sys.stderr.write(repr(e))
             raise e
 
