@@ -72,3 +72,51 @@ class TestMiscUtils:
     def test_get_active_branch_name_no_git(self):
         result = MiscUtils.get_active_branch_name("/nonexistent/path/.git")
         assert result is None
+
+    def test_get_active_branch_name_valid_branch(self):
+        # Test with valid git directory and branch reference
+        import tempfile
+        import os
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            git_dir = os.path.join(temp_dir, ".git")
+            os.makedirs(git_dir)
+            head_file = os.path.join(git_dir, "HEAD")
+            
+            # Write a valid branch reference
+            with open(head_file, 'w') as f:
+                f.write("ref: refs/heads/main\n")
+            
+            result = MiscUtils.get_active_branch_name(git_dir)
+            assert result == "main"
+
+    def test_get_active_branch_name_invalid_format(self):
+        # Test with invalid HEAD file format (covers lines 59-61)
+        import tempfile
+        import os
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            git_dir = os.path.join(temp_dir, ".git")
+            os.makedirs(git_dir)
+            head_file = os.path.join(git_dir, "HEAD")
+            
+            # Write invalid content (not starting with "ref:")
+            with open(head_file, 'w') as f:
+                f.write("invalid content\n")
+            
+            result = MiscUtils.get_active_branch_name(git_dir)
+            assert result is None
+
+    def test_user_choice_syntax_error(self):
+        # Test SyntaxError handling in user_choice to cover lines 46-47
+        import unittest.mock
+        import builtins
+
+        original_input = builtins.input
+        try:
+            # Mock input to raise SyntaxError
+            builtins.input = unittest.mock.Mock(side_effect=SyntaxError("Invalid syntax"))
+            result = MiscUtils.user_choice()
+            assert result is None
+        finally:
+            builtins.input = original_input

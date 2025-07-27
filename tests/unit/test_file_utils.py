@@ -290,3 +290,107 @@ class TestFileUtils:
         with unittest.mock.patch('requests.get', side_effect=requests.RequestException("Network error")):
             with pytest.raises(requests.RequestException):
                 FileUtils.download_file("https://example.com/test.txt", dst_file)
+
+    def test_open_windows(self):
+        # Test open on Windows to cover lines 36-37
+        import unittest.mock
+
+        with unittest.mock.patch('ddcUtils.file_utils.OsUtils.get_os_name', return_value='Windows'):
+            with unittest.mock.patch('os.startfile', create=True) as mock_startfile:
+                result = FileUtils.open(self.test_file)
+                assert result is True
+                mock_startfile.assert_called_once_with(self.test_file)
+
+    def test_gzip_with_cleanup_on_error(self):
+        # Test gzip cleanup when an error occurs to cover line 109
+        import unittest.mock
+
+        with unittest.mock.patch('builtins.open', side_effect=Exception("Write error")):
+            with pytest.raises(Exception):
+                FileUtils.gzip(self.test_file, self.temp_test_dir)
+
+    def test_get_exe_binary_type_detailed(self):
+        # Test different binary types with mock data
+        import unittest.mock
+        import struct
+
+        def create_mock_file(machine_code):
+            # Create properly structured PE file data
+            mock_file = unittest.mock.mock_open()
+            
+            # Set up the file reads in sequence
+            read_calls = [
+                b'MZ',  # First read (2 bytes)
+                struct.pack('<L', 64),  # Header offset read (4 bytes)
+                struct.pack('<H', machine_code)  # Machine type read (2 bytes)
+            ]
+            
+            mock_file.return_value.read.side_effect = read_calls
+            return mock_file
+
+        # Test IA32 (32-bit x86) - machine code 332
+        with unittest.mock.patch('builtins.open', create_mock_file(332)):
+            result = FileUtils.get_exe_binary_type("fake.exe")
+            assert result == "IA32"
+
+        # Test IA64 (Itanium) - machine code 512
+        with unittest.mock.patch('builtins.open', create_mock_file(512)):
+            result = FileUtils.get_exe_binary_type("fake.exe")
+            assert result == "IA64"
+
+        # Test AMD64 (64-bit x86) - machine code 34404
+        with unittest.mock.patch('builtins.open', create_mock_file(34404)):
+            result = FileUtils.get_exe_binary_type("fake.exe")
+            assert result == "AMD64"
+
+        # Test ARM-32bits - machine code 452
+        with unittest.mock.patch('builtins.open', create_mock_file(452)):
+            result = FileUtils.get_exe_binary_type("fake.exe")
+            assert result == "ARM-32bits"
+
+        # Test ARM-64bits - machine code 43620
+        with unittest.mock.patch('builtins.open', create_mock_file(43620)):
+            result = FileUtils.get_exe_binary_type("fake.exe")
+            assert result == "ARM-64bits"
+
+        # Test unknown machine type
+        with unittest.mock.patch('builtins.open', create_mock_file(9999)):
+            result = FileUtils.get_exe_binary_type("fake.exe")
+            assert result is None
+
+    def test_is_older_than_x_days_overflow_error(self):
+        # Test datetime overflow handling in is_older_than_x_days
+        import unittest.mock
+        from datetime import datetime, timedelta
+
+        temp_file = os.path.join(self.temp_test_dir, "test_overflow.txt")
+        with open(temp_file, 'w') as f:
+            f.write("test content")
+
+        try:
+            # Mock datetime.now and timedelta to raise OverflowError
+            with unittest.mock.patch('ddcUtils.file_utils.datetime') as mock_datetime:
+                mock_datetime.now.return_value = datetime.now()
+                mock_datetime.timedelta.side_effect = OverflowError("Date out of range")
+                
+                result = FileUtils.is_older_than_x_days(temp_file, 999999999)
+                assert result is False
+
+            # Test ValueError handling
+            with unittest.mock.patch('ddcUtils.file_utils.datetime') as mock_datetime:
+                mock_datetime.now.return_value = datetime.now()
+                mock_datetime.timedelta.side_effect = ValueError("Invalid date")
+                
+                result = FileUtils.is_older_than_x_days(temp_file, 999999999)
+                assert result is False
+
+            # Test OSError handling
+            with unittest.mock.patch('ddcUtils.file_utils.datetime') as mock_datetime:
+                mock_datetime.now.return_value = datetime.now()
+                mock_datetime.timedelta.side_effect = OSError("OS error")
+                
+                result = FileUtils.is_older_than_x_days(temp_file, 999999999)
+                assert result is False
+
+        finally:
+            FileUtils.remove(temp_file)

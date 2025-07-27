@@ -126,3 +126,69 @@ class TestConfFileUtils:
             assert value == [1, 2, 3]
         finally:
             os.unlink(temp_file)
+
+    def test_get_parser_value_empty_value(self):
+        # Test with empty value to cover line 43
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
+            f.write("[section]\nkey=\n")
+            temp_file = f.name
+
+        try:
+            parser = ConfFileUtils._get_default_parser()
+            parser.read(temp_file)
+            result = ConfFileUtils._get_parser_value(parser, "section", "key")
+            assert result is None
+        finally:
+            os.unlink(temp_file)
+
+    def test_get_parser_value_exception(self):
+        # Test exception handling in _get_parser_value
+        import unittest.mock
+        
+        parser = ConfFileUtils._get_default_parser()
+        with unittest.mock.patch.object(parser, 'get', side_effect=Exception("Test error")):
+            result = ConfFileUtils._get_parser_value(parser, "section", "key")
+            assert result is None
+
+    def test_get_all_values_exception(self):
+        # Test exception handling in get_all_values
+        import unittest.mock
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
+            f.write("[section]\nkey=value\n")
+            temp_file = f.name
+
+        try:
+            with unittest.mock.patch('configparser.ConfigParser.read', side_effect=Exception("Parse error")):
+                result = ConfFileUtils().get_all_values(temp_file)
+                assert result == {}
+        finally:
+            os.unlink(temp_file)
+
+    def test_get_section_values_exception(self):
+        # Test exception handling in get_section_values
+        import unittest.mock
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.ini', delete=False) as f:
+            f.write("[section]\nkey=value\n")
+            temp_file = f.name
+
+        try:
+            with unittest.mock.patch('configparser.ConfigParser.read', side_effect=Exception("Parse error")):
+                result = ConfFileUtils().get_section_values(temp_file, "section")
+                assert result == {}
+        finally:
+            os.unlink(temp_file)
+
+    def test_get_value_nonexistent_file(self):
+        # Test get_value with nonexistent file to cover line 131
+        with pytest.raises(FileNotFoundError) as exc_info:
+            ConfFileUtils().get_value(self.unknown_file, "section", "key")
+        assert exc_info.value.args[0] == 2
+
+    def test_set_value_nonexistent_file(self):
+        # Test set_value with nonexistent file to cover line 151
+        with pytest.raises(FileNotFoundError) as exc_info:
+            ConfFileUtils().set_value(self.unknown_file, "section", "key", "value")
+        assert exc_info.value.args[0] == 2
+
